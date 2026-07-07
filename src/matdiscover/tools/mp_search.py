@@ -74,10 +74,25 @@ def search_known_materials(
     return results
 
 
-def is_novel(formula: str, use_cache: bool = True) -> bool:
-    """True if no MP entry has this reduced formula (i.e. worth pursuing as 'new')."""
+def is_novel(
+    formula: str,
+    use_cache: bool = True,
+    holdout: frozenset[str] = frozenset(),
+) -> bool:
+    """True if no MP entry has this reduced formula (i.e. worth pursuing as 'new').
+
+    Formulas in `holdout` are treated as unknown-to-science even though MP has
+    them — the Phase 3 rediscovery test: hide known materials and check
+    whether a campaign finds them again.
+    """
     reduced = Composition(formula).reduced_formula
+    if reduced in _reduced_set(holdout):
+        return True
     return len(search_known_materials(reduced, use_cache=use_cache)) == 0
+
+
+def _reduced_set(formulas: frozenset[str]) -> set[str]:
+    return {Composition(f).reduced_formula for f in formulas}
 
 
 def get_structure_by_id(material_id: str):

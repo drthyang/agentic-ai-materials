@@ -1,17 +1,18 @@
 # matdiscover — agent onboarding
 
 Closed-loop "AI materials scientist." Read PLAN.md for the full build plan.
-Status: Phases 0–2 complete (tool layer + agent loop with pluggable LLM
-backend, local-first via Ollama/qwen3:32b).
-**Next: Phase 3** — baselines (random + similarity substitution at equal
-compute), metrics, rediscovery hold-out test, per PLAN.md.
+Status: Phases 0–3 complete (tool layer; agent loop with pluggable LLM
+backend, local-first via Ollama/qwen3:32b; baselines + metrics + benchmark).
+**Next: Phase 4** — critic agent, literature agent, dashboard, per PLAN.md.
 
 ## Commands
 
 ```bash
-uv run pytest                              # 31 tests, all should pass
+uv run pytest                              # 39 tests, all should pass
 uv run matdiscover check                   # env/key status
 uv run matdiscover run --iterations 1      # discovery campaign (needs Ollama up)
+uv run matdiscover benchmark --skip-agent  # baselines only (no LLM needed)
+uv run matdiscover benchmark               # full agent-vs-baselines comparison
 uv run python scripts/smoke_pipeline.py    # end-to-end pipeline, no agent
 ```
 
@@ -41,6 +42,17 @@ uv run python scripts/smoke_pipeline.py    # end-to-end pipeline, no agent
   local models and makes the notebook the scientific record.
 - Local-model robustness: malformed tool JSON is captured as ToolCall.parse_error
   and bounced back for retry; tool-call budget terminates runaway iterations.
+
+## Phase 3 (benchmark & evaluation)
+
+- `baselines.py` — random + greedy-similarity searchers; identical budget,
+  filters, scorer, and DB schema as the agent. Only substitution choice differs.
+- `metrics.py` — shared hit definition (converged + on-target gap + near-hull +
+  not confirmed-known); `benchmark.py` orchestrates equal-budget comparison into
+  data/benchmark/<stamp>/ with markdown table + png plot.
+- Rediscovery hold-out: `evaluation.holdout_formulas` in mission.yaml masks
+  known materials from MP search + novelty (compared via reduced formula), so
+  campaigns can "rediscover" them; metrics count rediscoveries.
 
 ## Non-obvious decisions (don't re-derive)
 

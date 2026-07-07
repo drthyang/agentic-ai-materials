@@ -118,9 +118,15 @@ def build_registry(ctx: CampaignContext) -> ToolRegistry:
     def search_known_materials(chemsys_or_formula: str) -> dict:
         if not has_mp_key:
             return {"error": "MP_API_KEY not set; database search unavailable"}
+        from pymatgen.core import Composition
+
         from matdiscover.tools.mp_search import search_known_materials as _search
 
-        results = _search(chemsys_or_formula)
+        # rediscovery hold-out: masked materials must not leak via search
+        masked = {Composition(f).reduced_formula
+                  for f in cfg.evaluation.holdout_formulas}
+        results = [m for m in _search(chemsys_or_formula)
+                   if Composition(m.formula).reduced_formula not in masked]
         return {
             "count": len(results),
             "materials": [
@@ -182,7 +188,10 @@ def build_registry(ctx: CampaignContext) -> ToolRegistry:
             if has_mp_key:
                 from matdiscover.tools.mp_search import is_novel
 
-                novel = is_novel(cand.formula)
+                novel = is_novel(
+                    cand.formula,
+                    holdout=frozenset(cfg.evaluation.holdout_formulas),
+                )
             ctx.structures[cand.formula] = Proposed(
                 structure=cand.structure, hypothesis=hypothesis,
                 prototype=prototype, substitution=cand.substitution, is_novel=novel,

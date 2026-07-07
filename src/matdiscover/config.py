@@ -50,6 +50,13 @@ class LLMConfig(BaseModel):
     timeout_s: float = 300.0
 
 
+class Evaluation(BaseModel):
+    """Phase 3 rediscovery hold-out: these known materials are masked from
+    MP search/novelty so a campaign can plausibly 'rediscover' them."""
+
+    holdout_formulas: list[str] = []
+
+
 class Paths(BaseModel):
     db: Path = Path("data/candidates.db")
     notebook: Path = Path("data/lab_notebook.md")
@@ -62,6 +69,7 @@ class MissionConfig(BaseModel):
     chemistry: Chemistry
     budget: Budget
     llm: LLMConfig = LLMConfig()
+    evaluation: Evaluation = Evaluation()
     paths: Paths = Paths()
 
     @property

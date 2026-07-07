@@ -68,6 +68,26 @@ def cmd_run(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_benchmark(args: argparse.Namespace) -> int:
+    import logging
+
+    from matdiscover.benchmark import run_benchmark
+    from matdiscover.config import load_mission
+
+    logging.basicConfig(
+        level=logging.DEBUG if args.verbose else logging.INFO,
+        format="%(asctime)s %(name)s %(levelname)s %(message)s",
+        datefmt="%H:%M:%S",
+    )
+    cfg = load_mission(args.mission)
+    outdir = run_benchmark(
+        cfg, iterations=args.iterations,
+        include_agent=not args.skip_agent, seed=args.seed,
+    )
+    print(f"benchmark artifacts: {outdir}")
+    return 0
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(prog="matdiscover")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -82,11 +102,23 @@ def main() -> None:
     run_p.add_argument("--model", default=None, help="override llm.model")
     run_p.add_argument("--verbose", action="store_true")
 
+    bench_p = sub.add_parser(
+        "benchmark", help="agent vs random/similarity baselines at equal budget"
+    )
+    bench_p.add_argument("--mission", default="config/mission.yaml")
+    bench_p.add_argument("--iterations", type=int, default=None)
+    bench_p.add_argument("--seed", type=int, default=0)
+    bench_p.add_argument("--skip-agent", action="store_true",
+                         help="run only the non-LLM baselines")
+    bench_p.add_argument("--verbose", action="store_true")
+
     args = parser.parse_args()
     if args.command == "check":
         sys.exit(cmd_check(args))
     if args.command == "run":
         sys.exit(cmd_run(args))
+    if args.command == "benchmark":
+        sys.exit(cmd_benchmark(args))
 
 
 if __name__ == "__main__":
