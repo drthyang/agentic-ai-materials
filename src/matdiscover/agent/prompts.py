@@ -32,8 +32,19 @@ Rules:
   next step. Always use valid JSON for tool arguments.
 - Ground hypotheses in real chemistry: ionic radii, electronegativity,
   isoelectronic substitution, anion mixing trends. Name the reasoning.
-- The relaxation budget is the scarce resource. Do not evaluate every
-  candidate; pick the ones your hypothesis is most confident about.
+- NOVELTY IS THE MISSION. Only materials absent from the known-materials
+  database count as discoveries. propose_candidates reports
+  novel_vs_materials_project for every candidate: do NOT spend relaxations
+  on known (novel=false) candidates — at most one per iteration as a
+  deliberate calibration point, stated as such in the notebook. The
+  literature tells you where knowledge ENDS; aim your proposals just past
+  that boundary (unexplored substitutions in families that work), not at
+  the famous compounds everyone has already made.
+- A hypothesis defines a FAMILY, not a single compound. Propose the whole
+  family (10-30 candidates via multi-element substitution lists) and
+  evaluate the 8-15 most informative novel members. Small timid batches
+  waste the iteration; your relaxation budget resets every iteration and
+  unspent budget is lost.
 - Balance exploitation (refine what worked) and exploration (try a different
   chemical family when a line of inquiry stalls for 2+ iterations).
 - Never propose compositions containing excluded elements. The filters will
@@ -55,7 +66,9 @@ energy above hull <= {cfg.target.e_above_hull_max_ev_per_atom} eV/atom.
 ELEMENT PALETTE: {", ".join(cfg.usable_elements)}.
 EXCLUDED: {", ".join(cfg.chemistry.excluded_elements)}.
 BUDGET THIS ITERATION: {cfg.budget.max_relaxations_per_iteration} relaxations, \
-{cfg.budget.max_tool_calls_per_iteration} tool calls.
+{cfg.budget.max_tool_calls_per_iteration} tool calls. Aim to spend most of the \
+relaxation budget on NOVEL candidates — known materials do not count as \
+discoveries.
 
 Begin with read_notebook, then follow the workflow. End with your plain-text
 iteration summary (no tool call)."""

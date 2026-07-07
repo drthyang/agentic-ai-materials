@@ -113,6 +113,33 @@ def test_comparison_table_renders(cfg, tmp_path):
 
 
 # --------------------------------------------------------------------------
+# benchmark lock
+# --------------------------------------------------------------------------
+
+def test_benchmark_lock_blocks_concurrent_run(tmp_path, monkeypatch):
+    import os
+
+    import matdiscover.benchmark as bm
+
+    monkeypatch.setattr(bm, "_LOCK", tmp_path / ".lock")
+    (tmp_path / ".lock").write_text(str(os.getpid()))  # "another" live process
+    with pytest.raises(SystemExit, match="already running"):
+        with bm._benchmark_lock():
+            pass
+
+
+def test_benchmark_lock_reclaims_stale_and_cleans_up(tmp_path, monkeypatch):
+    import matdiscover.benchmark as bm
+
+    lock = tmp_path / ".lock"
+    monkeypatch.setattr(bm, "_LOCK", lock)
+    lock.write_text("999999999")  # dead pid -> stale
+    with bm._benchmark_lock():
+        assert lock.exists()  # held during the run
+    assert not lock.exists()  # released after
+
+
+# --------------------------------------------------------------------------
 # holdout masking
 # --------------------------------------------------------------------------
 
