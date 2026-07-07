@@ -37,6 +37,14 @@ llm:
   base_url: http://localhost:11434/v1
   timeout_s: 300
 
+critic:
+  enabled: true            # independent review before compute is spent
+  # Optional hybrid: run the critic on a different (stronger) model, e.g.:
+  #   backend: anthropic
+  #   model: claude-sonnet-5
+  backend: null
+  model: null
+
 evaluation:
   # Rediscovery hold-out: known-good PV absorbers masked from MP search and
   # novelty checks. A campaign that re-finds them proves the search works.

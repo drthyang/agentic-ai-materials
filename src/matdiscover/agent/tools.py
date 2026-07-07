@@ -45,6 +45,7 @@ class CampaignContext:
     iteration: int = 0
     relaxations_used: int = 0
     structures: dict[str, Proposed] = field(default_factory=dict)
+    critic: object | None = None  # matdiscover.agent.critic.Critic when enabled
 
     def start_iteration(self, i: int) -> None:
         self.iteration = i
@@ -250,11 +251,34 @@ def build_registry(ctx: CampaignContext) -> ToolRegistry:
     # -- evaluate_candidates --------------------------------------------------
     def evaluate_candidates(formulas: list[str]) -> dict:
         lo, hi = cfg.target.band_gap_ev
-        out, skipped = [], []
+        out, skipped, critic_notes = [], [], []
+
+        # critic pass: vetoed candidates are dropped BEFORE any compute
+        reviewable = [f for f in formulas if f in ctx.structures]
+        if ctx.critic is not None and reviewable:
+            batch = [{"formula": f, "substitution": ctx.structures[f].substitution}
+                     for f in reviewable]
+            hypothesis = ctx.structures[reviewable[0]].hypothesis
+            verdicts = ctx.critic.review(batch, hypothesis)
+            for f, v in verdicts.items():
+                if v.approve:
+                    continue
+                skipped.append({"formula": f, "reason": f"critic vetoed: {v.reason}"})
+                critic_notes.append(f"{f}: {v.reason}")
+                ctx.db.add(CandidateRow(
+                    iteration=ctx.iteration, formula=f, status="filtered_out",
+                    parent_prototype=ctx.structures[f].prototype,
+                    substitution=ctx.structures[f].substitution,
+                    hypothesis=ctx.structures[f].hypothesis,
+                    filter_reasons=[f"critic: {v.reason}"],
+                ))
+                del ctx.structures[f]
+
         for formula in formulas:
             if formula not in ctx.structures:
-                skipped.append({"formula": formula,
-                                "reason": "not a proposed candidate (propose it first)"})
+                if not any(s["formula"] == formula for s in skipped):
+                    skipped.append({"formula": formula,
+                                    "reason": "not a proposed candidate (propose it first)"})
                 continue
             if ctx.relaxations_left <= 0:
                 skipped.append({"formula": formula,
@@ -295,13 +319,16 @@ def build_registry(ctx: CampaignContext) -> ToolRegistry:
                 "gap_in_target_window": on_target_gap,
                 "near_stable": near_hull,
             })
-        return {
+        result = {
             "results": out,
             "skipped": skipped,
             "relaxation_budget_left": ctx.relaxations_left,
             "target": {"band_gap_ev": [lo, hi],
                        "e_above_hull_max": cfg.target.e_above_hull_max_ev_per_atom},
         }
+        if critic_notes:
+            result["critic_vetoes"] = critic_notes
+        return result
 
     reg.register(
         ToolSpec(
@@ -326,6 +353,37 @@ def build_registry(ctx: CampaignContext) -> ToolRegistry:
             },
         ),
         evaluate_candidates,
+    )
+
+    # -- search_literature ----------------------------------------------------
+    def search_literature(query: str, rows: int = 5) -> dict:
+        from matdiscover.tools.literature import search_literature as _lit
+
+        results = _lit(query, rows=rows)
+        if isinstance(results, dict):  # error dict
+            return results
+        return {"count": len(results), "papers": results}
+
+    reg.register(
+        ToolSpec(
+            name="search_literature",
+            description=(
+                "Search the scientific literature (Crossref) for prior work. Use "
+                "it to ground hypotheses before spending compute: has this family "
+                "been synthesized? Is a candidate already well-studied? Query with "
+                "compound names or topics, e.g. 'CuGaSe2 photovoltaic absorber'."
+            ),
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string"},
+                    "rows": {"type": "integer",
+                             "description": "max results (default 5, max 10)"},
+                },
+                "required": ["query"],
+            },
+        ),
+        search_literature,
     )
 
     # -- get_top_candidates ---------------------------------------------------

@@ -50,6 +50,19 @@ class LLMConfig(BaseModel):
     timeout_s: float = 300.0
 
 
+class CriticConfig(BaseModel):
+    """Independent reviewer that vets candidates before compute is spent.
+
+    backend/model default to the main llm config; override them to run a
+    hybrid campaign (e.g. local proposer + Claude critic) — useful because a
+    weak critic's wrong vetoes can block good candidates.
+    """
+
+    enabled: bool = True
+    backend: str | None = None
+    model: str | None = None
+
+
 class Evaluation(BaseModel):
     """Phase 3 rediscovery hold-out: these known materials are masked from
     MP search/novelty so a campaign can plausibly 'rediscover' them."""
@@ -69,6 +82,7 @@ class MissionConfig(BaseModel):
     chemistry: Chemistry
     budget: Budget
     llm: LLMConfig = LLMConfig()
+    critic: CriticConfig = CriticConfig()
     evaluation: Evaluation = Evaluation()
     paths: Paths = Paths()
 

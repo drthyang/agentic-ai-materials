@@ -1,9 +1,11 @@
 # matdiscover — agent onboarding
 
 Closed-loop "AI materials scientist." Read PLAN.md for the full build plan.
-Status: Phases 0–3 complete (tool layer; agent loop with pluggable LLM
-backend, local-first via Ollama/qwen3:32b; baselines + metrics + benchmark).
-**Next: Phase 4** — critic agent, literature agent, dashboard, per PLAN.md.
+Status: Phases 0–4 complete (tool layer; agent loop with pluggable LLM
+backend, local-first via Ollama/qwen3:32b; baselines + metrics + benchmark;
+critic + literature tool + live dashboard).
+**Remaining:** the headline agent-vs-baseline benchmark run, PLAN.md stretch
+ideas (active learning, DFT export), and whatever the results suggest.
 
 ## Commands
 
@@ -14,7 +16,22 @@ uv run matdiscover run --iterations 1      # discovery campaign (needs Ollama up
 uv run matdiscover benchmark --skip-agent  # baselines only (no LLM needed)
 uv run matdiscover benchmark               # full agent-vs-baselines comparison
 uv run python scripts/smoke_pipeline.py    # end-to-end pipeline, no agent
+uv run matdiscover dashboard               # live view at localhost:8517
 ```
+
+## Phase 4 (critic, literature, dashboard)
+
+- `agent/critic.py` — independent reviewer with skeptical persona, fresh
+  context per review. Gates evaluate_candidates INSIDE the tool: vetoes cost
+  zero relaxation budget, recorded as filtered_out rows. Fails OPEN (parse
+  failure/exception => approve all): a flaky critic may only save compute,
+  never block science. Disabled via critic.enabled in mission.yaml; tests in
+  test_agent.py disable it to keep scripted backends exact.
+- `tools/literature.py` — Crossref search (free, no key), disk-cached in
+  data/lit_cache/; registered as search_literature agent tool.
+- `dashboard.py` — stdlib http.server, one self-contained HTML page rendered
+  fresh per request from DB + notebook, auto-refresh 10s, matplotlib scatter
+  embedded as base64. No new dependencies.
 
 ## Architecture
 

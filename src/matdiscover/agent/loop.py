@@ -36,6 +36,20 @@ def run_campaign(
         db=CandidateDB(cfg.paths.db),
         notebook=LabNotebook(cfg.paths.notebook),
     )
+    if cfg.critic.enabled:
+        from matdiscover.agent.critic import Critic
+
+        critic_backend = backend
+        if cfg.critic.backend or cfg.critic.model:
+            from matdiscover.llm import make_backend
+
+            llm = cfg.llm.model_copy()
+            llm.backend = cfg.critic.backend or llm.backend
+            llm.model = cfg.critic.model or llm.model
+            critic_backend = make_backend(llm)
+        ctx.critic = Critic(critic_backend, cfg)
+        log.info("critic enabled: %s (%s)", critic_backend.name,
+                 getattr(critic_backend, "model", "?"))
     registry = build_registry(ctx)
 
     for i in range(1, iterations + 1):

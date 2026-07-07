@@ -112,6 +112,10 @@ def main() -> None:
                          help="run only the non-LLM baselines")
     bench_p.add_argument("--verbose", action="store_true")
 
+    dash_p = sub.add_parser("dashboard", help="live campaign dashboard (localhost)")
+    dash_p.add_argument("--mission", default="config/mission.yaml")
+    dash_p.add_argument("--port", type=int, default=8517)
+
     args = parser.parse_args()
     if args.command == "check":
         sys.exit(cmd_check(args))
@@ -119,6 +123,12 @@ def main() -> None:
         sys.exit(cmd_run(args))
     if args.command == "benchmark":
         sys.exit(cmd_benchmark(args))
+    if args.command == "dashboard":
+        from matdiscover.config import load_mission
+        from matdiscover.dashboard import serve
+
+        serve(load_mission(args.mission), port=args.port)
+        sys.exit(0)
 
 
 if __name__ == "__main__":

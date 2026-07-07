@@ -32,6 +32,7 @@ def cfg(tmp_path, monkeypatch):
     c.paths.db = tmp_path / "c.db"
     c.paths.notebook = tmp_path / "nb.md"
     c.paths.reports = tmp_path / "reports"
+    c.critic.enabled = False  # critic has dedicated tests; keep scripts exact here
     return c
 
 
