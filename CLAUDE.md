@@ -1,15 +1,17 @@
 # matdiscover — agent onboarding
 
 Closed-loop "AI materials scientist." Read PLAN.md for the full build plan.
-Status: Phases 0–1 complete (scaffold + deterministic tool layer, verified).
-**Next: Phase 2** — wire tools into a Claude-driven hypothesize→propose→screen→
-reflect loop (`matdiscover run --iterations N`), per PLAN.md.
+Status: Phases 0–2 complete (tool layer + agent loop with pluggable LLM
+backend, local-first via Ollama/qwen3:32b).
+**Next: Phase 3** — baselines (random + similarity substitution at equal
+compute), metrics, rediscovery hold-out test, per PLAN.md.
 
 ## Commands
 
 ```bash
-uv run pytest                              # 19 tests, all should pass
+uv run pytest                              # 31 tests, all should pass
 uv run matdiscover check                   # env/key status
+uv run matdiscover run --iterations 1      # discovery campaign (needs Ollama up)
 uv run python scripts/smoke_pipeline.py    # end-to-end pipeline, no agent
 ```
 
@@ -24,6 +26,21 @@ uv run python scripts/smoke_pipeline.py    # end-to-end pipeline, no agent
   append-only markdown lab notebook (the agent's cross-iteration memory)
 - `config/mission.yaml` — the mission (target windows, element palette,
   compute budgets). Change missions here, never in code.
+
+## Phase 2 architecture (agent loop)
+
+- `llm/` — provider-agnostic backend (`base.py` neutral messages, `openai_compat.py`
+  for Ollama/LM Studio/vLLM, `anthropic_backend.py`, `factory.py`). Selected via
+  `llm:` in mission.yaml. Default: `ollama` + `qwen3:32b` (user has 64 GB RAM).
+- `agent/` — `registry.py` (schema validation, errors returned to the model, never
+  raised), `tools.py` (agent-facing tools over the Phase 1 layer; propose fuses
+  generate+filter+novelty; evaluate enforces the relaxation budget in code),
+  `prompts.py`, `loop.py`.
+- Context strategy: each iteration starts a FRESH message list; cross-iteration
+  memory is the lab notebook (via read_notebook tool). Keeps prompts small for
+  local models and makes the notebook the scientific record.
+- Local-model robustness: malformed tool JSON is captured as ToolCall.parse_error
+  and bounced back for retry; tool-call budget terminates runaway iterations.
 
 ## Non-obvious decisions (don't re-derive)
 

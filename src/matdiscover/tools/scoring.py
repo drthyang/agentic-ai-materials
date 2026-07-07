@@ -86,20 +86,30 @@ def e_above_hull(structure: Structure, use_cache: bool = True) -> float | None:
         return None
 
     from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
-    from pymatgen.entries.computed_entries import ComputedEntry
 
     from matdiscover.tools.mp_search import _require_key
     from mp_api.client import MPRester
 
     chemsys = "-".join(sorted(el.symbol for el in structure.composition.elements))
     with MPRester(_require_key()) as mpr:
-        entries = mpr.get_entries_in_chemsys(chemsys)
+        # Pin to the GGA/GGA+U hull: CHGNet energies are GGA-compatible, and
+        # MP's default mixed hull includes r2SCAN entries whose absolute
+        # energy scale differs by eV/atom — mixing them makes every candidate
+        # look wildly unstable.
+        entries = mpr.get_entries_in_chemsys(
+            chemsys, additional_criteria={"thermo_types": ["GGA_GGA+U"]}
+        )
     if not entries:
         return None
 
+    # Build the hull from UNCORRECTED energies: CHGNet reproduces raw GGA
+    # totals, while MP entries carry MP2020 correction adjustments (~0.2-0.5
+    # eV/atom for chalcogenides). Stripping corrections on the MP side keeps
+    # both sides at the same level of theory for screening purposes.
+    hull_entries = [PDEntry(e.composition, e.uncorrected_energy) for e in entries]
     e_total = _chgnet().predict_structure(structure)["e"] * len(structure)
-    candidate = ComputedEntry(structure.composition, e_total)
-    pd = PhaseDiagram(entries + [candidate])
+    candidate = PDEntry(structure.composition, e_total)
+    pd = PhaseDiagram(hull_entries + [candidate])
     return float(pd.get_e_above_hull(candidate))
 
 

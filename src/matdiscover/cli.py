@@ -1,8 +1,7 @@
 """Command-line entry point.
 
-Phase 1 exposes environment checks; the campaign runner lands in Phase 2:
-    matdiscover check          # verify env, keys, model availability
-    matdiscover run ...        # (Phase 2) run a discovery campaign
+    matdiscover check                    # verify env, keys, model availability
+    matdiscover run --iterations 3       # run a discovery campaign
 """
 
 from __future__ import annotations
@@ -43,14 +42,51 @@ def cmd_check(_args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_run(args: argparse.Namespace) -> int:
+    import logging
+
+    from matdiscover.agent.loop import run_campaign
+    from matdiscover.config import load_mission
+    from matdiscover.llm import make_backend
+
+    logging.basicConfig(
+        level=logging.DEBUG if args.verbose else logging.INFO,
+        format="%(asctime)s %(name)s %(levelname)s %(message)s",
+        datefmt="%H:%M:%S",
+    )
+    cfg = load_mission(args.mission)
+    if args.backend:
+        cfg.llm.backend = args.backend
+    if args.model:
+        cfg.llm.model = args.model
+
+    backend = make_backend(cfg.llm)
+    print(f"mission: {cfg.mission.name} | backend: {cfg.llm.backend} "
+          f"({cfg.llm.model}) | iterations: {args.iterations or cfg.budget.iterations}")
+    report = run_campaign(cfg, backend, iterations=args.iterations)
+    print(f"\ncampaign complete — report: {report}")
+    return 0
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(prog="matdiscover")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("check", help="verify environment and configuration")
 
+    run_p = sub.add_parser("run", help="run a discovery campaign")
+    run_p.add_argument("--mission", default="config/mission.yaml")
+    run_p.add_argument("--iterations", type=int, default=None,
+                       help="override budget.iterations from mission config")
+    run_p.add_argument("--backend", default=None,
+                       help="override llm.backend (ollama | openai-compat | anthropic)")
+    run_p.add_argument("--model", default=None, help="override llm.model")
+    run_p.add_argument("--verbose", action="store_true")
+
     args = parser.parse_args()
     if args.command == "check":
         sys.exit(cmd_check(args))
+    if args.command == "run":
+        sys.exit(cmd_run(args))
 
 
 if __name__ == "__main__":

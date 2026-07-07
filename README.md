@@ -21,12 +21,23 @@ export ANTHROPIC_API_KEY=... # for the agent loop (Phase 2+)
 ## Usage
 
 ```bash
-# Phase 1 milestone: hand-chained pipeline on the chalcopyrite family
+# Run a discovery campaign (default: local qwen3:32b via Ollama)
+uv run matdiscover run --iterations 3
+
+# Use Claude instead of a local model
+uv run matdiscover run --backend anthropic --model claude-sonnet-5
+
+# Phase 1 pipeline without any agent (sanity check)
 uv run python scripts/smoke_pipeline.py
 
 # Run tests
 uv run pytest
 ```
+
+The LLM backend is pluggable (`llm:` section in mission.yaml): `ollama` /
+`openai-compat` for local models, `anthropic` for Claude. The architecture is
+identical either way — the agent's memory is the lab notebook, its actions are
+the physics tools, and all budgets are enforced in code.
 
 ## Layout
 

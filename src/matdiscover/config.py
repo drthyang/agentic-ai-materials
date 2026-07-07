@@ -40,6 +40,14 @@ class Budget(BaseModel):
     max_candidates_proposed_per_iteration: int = 50
     max_relaxations_per_iteration: int = 20
     relaxation_max_steps: int = 200
+    max_tool_calls_per_iteration: int = 24
+
+
+class LLMConfig(BaseModel):
+    backend: str = "ollama"  # ollama | openai-compat | anthropic
+    model: str = "qwen3:32b"
+    base_url: str = "http://localhost:11434/v1"
+    timeout_s: float = 300.0
 
 
 class Paths(BaseModel):
@@ -53,6 +61,7 @@ class MissionConfig(BaseModel):
     target: Target
     chemistry: Chemistry
     budget: Budget
+    llm: LLMConfig = LLMConfig()
     paths: Paths = Paths()
 
     @property

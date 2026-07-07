@@ -73,12 +73,27 @@ class CandidateDB:
         return cur.fetchone() is not None
 
     def top_candidates(self, limit: int = 20) -> list[dict]:
-        """Best scored candidates: novel, converged, sorted by hull distance."""
+        """Best scored candidates, sorted by hull distance.
+
+        is_novel NULL (no MP key -> novelty unknown) is included; only
+        confirmed-known materials (is_novel = 0) are excluded.
+        """
         cur = self._conn.execute(
             """SELECT * FROM candidates
-               WHERE status = 'scored' AND converged = 1 AND is_novel = 1
+               WHERE status = 'scored' AND converged = 1
+                 AND (is_novel = 1 OR is_novel IS NULL)
                ORDER BY e_above_hull ASC NULLS LAST LIMIT ?""",
             (limit,),
+        )
+        return [dict(r) for r in cur.fetchall()]
+
+    def all_scored(self) -> list[dict]:
+        """Every scored candidate with its key numbers, campaign-wide."""
+        cur = self._conn.execute(
+            """SELECT iteration, formula, converged, formation_energy_per_atom,
+                      e_above_hull, band_gap_ev, is_novel, hypothesis
+               FROM candidates WHERE status = 'scored'
+               ORDER BY iteration, e_above_hull ASC NULLS LAST"""
         )
         return [dict(r) for r in cur.fetchall()]
 
