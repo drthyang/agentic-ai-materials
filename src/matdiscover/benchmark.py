@@ -30,6 +30,10 @@ def run_benchmark(
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M")
     outdir = Path("data/benchmark") / stamp
     outdir.mkdir(parents=True, exist_ok=True)
+    # stable pointer for the dashboard: matdiscover dashboard --latest
+    latest = Path("data/benchmark/latest")
+    latest.unlink(missing_ok=True)
+    latest.symlink_to(stamp)
 
     results: list[CampaignMetrics] = []
 

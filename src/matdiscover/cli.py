@@ -115,6 +115,11 @@ def main() -> None:
     dash_p = sub.add_parser("dashboard", help="live campaign dashboard (localhost)")
     dash_p.add_argument("--mission", default="config/mission.yaml")
     dash_p.add_argument("--port", type=int, default=8517)
+    dash_p.add_argument("--db", default=None,
+                        help="watch a specific campaign DB instead of the mission default")
+    dash_p.add_argument("--notebook", default=None)
+    dash_p.add_argument("--latest", action="store_true",
+                        help="watch the agent leg of the most recent benchmark run")
 
     args = parser.parse_args()
     if args.command == "check":
@@ -124,10 +129,20 @@ def main() -> None:
     if args.command == "benchmark":
         sys.exit(cmd_benchmark(args))
     if args.command == "dashboard":
+        from pathlib import Path
+
         from matdiscover.config import load_mission
         from matdiscover.dashboard import serve
 
-        serve(load_mission(args.mission), port=args.port)
+        cfg = load_mission(args.mission)
+        if args.latest:
+            cfg.paths.db = Path("data/benchmark/latest/agent.db")
+            cfg.paths.notebook = Path("data/benchmark/latest/agent_notebook.md")
+        if args.db:
+            cfg.paths.db = Path(args.db)
+        if args.notebook:
+            cfg.paths.notebook = Path(args.notebook)
+        serve(cfg, port=args.port)
         sys.exit(0)
 
 
