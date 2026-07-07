@@ -1,0 +1,56 @@
+# Mission: transparent conducting oxide (TCO) candidates (display electrodes).
+#
+# Every display needs transparent electrodes; ITO (indium tin oxide) dominates
+# and indium is expensive/scarce, so In-lean or In-free TCOs are a real
+# industrial target.
+#
+# HONEST CAVEAT: this mission screens transparency (wide gap) and stability
+# only. Real TCOs also need high carrier mobility and dopability, which our
+# current surrogates cannot see (see ROADMAP.md, long-term item 2). Treat
+# hits as "transparent stable oxides worth a dopability study", not as TCOs.
+#
+# Use: cp config/missions/tco.yaml config/mission.yaml && matdiscover run
+
+mission:
+  name: tco-v1
+  description: >
+    Find novel, stable, wide-band-gap oxide compositions (gap >= 3.1 eV so
+    visible light passes through) built from earth-abundant elements, as
+    candidate transparent-electrode materials pending dopability validation.
+    Prefer In-free chemistries.
+
+target:
+  band_gap_ev: [3.1, 4.6]
+  band_gap_ideal_ev: 3.5
+  e_above_hull_max_ev_per_atom: 0.05
+
+chemistry:
+  allowed_elements:
+    - Zn, Sn, Ga, Al, Mg, Ca, Sr, Ba, Ti, Zr, Nb, Ta, Mo, W, Si, Ge, Cu, Ag, In
+    - O
+  excluded_elements: [Cd, Hg, Pb, Tl]
+  max_elements_per_compound: 4
+  max_atoms_per_cell: 50
+
+budget:
+  iterations: 10
+  max_candidates_proposed_per_iteration: 50
+  max_relaxations_per_iteration: 20
+  relaxation_max_steps: 200
+  max_tool_calls_per_iteration: 24
+
+llm:
+  backend: ollama
+  model: qwen3:32b
+  base_url: http://localhost:11434/v1
+  timeout_s: 300
+
+critic:
+  enabled: true
+  backend: null
+  model: gemma4:26b
+
+evaluation:
+  # rediscovery sanity set: the incumbents, hidden and hopefully re-found
+  #   holdout_formulas: [In2O3, ZnO, SnO2]
+  holdout_formulas: []

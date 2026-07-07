@@ -1,0 +1,53 @@
+# Mission: heavy-metal-free quantum-dot emitter candidates (display industry).
+#
+# QD displays need emitters with visible-range band gaps; regulation (RoHS)
+# pushes hard against Cd/Pb-based dots, which is why InP and ZnSe families
+# dominate current research. This mission hunts stable compositions with
+# visible gaps under a strict heavy-metal veto.
+#
+# Use: cp config/missions/qd-emitter.yaml config/mission.yaml && matdiscover run
+
+mission:
+  name: qd-emitter-v1
+  description: >
+    Find novel, thermodynamically stable (or near-stable) heavy-metal-free
+    semiconductor compositions with band gaps in the visible range, as
+    candidate quantum-dot display emitters. Bulk gap is the screening proxy;
+    quantum confinement will blue-shift emission, so mid-visible bulk gaps
+    are the sweet spot.
+
+target:
+  band_gap_ev: [1.8, 3.1]      # red (~1.9) through blue (~2.9) emission
+  band_gap_ideal_ev: 2.4       # green — the hardest color to make well
+  e_above_hull_max_ev_per_atom: 0.05
+
+chemistry:
+  allowed_elements:
+    - Zn, Mg, Ca, Sr, Ba, Cu, Ag, Al, Ga, In, Si, Ge, Sn
+    - S, Se, Te, N, P, O, Cl, Br, I
+  excluded_elements: [Cd, Hg, Pb, Tl]   # the whole point of the mission
+  max_elements_per_compound: 4
+  max_atoms_per_cell: 50
+
+budget:
+  iterations: 10
+  max_candidates_proposed_per_iteration: 50
+  max_relaxations_per_iteration: 20
+  relaxation_max_steps: 200
+  max_tool_calls_per_iteration: 24
+
+llm:
+  backend: ollama
+  model: qwen3:32b
+  base_url: http://localhost:11434/v1
+  timeout_s: 300
+
+critic:
+  enabled: true
+  backend: null
+  model: gemma4:26b
+
+evaluation:
+  # rediscovery sanity set: known QD/emitter materials to hide and re-find
+  #   holdout_formulas: [InP, ZnSe, ZnTe]
+  holdout_formulas: []

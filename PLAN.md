@@ -1,5 +1,9 @@
 # Agentic AI for Materials Discovery — Build Plan
 
+> **Status: all four phases built and verified (2026-07-07).** This document
+> is the original design, kept as the architectural reference. For what's
+> next, see [ROADMAP.md](ROADMAP.md).
+
 ## The idea
 
 Build a **closed-loop "AI materials scientist"**: an agent (or small team of agents)

@@ -1,48 +1,100 @@
 # matdiscover — Agentic AI for Materials Discovery
 
-A closed-loop "AI materials scientist": an agent that proposes candidate
-materials, screens them with physics-grounded surrogate models (CHGNet
-relaxation, convex-hull stability, MEGNet band gaps), reflects on results in a
-lab notebook, and iterates.
+A closed-loop **"AI materials scientist"**: an LLM agent that states chemical
+hypotheses, proposes candidate materials, screens them with physics-grounded
+surrogate models, reflects on the results in a lab notebook, and iterates —
+then writes a research report from ground-truth data. Runs **entirely on
+local models** (Ollama) by default; Claude is a one-line config switch.
 
-Default mission: find novel, near-stable semiconductor compositions with a band
-gap near 1.4 eV (photovoltaic absorber candidates). Missions are configured in
-[config/mission.yaml](config/mission.yaml) — see [PLAN.md](PLAN.md) for the full
-build plan.
+```
+mission config ──▶ [LLM hypothesizes] ──▶ propose ──▶ filter (SMACT, palette)
+                        ▲                                    │
+                        │                          critic review (2nd LLM)
+                   lab notebook                              │
+                   + SQLite DB  ◀── evaluate: CHGNet relax ──▶ formation energy
+                        ▲                  │                  energy above hull
+                        │                  └────────────────▶ band gap (MEGNet)
+                   [LLM reflects] ◀───────── results ◀───────┘
+```
 
-## Setup
+Why it's interesting: the agent's "experiments" are real physics (ML
+interatomic potentials, convex-hull thermodynamics), success is objectively
+measurable, and every campaign is benchmarked against **non-LLM baselines at
+identical compute** — so "the agent helps" is a claim with a control group.
+
+## Quickstart
 
 ```bash
 uv sync --extra dev
-export MP_API_KEY=...        # free key from https://materialsproject.org/api
-export ANTHROPIC_API_KEY=... # for the agent loop (Phase 2+)
+export MP_API_KEY=...        # free key: materialsproject.org/api (or put in .env)
+ollama pull qwen3:32b        # the default local scientist (needs ~20 GB RAM)
+
+uv run matdiscover check                   # verify environment
+uv run matdiscover run --iterations 3     # run a discovery campaign
+uv run matdiscover dashboard               # watch it live at localhost:8517
+uv run matdiscover benchmark               # agent vs random vs similarity
 ```
 
-## Usage
+## Missions
 
-```bash
-# Run a discovery campaign (default: local qwen3:32b via Ollama)
-uv run matdiscover run --iterations 3
+The science target is pure config — swap missions without touching code:
 
-# Use Claude instead of a local model
-uv run matdiscover run --backend anthropic --model claude-sonnet-5
+| Mission | Target | File |
+|---|---|---|
+| PV absorber *(default)* | gap 1.1–1.7 eV, near-stable | [config/mission.yaml](config/mission.yaml) |
+| QD display emitter | visible gap, **no Cd/Pb/Hg** | [config/missions/qd-emitter.yaml](config/missions/qd-emitter.yaml) |
+| Transparent conductor | gap ≥ 3.1 eV oxides (see caveats in file) | [config/missions/tco.yaml](config/missions/tco.yaml) |
 
-# Phase 1 pipeline without any agent (sanity check)
-uv run python scripts/smoke_pipeline.py
+Activate one: `cp config/missions/qd-emitter.yaml config/mission.yaml`
 
-# Run tests
-uv run pytest
-```
+## The cast
 
-The LLM backend is pluggable (`llm:` section in mission.yaml): `ollama` /
-`openai-compat` for local models, `anthropic` for Claude. The architecture is
-identical either way — the agent's memory is the lab notebook, its actions are
-the physics tools, and all budgets are enforced in code.
+- **Proposer** — any tool-calling LLM (default `qwen3:32b` via Ollama;
+  `--backend anthropic` for Claude). Hypothesizes, proposes substitutions on
+  known prototypes, decides what's worth evaluating.
+- **Critic** — an independent second model (default `gemma4:26b`) that
+  reviews every batch *before* compute is spent. Vetoes cost zero budget and
+  are recorded with reasons. Fails open: a flaky critic can only save
+  compute, never block science.
+- **The lab** — deterministic Python tools: SMACT charge-balance filters,
+  CHGNet relaxation (Apple-GPU accelerated), Materials Project convex-hull
+  stability, MEGNet multi-fidelity band gaps (HSE), Crossref literature
+  search. Budgets are enforced in code; the models can't talk their way
+  around them.
+- **The record** — an append-only lab notebook (the agent's cross-iteration
+  memory) and a SQLite ledger of every candidate ever considered. Final
+  reports are generated from this ground truth injected into the prompt —
+  never from the model's recollection.
+
+## Results so far
+
+- Full pipeline verified live end-to-end with local models doing real
+  hypothesis-driven iterations.
+- First screening hit (similarity baseline, 19 relaxations): **CdCuSe2** —
+  predicted 1.70 eV gap, 0.003 eV/atom above hull, no Materials Project
+  entry. Surrogate-level only; needs DFT validation.
+- Headline agent-vs-baseline benchmark: in progress.
+
+All predictions carry surrogate error bars (CHGNet ~0.05 eV/atom on hull
+distances; MEGNet gaps worse). Outputs are *candidates for validation*, never
+"discoveries".
 
 ## Layout
 
-- `src/matdiscover/tools/` — deterministic tool layer (MP search, candidate
-  generation, SMACT filters, CHGNet/MEGNet scoring)
-- `src/matdiscover/db.py`, `notebook.py` — campaign persistence
-- `config/mission.yaml` — the discovery mission (target, chemistry, budget)
-- `scripts/` — standalone pipeline scripts
+- `src/matdiscover/tools/` — deterministic tool layer (filters, scoring,
+  MP search, literature)
+- `src/matdiscover/agent/` — registry, campaign tools, critic, prompts, loop
+- `src/matdiscover/llm/` — provider-agnostic backends (Ollama/OpenAI-compat,
+  Anthropic)
+- `src/matdiscover/{baselines,metrics,benchmark,dashboard}.py` — the
+  evaluation machinery
+- `config/` — missions; `tests/` — hermetic suite (`uv run pytest`, no
+  network/GPU needed)
+
+## Where this is going
+
+See [ROADMAP.md](ROADMAP.md) — short term: finish the benchmark matrix and
+rediscovery validation; mid term: magnetism screening and active learning;
+long term: the surrogates that quantum-materials searches actually need
+(optical, dopability, defects, topology). [PLAN.md](PLAN.md) documents the
+original build (phases 0–4, complete).

@@ -4,8 +4,9 @@ Closed-loop "AI materials scientist." Read PLAN.md for the full build plan.
 Status: Phases 0–4 complete (tool layer; agent loop with pluggable LLM
 backend, local-first via Ollama/qwen3:32b; baselines + metrics + benchmark;
 critic + literature tool + live dashboard).
-**Remaining:** the headline agent-vs-baseline benchmark run, PLAN.md stretch
-ideas (active learning, DFT export), and whatever the results suggest.
+**Remaining:** ROADMAP.md is the source of truth for next steps (benchmark
+matrix, rediscovery run, mission gallery in config/missions/, then
+magnetism/active-learning, then new-surrogate work).
 
 ## Commands
 
