@@ -143,7 +143,15 @@ def serve(cfg: MissionConfig, port: int = 8517) -> None:
         def log_message(self, *args):  # quiet
             pass
 
-    server = HTTPServer(("127.0.0.1", port), Handler)
+    try:
+        server = HTTPServer(("127.0.0.1", port), Handler)
+    except OSError as exc:
+        if exc.errno == 48:  # EADDRINUSE
+            raise SystemExit(
+                f"port {port} is already in use (another dashboard running?) — "
+                f"stop it or pass --port {port + 1}"
+            ) from None
+        raise
     print(f"dashboard: http://localhost:{port} (ctrl-c to stop)")
     try:
         server.serve_forever()

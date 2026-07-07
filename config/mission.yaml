@@ -43,7 +43,7 @@ critic:
   #   backend: anthropic
   #   model: claude-sonnet-5
   backend: null
-  model: null
+  model: gemma4:26b
 
 evaluation:
   # Rediscovery hold-out: known-good PV absorbers masked from MP search and
