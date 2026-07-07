@@ -1,0 +1,41 @@
+[project]
+name = "matdiscover"
+version = "0.1.0"
+description = "Agentic AI for materials discovery: a closed-loop AI materials scientist"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "pymatgen>=2024.8.9",
+    "mp-api>=0.42",
+    "smact>=2.5",
+    "chgnet>=0.3.8",
+    "matgl>=1.1.3",
+    "ase>=3.23",
+    "pydantic>=2.7",
+    "pyyaml>=6.0",
+    "anthropic>=0.40",
+    "matplotlib>=3.8",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+[project.scripts]
+matdiscover = "matdiscover.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/matdiscover"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

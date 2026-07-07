@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+data/*.db
+data/reports/
+data/lab_notebook.md
+data/elemental_refs.json
+data/mp_cache/
+.env
