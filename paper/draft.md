@@ -34,8 +34,13 @@ for the strongest baseline (complete separation, exact rank p ≈ 0.006). All
 replicates independently converged on the Ag₂(II)(IV)(VI)₄ kesterite family;
 two predicted on-hull members correspond to a recently synthesized compound
 and an independently DFT-studied photovoltaic candidate, and two (Mg
-tellurides) appear unreported. [Rediscovery result: TBD.] [Second-mission
-generality: TBD.] Our results suggest that for LLM discovery agents,
+tellurides) appear unreported. In a hold-out test with three known
+photovoltaic absorbers masked from all database tools, the agent re-derived
+AgGaSe₂ through its own hypothesis chain in 14 relaxations — five times
+fewer than the enumeration baseline needed to re-find one. A second mission
+(heavy-metal-free quantum-dot emitters) ran with zero code changes,
+transferring the discovered kesterite family across gap windows via anion
+substitution. Our results suggest that for LLM discovery agents,
 objective specification is a stronger lever than model scale, and that
 controlled baselines — absent from most agentic-discovery reports — are
 essential to measuring either.
@@ -51,8 +56,8 @@ essential to measuring either.
 | C3 | Objective alignment alone flips the outcome | benchmark 2: same model/seed/budget, prompts only, 0→4 hits | results/2026-07-07-benchmark-2/ |
 | C4 | The advantage replicates and separates from baselines | 3 runs: 57.1/22.2/16.7 vs similarity 3.01±0.62 (n=8), p≈0.006 | results/2026-07-08-replication/ |
 | C5 | The found chemistry is real | CdAg₂GeSe₄ synthesized externally; MgAg₂SnSe₄ DFT literature; convergent family across runs | novelty-audit.md |
-| C6 | The loop re-finds hidden known materials | **rediscovery run — in progress** | results/ (pending) |
-| C7 | The architecture generalizes across missions via config | **QD-emitter run — in progress** | results/ (pending) |
+| C6 | The loop re-finds hidden known materials | agent re-found AgGaSe₂ blind (it3, 14 relax); similarity re-found CuGaSe₂ (79 relax); random 0/3 | results/2026-07-08-rediscovery/ |
+| C7 | The architecture generalizes across missions via config | QD mission ran unchanged; agent pattern directional (2 hits/3 evals, small-n caveat); similarity produced 3 on-hull QD candidates | results/2026-07-08-qd-emitter/ |
 | C8 | Honest failure catalog | fabricated reports (fixed by grounding), critic chemistry errors (fixed by model diversity), SMACT InP false negative, budget timidity | analyses passim |
 
 ## Section outline
@@ -102,8 +107,8 @@ essential to measuring either.
 
 ## TODO
 
-- [ ] Fold in rediscovery result (C6) when run completes
-- [ ] Fold in QD-emitter result (C7)
+- [x] Fold in rediscovery result (C6) — done, see §4.5 source material in results/2026-07-08-rediscovery/
+- [x] Fold in QD-emitter result (C7) — done, results/2026-07-08-qd-emitter/
 - [ ] User: ICSD/OQMD check on MgAg₂GeTe₄, MgAg₂SnTe₄ → upgrades or kills
       the "unreported" language in the abstract
 - [ ] Decide: Claude capability run in v1 or follow-up?
