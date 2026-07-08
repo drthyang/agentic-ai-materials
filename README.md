@@ -22,6 +22,9 @@ interatomic potentials, convex-hull thermodynamics), success is objectively
 measurable, and every campaign is benchmarked against **non-LLM baselines at
 identical compute** — so "the agent helps" is a claim with a control group.
 
+**New here (or catching up)? Read [WALKTHROUGH.md](WALKTHROUGH.md)** — the
+whole machine and every experiment so far, in order, in ~15 minutes.
+
 ## Quickstart
 
 ```bash
