@@ -99,7 +99,14 @@ def _run_agent_turn(
     calls_used = 0
 
     while True:
-        response = backend.chat(SYSTEM_PROMPT, messages, registry.specs)
+        try:
+            response = backend.chat(SYSTEM_PROMPT, messages, registry.specs)
+        except Exception as exc:
+            # A dead backend must cost one iteration, not the whole campaign
+            # (hours of compute). Backend-level retries have already run.
+            log.error("backend failed mid-turn (%s: %s); aborting this turn",
+                      type(exc).__name__, exc)
+            return f"(iteration aborted: backend error: {type(exc).__name__})"
 
         if not response.tool_calls:
             return response.text.strip() or "(no summary provided)"

@@ -40,7 +40,7 @@ llm:
   backend: ollama
   model: qwen3:32b
   base_url: http://localhost:11434/v1
-  timeout_s: 300
+  timeout_s: 600
 
 critic:
   enabled: true

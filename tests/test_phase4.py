@@ -156,6 +156,74 @@ def test_no_critic_means_no_gate(cfg, monkeypatch):
 
 
 # --------------------------------------------------------------------------
+# backend resilience (from the dead-replicates incident, 2026-07-08)
+# --------------------------------------------------------------------------
+
+def test_openai_backend_retries_timeouts(monkeypatch):
+    import httpx
+
+    from matdiscover.llm import openai_compat
+    from matdiscover.llm.openai_compat import OpenAICompatBackend
+
+    monkeypatch.setattr(openai_compat.time, "sleep", lambda s: None)
+    backend = OpenAICompatBackend(model="test")
+    calls = {"n": 0}
+
+    class FakeResp:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"choices": [{"message": {"content": "ok", "tool_calls": None}}]}
+
+    def flaky_post(url, json=None):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            raise httpx.ReadTimeout("timed out")
+        return FakeResp()
+
+    monkeypatch.setattr(backend._client, "post", flaky_post)
+    resp = backend.chat("sys", [{"role": "user", "content": "hi"}], [])
+    assert resp.text == "ok"
+    assert calls["n"] == 2  # one failure, one retry, success
+
+
+def test_openai_backend_gives_up_after_retries(monkeypatch):
+    import httpx
+
+    from matdiscover.llm import openai_compat
+    from matdiscover.llm.openai_compat import OpenAICompatBackend
+
+    monkeypatch.setattr(openai_compat.time, "sleep", lambda s: None)
+    backend = OpenAICompatBackend(model="test")
+
+    def always_timeout(url, json=None):
+        raise httpx.ReadTimeout("timed out")
+
+    monkeypatch.setattr(backend._client, "post", always_timeout)
+    with pytest.raises(httpx.ReadTimeout):
+        backend.chat("sys", [{"role": "user", "content": "hi"}], [])
+
+
+def test_campaign_survives_dead_backend(cfg, monkeypatch, tmp_path):
+    """A backend that dies mid-campaign costs iterations, not the whole run."""
+    from matdiscover.agent.loop import run_campaign
+
+    cfg.paths.reports = tmp_path / "reports"
+    cfg.critic.enabled = False
+
+    class DeadBackend(LLMBackend):
+        name = "dead"
+
+        def chat(self, *a, **k):
+            raise RuntimeError("connection refused")
+
+    report = run_campaign(cfg, DeadBackend(), iterations=2)
+    assert report.exists()  # campaign completed and wrote a report
+    assert "aborted" in report.read_text()
+
+
+# --------------------------------------------------------------------------
 # literature tool
 # --------------------------------------------------------------------------
 
