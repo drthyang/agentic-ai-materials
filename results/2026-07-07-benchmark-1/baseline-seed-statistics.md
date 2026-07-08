@@ -14,13 +14,19 @@ can afford real statistics here — the agent cannot (see analysis.md,
 | 1 | 1.67 | 2.70 |
 | 2 | 1.23 | 2.90 |
 | 3 | 3.95 | 2.82 |
+| 4 | 1.61 | 3.57 |
+| 5 | 1.27 | 3.28 |
 
-## Aggregate
+*(seeds 4–5 harvested from the 2026-07-08 replicate runs whose agent legs
+crashed — baselines had already completed; see benchmark-2 analysis for the
+crash + fix.)*
+
+## Aggregate (n = 6)
 
 | strategy | mean | std | range |
 |---|---|---|---|
-| random | 1.71 | 1.43 | 0.00 – 3.95 |
-| similarity | **2.54** | **0.48** | 1.72 – 2.90 |
+| random | 1.62 | 1.19 | 0.00 – 3.95 |
+| similarity | **2.83** | **0.57** | 1.72 – 3.57 |
 
 ## Reading
 
