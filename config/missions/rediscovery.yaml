@@ -1,0 +1,58 @@
+# Discovery mission configuration.
+# The agent reads this at campaign start; swap missions here, not in code.
+
+mission:
+  name: pv-absorber-rediscovery-v1
+  description: >
+    Find novel, thermodynamically stable (or near-stable) semiconductor
+    compositions with a band gap near 1.4 eV, suitable as single-junction
+    photovoltaic absorber candidates.
+
+target:
+  band_gap_ev: [1.1, 1.7]      # acceptance window
+  band_gap_ideal_ev: 1.4
+  e_above_hull_max_ev_per_atom: 0.05   # "near-stable" threshold
+
+chemistry:
+  # Element palette the agent may draw from. Excludes noble gases, actinides,
+  # and elements that are toxic/scarce enough to be uninteresting for PV.
+  allowed_elements:
+    - Cu, Ag, Zn, Cd, Al, Ga, In, Sn, Ge, Si, Sb, Bi
+    - S, Se, Te, N, P, As, O, Cl, Br, I
+    - Na, K, Ca, Sr, Ba, Mg, Ti, Zr, Fe, Mn, Ni, Co, Mo, W
+  excluded_elements: [Pb, Hg, Tl]   # hard veto even if proposed
+  max_elements_per_compound: 4
+  max_atoms_per_cell: 50
+
+budget:
+  iterations: 10
+  max_candidates_proposed_per_iteration: 50
+  max_relaxations_per_iteration: 20     # CHGNet relaxations are the cost driver
+  relaxation_max_steps: 200
+  max_tool_calls_per_iteration: 24      # hard stop for a runaway agent iteration
+
+llm:
+  backend: ollama          # ollama | openai-compat | anthropic
+  model: qwen3:32b
+  base_url: http://localhost:11434/v1
+  timeout_s: 600   # local 32B + critic model swaps can stall well past 300s
+
+critic:
+  enabled: true            # independent review before compute is spent
+  # Optional hybrid: run the critic on a different (stronger) model, e.g.:
+  #   backend: anthropic
+  #   model: claude-sonnet-5
+  backend: null
+  model: gemma4:26b
+
+evaluation:
+  # Rediscovery hold-out: known-good PV absorbers masked from MP search and
+  # novelty checks. A campaign that re-finds them proves the search works.
+  # Empty by default; enable for validation runs, e.g.:
+  #   holdout_formulas: [CuGaSe2, AgGaSe2, CuInS2]
+  holdout_formulas: [CuGaSe2, AgGaSe2, CuInS2]
+
+paths:
+  db: data/candidates.db
+  notebook: data/lab_notebook.md
+  reports: data/reports
