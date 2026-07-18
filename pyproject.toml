@@ -27,7 +27,8 @@ dev = [
 
 [project.scripts]
 athanor = "athanor.cli:main"
-# Transitional alias from the pre-rename era; drop after 0.2.
+# Alias from the pre-rename era. Keep while external references and links
+# still say "matdiscover"; retire only after those are updated.
 matdiscover = "athanor.cli:main"
 
 [build-system]

@@ -2,7 +2,8 @@
 
 *One document to understand the entire project — the machine, the experiment
 protocol, and everything run so far. ~15 minute read. Assumes materials
-knowledge; explains the AI and protocol side.*
+knowledge; explains the AI and protocol side. The project is **Athanor**,
+formerly published as **matdiscover** — older links still use that name.*
 
 ---
 

@@ -4,6 +4,10 @@
 > transmutation, self-feeding, running unattended. This one has a skeptic
 > inside.
 
+*Formerly published as **matdiscover** — the name some external links
+still use. Same project, renamed 2026-07; the `matdiscover` CLI command
+still works.*
+
 A closed-loop **"AI materials scientist"**: an LLM agent that states chemical
 hypotheses, proposes candidate materials, screens them with physics-grounded
 surrogate models, reflects on the results in a lab notebook, and iterates —

@@ -94,6 +94,11 @@ uv run athanor dashboard               # live view at localhost:8517
 
 ## Conventions
 
+- Naming: the project is **Athanor** (renamed from matdiscover 2026-07).
+  Keep the "formerly matdiscover" notes in README/WALKTHROUGH and the
+  `matdiscover` CLI alias — external references still cite the old name; do
+  not purge them until the user says those references are updated. Do not rename
+  the GitHub repo without asking, for the same reason.
 - uv + Python 3.11 (pinned); `uv sync --extra dev` to set up
 - Commit style: imperative subject, body explains the "why",
   `Co-Authored-By: Claude <noreply@anthropic.com>` trailer
