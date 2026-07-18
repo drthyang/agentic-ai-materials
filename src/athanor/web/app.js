@@ -15,13 +15,32 @@ const pretty = (formula) =>
 
 let colorMode = "status";
 let snapshot = null;
+// null = undetermined; false = live server; true = baked snapshot (GitHub
+// Pages export) — decided on first load, then routes all data fetches.
+let staticMode = null;
 
 /* ── data plumbing ─────────────────────────────────────────────── */
 
+async function fetchJson(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(String(res.status));
+  return res.json();
+}
+
 async function refresh() {
   try {
-    const res = await fetch("/api/snapshot");
-    snapshot = await res.json();
+    if (staticMode === null) {
+      try {
+        snapshot = await fetchJson("api/snapshot");
+        staticMode = false;
+      } catch {
+        snapshot = await fetchJson("data/snapshot.json");
+        staticMode = true;
+        clearInterval(refreshTimer); // a recording never changes
+      }
+    } else {
+      snapshot = await fetchJson(staticMode ? "data/snapshot.json" : "api/snapshot");
+    }
   } catch {
     $("status-msg").textContent = "dashboard server unreachable — retrying…";
     $("status-dot").classList.remove("live");
@@ -60,10 +79,12 @@ function renderStatus(s) {
   $("status-msg").textContent = msg;
   const critic = s.mission.critic.enabled
     ? `critic ${s.mission.critic.model || s.mission.llm.model}` : "critic off";
+  const tail = staticMode
+    ? `<span class="chip note">recorded campaign · exported ${esc(s.meta.generated_at.slice(0, 10))}</span>`
+    : `<span class="chip">refreshed ${s.meta.generated_at.slice(11, 16)} UTC</span>`;
   $("status-chips").innerHTML =
     `<span class="chip">agent ${esc(s.mission.llm.model)}</span>`
-    + `<span class="chip">${esc(critic)}</span>`
-    + `<span class="chip">refreshed ${s.meta.generated_at.slice(11, 16)} UTC</span>`;
+    + `<span class="chip">${esc(critic)}</span>` + tail;
 }
 
 /* ── summary cards ─────────────────────────────────────────────── */
@@ -350,7 +371,7 @@ function renderNotebookPage(entries) {
 async function renderBenchmark() {
   let b;
   try {
-    b = await (await fetch("/api/benchmark")).json();
+    b = await fetchJson(staticMode ? "data/benchmark.json" : "api/benchmark");
   } catch {
     return;
   }
@@ -371,7 +392,8 @@ async function renderBenchmark() {
       </tbody></table></div>` : "";
   $("bench-body").innerHTML = table
     + (b.hit_definition ? `<p class="bench-note">hit = ${esc(b.hit_definition)}</p>` : "")
-    + (b.has_plot ? `<img class="bench-img" src="/api/benchmark/plot.png"
+    + (b.has_plot ? `<img class="bench-img"
+         src="${staticMode ? "data/benchmark.png" : "api/benchmark/plot.png"}"
          alt="hits per 100 relaxations by strategy">` : "");
 }
 
@@ -418,5 +440,5 @@ $("export-csv").addEventListener("click", () => {
   URL.revokeObjectURL(a.href);
 });
 
+const refreshTimer = setInterval(refresh, 10_000);
 refresh();
-setInterval(refresh, 10_000);

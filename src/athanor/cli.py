@@ -121,6 +121,17 @@ def main() -> None:
     dash_p.add_argument("--latest", action="store_true",
                         help="watch the agent leg of the most recent benchmark run")
 
+    pages_p = sub.add_parser(
+        "export-pages",
+        help="bake a static Mission Control (recorded campaign) for GitHub Pages")
+    pages_p.add_argument("--mission", default="config/mission.yaml")
+    pages_p.add_argument("--out", default="docs",
+                         help="output directory (default: docs/, GitHub Pages-ready)")
+    pages_p.add_argument("--db", default=None)
+    pages_p.add_argument("--notebook", default=None)
+    pages_p.add_argument("--latest", action="store_true",
+                         help="export the agent leg of the most recent benchmark run")
+
     args = parser.parse_args()
     if args.command == "check":
         sys.exit(cmd_check(args))
@@ -128,11 +139,11 @@ def main() -> None:
         sys.exit(cmd_run(args))
     if args.command == "benchmark":
         sys.exit(cmd_benchmark(args))
-    if args.command == "dashboard":
+    if args.command in ("dashboard", "export-pages"):
         from pathlib import Path
 
         from athanor.config import load_mission
-        from athanor.dashboard import serve
+        from athanor.dashboard import export_pages, serve
 
         cfg = load_mission(args.mission)
         if args.latest:
@@ -142,7 +153,14 @@ def main() -> None:
             cfg.paths.db = Path(args.db)
         if args.notebook:
             cfg.paths.notebook = Path(args.notebook)
-        serve(cfg, port=args.port)
+        if args.command == "dashboard":
+            serve(cfg, port=args.port)
+        else:
+            written = export_pages(cfg, Path(args.out))
+            print(f"exported {len(written)} files to {args.out}/")
+            print("serve locally:  python -m http.server -d "
+                  f"{args.out} 8000\npublish: commit {args.out}/ and enable "
+                  "GitHub Pages (deploy from branch, /docs folder)")
         sys.exit(0)
 
 

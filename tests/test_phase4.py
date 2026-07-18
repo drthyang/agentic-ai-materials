@@ -409,3 +409,28 @@ def test_web_shell_ships_with_package():
         assert f'id="{mount}"' in index
     for asset in ("app.css", "app.js", "ibm-plex-sans-var.woff2"):
         assert (WEB_DIR / asset).exists()
+    # subpath-hosting (GitHub Pages) requires every reference to be relative
+    assert '"/assets/' not in index
+    assert "url(/" not in (WEB_DIR / "app.css").read_text()
+    assert 'fetch("/' not in (WEB_DIR / "app.js").read_text()
+
+
+def test_export_pages_writes_static_site(cfg, tmp_path):
+    _seed_campaign(cfg)
+    from athanor.dashboard import export_pages
+
+    bench_dir = tmp_path / "bench"
+    bench_dir.mkdir()
+    (bench_dir / "benchmark.md").write_text(
+        "# Benchmark: pv\n\nbudget: 1 x 1\n\n| strategy | hits |\n|---|---|\n| agent | 1 |\n")
+    out = tmp_path / "site"
+    written = export_pages(cfg, out, benchmark_dir=bench_dir)
+
+    assert (out / "index.html").exists() and (out / ".nojekyll").exists()
+    assert (out / "assets" / "app.js").exists()
+    assert (out / "assets" / "ibm-plex-sans-var.woff2").exists()
+    snap = json.loads((out / "data" / "snapshot.json").read_text())
+    assert snap["totals"]["hits"] == 1
+    bench = json.loads((out / "data" / "benchmark.json").read_text())
+    assert bench["available"] and bench["rows"][0]["strategy"] == "agent"
+    assert all(p.exists() for p in written)

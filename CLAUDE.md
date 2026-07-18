@@ -18,6 +18,7 @@ uv run athanor benchmark --skip-agent  # baselines only (no LLM needed)
 uv run athanor benchmark               # full agent-vs-baselines comparison
 uv run python scripts/smoke_pipeline.py    # end-to-end pipeline, no agent
 uv run athanor dashboard               # live view at localhost:8517
+uv run athanor export-pages            # static recorded-campaign site -> docs/
 ```
 
 ## Phase 4 (critic, literature, dashboard)

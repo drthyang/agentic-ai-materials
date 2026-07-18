@@ -199,6 +199,44 @@ def benchmark_snapshot(benchmark_dir: Path = Path("data/benchmark/latest")) -> d
     }
 
 
+def export_pages(cfg: MissionConfig, out_dir: Path,
+                 benchmark_dir: Path = Path("data/benchmark/latest")) -> list[Path]:
+    """Bake a static, GitHub Pages-ready copy of Mission Control.
+
+    Same shell, same JSON — but written to disk as a recorded campaign
+    (app.js falls back to data/*.json when no /api is answering). Publish
+    only what you choose to: the export reads the configured DB/notebook
+    and nothing else.
+    """
+    import shutil
+
+    assets = out_dir / "assets"
+    data = out_dir / "data"
+    assets.mkdir(parents=True, exist_ok=True)
+    data.mkdir(parents=True, exist_ok=True)
+
+    written = []
+    shutil.copy2(WEB_DIR / "index.html", out_dir / "index.html")
+    written.append(out_dir / "index.html")
+    for f in WEB_DIR.iterdir():
+        if f.name != "index.html" and f.suffix in (*_ASSET_TYPES, ".txt"):
+            shutil.copy2(f, assets / f.name)
+            written.append(assets / f.name)
+
+    (data / "snapshot.json").write_text(json.dumps(campaign_snapshot(cfg)))
+    written.append(data / "snapshot.json")
+    bench = benchmark_snapshot(benchmark_dir)
+    (data / "benchmark.json").write_text(json.dumps(bench))
+    written.append(data / "benchmark.json")
+    if bench.get("has_plot"):
+        shutil.copy2(benchmark_dir / "benchmark.png", data / "benchmark.png")
+        written.append(data / "benchmark.png")
+
+    (out_dir / ".nojekyll").write_text("")  # serve files verbatim on Pages
+    written.append(out_dir / ".nojekyll")
+    return written
+
+
 def serve(cfg: MissionConfig, port: int = 8517) -> None:
     benchmark_dir = Path("data/benchmark/latest")
 

@@ -44,7 +44,13 @@ uv run athanor check                   # verify environment
 uv run athanor run --iterations 3     # run a discovery campaign
 uv run athanor dashboard               # watch it live at localhost:8517
 uv run athanor benchmark               # agent vs random vs similarity
+uv run athanor export-pages            # bake a static Mission Control into docs/
 ```
+
+`export-pages` writes a self-contained recorded-campaign site (the same
+Mission Control UI, clearly labeled as a recording) that GitHub Pages can
+serve from the `docs/` folder — nothing live, nothing local leaks; you
+choose which campaign DB to publish (`--latest`, `--db`).
 
 ## Missions
 
