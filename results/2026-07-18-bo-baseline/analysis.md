@@ -1,32 +1,44 @@
-# Bayesian-optimization baseline: first datapoint (n=1 seed)
+# Bayesian-optimization baseline: seeds 0–1
 
-**Run:** `data/benchmark/20260718-160305-seed0/` — baselines only,
-5 iterations × 20 relaxations, seed 0, pv-absorber-v1
+**Runs:** `data/benchmark/20260718-160305-seed0/` and the seed-1 dir —
+baselines only, 5 iterations × 20 relaxations, pv-absorber-v1
 (gap 1.1–1.7 eV, hull ≤ 0.05 eV/atom). BO strategy introduced in
 commit `38f4fbe` (GP + expected improvement over composition features;
 utility = −|gap − 1.4| − 10·max(0, hull − 0.05)).
 
-| strategy | scored | hits | hits/100 relax | best \|gap−ideal\| (eV) |
-|---|---|---|---|---|
-| random | 80 | 0 | 0.0 | 0.249 |
-| similarity | 58 | 1 | 1.72 | 0.041 |
-| **bayesopt** | 80 | **0** | 0.0 | 0.095 |
+| strategy | seed 0: hits (best \|Δgap\|) | seed 1: hits (best \|Δgap\|) |
+|---|---|---|
+| random | 0 (0.249) | 1 (0.041) |
+| similarity | 1 (0.041) | 2 (0.041) |
+| **bayesopt** | **0** (0.095) | **0** (**0.036**) |
 
 Reference bands from earlier seeds (n=8): random 1.38±1.15,
 similarity 3.01±0.62; aligned agent (n=3): 32.0±17.9 hits/100 relax.
+Random and similarity landed inside their bands both seeds.
 
 ## What BO actually found
 
-Its three in-window compositions, ordered by stability
+Its in-window compositions across both seeds, ordered by stability
 (`bayesopt.db`):
 
-| formula | gap (eV) | hull (eV/at) | novel? | why not a hit |
-|---|---|---|---|---|
-| CuCl | 1.30 | 0.000 | no | known (on the hull, and in MP) |
-| MgSb | 1.17 | 0.184 | no | known and unstable |
-| Sr₂ZnSnSe₄ | 1.15 | 0.250 | yes | novel but far from stable |
+| seed | formula | gap (eV) | hull (eV/at) | novel? | why not a hit |
+|---|---|---|---|---|---|
+| 0 | CuCl | 1.30 | 0.000 | no | known, on the hull |
+| 0 | MgSb | 1.17 | 0.184 | no | known and unstable |
+| 0 | Sr₂ZnSnSe₄ | 1.15 | 0.250 | yes | novel but far from stable |
+| 1 | NaAsSe₂ | 1.10 | 0.000 | no | known, on the hull |
+| 1 | **AlSb** | **1.49** | **0.000** | no | **the textbook III–V absorber** |
+| 1 | CdCu₂SnS₄ | 1.69 | 0.011 | no | known |
+| 1 | GaCuSe₂ | 1.21 | 0.099 | no | known (CuGaSe₂) |
+| 1 | Zn₃SnSe₄ | 1.36 | 0.128 | yes | novel but unstable |
 
-## Interpretation (preliminary — one seed)
+Seed 1 is the cleaner illustration: BO's best find was **AlSb at
+1.49 eV on the hull** — 0.036 eV from the mission's ideal gap, and a
+semiconductor known since the 1950s. The optimizer found the textbook
+answer, because the textbook answer optimizes the objective it was
+given.
+
+## Interpretation (preliminary — two seeds)
 
 1. **The GP works as an optimizer.** Gap targeting improved markedly
    over random (best |gap−ideal| 0.095 vs 0.249): EI is steering toward
@@ -48,8 +60,9 @@ Its three in-window compositions, ordered by stability
 
 ## Caveats & next steps
 
-- **n=1 seed.** More seeds queued; the claim above is a hypothesis
-  until the band exists.
+- **n=2 seeds, both zero hits with best-in-class gap targeting
+  (0.095, 0.036 eV).** Consistent so far; 3+ more seeds would make the
+  band citable.
 - A fair stronger BO control would add a novelty-aware term (e.g.
   penalize proximity to known compositions in feature space, or filter
   the pool to MP-novel candidates before EI). Worth building — if
