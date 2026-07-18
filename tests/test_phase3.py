@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import numpy as np
 import pytest
 
 from athanor.baselines import RandomBaseline, SimilarityBaseline, element_similarity
@@ -66,6 +67,59 @@ def test_similarity_baseline_runs_and_prefers_similar(cfg, fake_scoring, tmp_pat
     # sanity of the similarity metric itself: same group < cross group
     assert element_similarity("Se", "S") < element_similarity("Se", "K")
     assert element_similarity("In", "Ga") < element_similarity("In", "Cl")
+
+
+def test_bayesopt_baseline_respects_budget_and_is_deterministic(
+        cfg, fake_scoring, tmp_path):
+    from athanor.baselines import BayesOptBaseline
+
+    r1 = BayesOptBaseline(cfg, CandidateDB(tmp_path / "a.db"), seed=3).run()
+    r2 = BayesOptBaseline(cfg, CandidateDB(tmp_path / "b.db"), seed=3).run()
+    assert 0 < r1.relaxations_used <= 2 * 5
+    a = [r["formula"] for r in CandidateDB(tmp_path / "a.db").all_scored()]
+    b = [r["formula"] for r in CandidateDB(tmp_path / "b.db").all_scored()]
+    assert a == b
+    rows = CandidateDB(tmp_path / "a.db").all_scored()
+    assert all(r["hypothesis"] == "baseline:bayesopt" for r in rows)
+
+
+def test_bayesopt_gp_ranks_known_good_region_first():
+    import numpy as np
+
+    from athanor.baselines import _GP
+
+    rng = np.random.default_rng(0)
+    # utility peaks at x = 2; train on noisy samples, ask EI to rank probes
+    X = rng.uniform(0, 4, size=(40, 1))
+    y = -np.abs(X[:, 0] - 2.0)
+    gp = _GP()
+    gp.fit(X, y)
+    ei = gp.expected_improvement(np.array([[2.0], [0.1], [3.9]]))
+    assert ei[0] == max(ei)  # the peak region beats both edges
+
+    mu, _ = gp.predict(np.array([[2.0], [0.0]]))
+    assert mu[0] > mu[1]  # GP mean recovers the shape
+
+
+def test_bayesopt_featurizer_shape_and_signal():
+    from athanor.baselines import featurize_composition
+
+    v1 = featurize_composition("CuGaSe2")
+    v2 = featurize_composition("CuGaS2")
+    v3 = featurize_composition("BaTiO3")
+    assert v1.shape == (11,)
+    # anion swap is a small move; a different chemistry is a big one
+    assert np.linalg.norm(v1 - v2) < np.linalg.norm(v1 - v3)
+
+
+def test_bayesopt_utility_prefers_window_and_stability(cfg, tmp_path):
+    from athanor.baselines import BayesOptBaseline
+
+    bo = BayesOptBaseline(cfg, CandidateDB(tmp_path / "u.db"), seed=0)
+    ideal = cfg.target.band_gap_ideal_ev
+    assert bo.utility(ideal, 0.0) > bo.utility(ideal + 0.5, 0.0)
+    assert bo.utility(ideal, 0.0) > bo.utility(ideal, 0.2)
+    assert bo.utility(None, 0.0) is None
 
 
 # --------------------------------------------------------------------------

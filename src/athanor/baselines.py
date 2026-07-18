@@ -9,6 +9,8 @@ chosen. That makes "agent vs baseline" a pure test of hypothesis quality.
 - SimilarityBaseline: greedy chemical similarity — try the most similar
   replacement elements first (periodic-table group/period distance), the
   classic "sensible enumeration" a materials scientist might script.
+- BayesOptBaseline: GP + expected improvement over composition features —
+  the sequential model-based search a materials-informatics group would run.
 """
 
 from __future__ import annotations
@@ -55,9 +57,17 @@ class _BaseRunner:
         self.rng = random.Random(seed)
         self.has_mp_key = bool(os.environ.get("MP_API_KEY"))
 
-    # -- strategy hook -----------------------------------------------------
+    # -- strategy hooks ----------------------------------------------------
     def choose_substitutions(self, prototype_elements: list[str]) -> dict[str, list[str]]:
         raise NotImplementedError
+
+    def rank_candidates(self, cands: list) -> list:
+        """Order filter-survivors before spending relaxations (best first).
+
+        Default: generation order, which keeps RandomBaseline and
+        SimilarityBaseline byte-identical to their pre-hook behavior.
+        """
+        return cands
 
     # -- shared campaign runner ---------------------------------------------
     def run(self, iterations: int | None = None) -> BaselineResult:
@@ -91,7 +101,7 @@ class _BaseRunner:
         )
         results = filter_candidates([c.formula for c in cands], self.cfg)
 
-        scored = 0
+        pool = []
         for cand, res in zip(cands, results):
             if self.db.already_seen(cand.formula):
                 continue
@@ -102,6 +112,10 @@ class _BaseRunner:
                     hypothesis=f"baseline:{self.name}", filter_reasons=res.reasons,
                 ))
                 continue
+            pool.append(cand)
+
+        scored = 0
+        for cand in self.rank_candidates(pool):
             if scored >= relax_left:
                 break
             novel = None
@@ -125,6 +139,87 @@ class _BaseRunner:
             ))
             scored += 1
         return scored
+
+
+def featurize_composition(formula: str) -> "np.ndarray":
+    """Fraction-weighted elemental-property statistics for a composition.
+
+    Mean and standard deviation of (Z, group, row, electronegativity,
+    atomic mass) plus the element count: an 11-dim numpy vector. Deliberately
+    magpie-lite — enough signal for a GP over a few dozen points, zero new
+    dependencies.
+    """
+    import numpy as np
+    from pymatgen.core import Composition
+
+    comp = Composition(formula).fractional_composition
+    props = []
+    fracs = []
+    for el, frac in comp.items():
+        x = el.X if el.X is not None else 1.5  # noble-gas fallback
+        props.append([el.Z, el.group, el.row, x, float(el.atomic_mass)])
+        fracs.append(frac)
+    p = np.asarray(props, dtype=float)
+    w = np.asarray(fracs, dtype=float)
+    w = w / w.sum()
+    mean = w @ p
+    std = np.sqrt(np.maximum(w @ (p - mean) ** 2, 0.0))
+    return np.concatenate([mean, std, [len(fracs)]])
+
+
+class _GP:
+    """Minimal RBF-kernel Gaussian process (numpy only, fixed hyperparams).
+
+    Lengthscale from the median-distance heuristic; noise floor keeps the
+    Cholesky stable. Good enough to rank ~50 candidates from ~100 training
+    points; not a general-purpose GP.
+    """
+
+    def __init__(self):
+        import numpy as np
+
+        self.np = np
+        self.ready = False
+
+    def fit(self, X, y):
+        np = self.np
+        X = np.asarray(X, float)
+        y = np.asarray(y, float)
+        self.x_mean, self.x_std = X.mean(0), X.std(0) + 1e-9
+        Xs = (X - self.x_mean) / self.x_std
+        d2 = ((Xs[:, None, :] - Xs[None, :, :]) ** 2).sum(-1)
+        off = d2[d2 > 1e-12]
+        self.ls2 = float(np.median(off)) if off.size else 1.0
+        self.y_mean = float(y.mean())
+        yc = y - self.y_mean
+        K = np.exp(-d2 / (2 * self.ls2))
+        noise = 1e-4 * float(yc.var()) + 1e-8
+        self.L = np.linalg.cholesky(K + noise * np.eye(len(y)))
+        self.alpha = np.linalg.solve(self.L.T, np.linalg.solve(self.L, yc))
+        self.Xs = Xs
+        self.y_best = float(y.max())
+        self.ready = True
+
+    def predict(self, X):
+        np = self.np
+        Xq = (np.asarray(X, float) - self.x_mean) / self.x_std
+        d2 = ((Xq[:, None, :] - self.Xs[None, :, :]) ** 2).sum(-1)
+        Ks = np.exp(-d2 / (2 * self.ls2))
+        mu = Ks @ self.alpha + self.y_mean
+        v = np.linalg.solve(self.L, Ks.T)
+        var = np.maximum(1.0 - (v ** 2).sum(0), 1e-12)
+        return mu, var
+
+    def expected_improvement(self, X, xi: float = 0.01):
+        from math import erf, exp, pi, sqrt
+
+        np = self.np
+        mu, var = self.predict(X)
+        sigma = np.sqrt(var)
+        z = (mu - self.y_best - xi) / sigma
+        cdf = np.array([0.5 * (1 + erf(zi / sqrt(2))) for zi in z])
+        pdf = np.array([exp(-zi * zi / 2) / sqrt(2 * pi) for zi in z])
+        return (mu - self.y_best - xi) * cdf + sigma * pdf
 
 
 class RandomBaseline(_BaseRunner):
@@ -159,3 +254,57 @@ class SimilarityBaseline(_BaseRunner):
             self._rank_cursor[site] = 0
             return {}
         return {site: picks}
+
+
+class BayesOptBaseline(_BaseRunner):
+    """GP + expected improvement over composition features.
+
+    Proposes like RandomBaseline (wide pools), but before spending any
+    relaxation it ranks the filter-survivors by expected improvement of a
+    mission-utility GP trained on every composition this campaign has
+    scored. Until enough training data exists (min_train) it explores in
+    shuffled order. The standard materials-informatics control: what does
+    sequential model-based search achieve at the same budget, with no
+    language model involved?
+    """
+
+    name = "bayesopt"
+    min_train = 6
+
+    def utility(self, gap: float | None, hull: float | None) -> float | None:
+        """Scalar 'goodness' of a scored composition; higher is better.
+
+        Gap distance in eV and hull excess in eV/atom x10 are comparable
+        scales, so a candidate 0.1 eV/atom above the near-stable bar pays
+        like a 1 eV gap miss.
+        """
+        if gap is None:
+            return None
+        y = -abs(gap - self.cfg.target.band_gap_ideal_ev)
+        if hull is not None:
+            y -= 10.0 * max(0.0, hull - self.cfg.target.e_above_hull_max_ev_per_atom)
+        return y
+
+    def choose_substitutions(self, prototype_elements: list[str]) -> dict[str, list[str]]:
+        palette = self.cfg.usable_elements
+        n_sites = self.rng.randint(1, min(2, len(prototype_elements)))
+        sites = self.rng.sample(prototype_elements, n_sites)
+        return {
+            el: self.rng.sample(palette, self.rng.randint(2, 3)) for el in sites
+        }
+
+    def rank_candidates(self, cands: list) -> list:
+        X, y = [], []
+        for r in self.db.all_scored():
+            u = self.utility(r["band_gap_ev"], r["e_above_hull"])
+            if u is not None and r["converged"]:
+                X.append(featurize_composition(r["formula"]))
+                y.append(u)
+        if len(y) < self.min_train:
+            self.rng.shuffle(cands)
+            return cands
+        gp = _GP()
+        gp.fit(X, y)
+        ei = gp.expected_improvement([featurize_composition(c.formula) for c in cands])
+        order = sorted(range(len(cands)), key=lambda i: -ei[i])
+        return [cands[i] for i in order]

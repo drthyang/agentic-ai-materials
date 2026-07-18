@@ -13,7 +13,7 @@ from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 
-from athanor.baselines import RandomBaseline, SimilarityBaseline
+from athanor.baselines import BayesOptBaseline, RandomBaseline, SimilarityBaseline
 from athanor.config import MissionConfig
 from athanor.db import CandidateDB
 from athanor.metrics import CampaignMetrics, comparison_table, compute_metrics
@@ -74,7 +74,7 @@ def _run_benchmark_locked(
 
     results: list[CampaignMetrics] = []
 
-    for cls in (RandomBaseline, SimilarityBaseline):
+    for cls in (RandomBaseline, SimilarityBaseline, BayesOptBaseline):
         db = CandidateDB(outdir / f"{cls.name}.db")
         log.info("--- running %s baseline (%d iterations) ---", cls.name, iterations)
         cls(cfg, db, seed=seed).run(iterations)

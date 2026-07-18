@@ -13,10 +13,21 @@ principles carried forward:
 
 ## Short term (days–weeks): finish the science the machine was built for
 
+Agreed priority order (2026-07-18): (1) capability-vs-alignment matrix,
+(2) package the equal-budget protocol as a benchmark others can run,
+(3) Bayesian-optimization baseline + acquisition tool, (4) multi-fidelity
+ladder with uncertainty, (5) magnetism mission. Rationale: the field's gap
+is controlled evaluation, not more agent demos — evidence first.
+
 - **Headline benchmark** *(in progress)* — agent (qwen3:32b) vs random vs
   similarity at equal compute; gemma4:26b as critic. Repeat with 3+ seeds for
   error bars; audit critic vetoes against outcomes (were vetoed candidates
   actually bad?).
+- **Bayesian-optimization baseline** *(built 2026-07-18, baselines.py)* —
+  GP + expected improvement over composition features, same budget/filters/
+  scorer as every other strategy. The control a materials-informatics
+  reviewer will ask for; next step is exposing the acquisition function to
+  the agent as a tool (LLM+BO hybrid vs pure BO is the open question).
 - **Rediscovery validation** — populate `evaluation.holdout_formulas` with
   known PV absorbers (CuGaSe2, AgGaSe2, CuInS2), measure rediscovery rate.
   This is the credibility experiment.
