@@ -11,7 +11,7 @@ magnetism/active-learning, then new-surrogate work).
 ## Commands
 
 ```bash
-uv run pytest                              # 60 tests, all should pass
+uv run pytest                              # 66 tests, all should pass
 uv run athanor check                   # env/key status
 uv run athanor run --iterations 1      # discovery campaign (needs Ollama up)
 uv run athanor benchmark --skip-agent  # baselines only (no LLM needed)
@@ -30,9 +30,15 @@ uv run athanor dashboard               # live view at localhost:8517
   test_agent.py disable it to keep scripted backends exact.
 - `tools/literature.py` — Crossref search (free, no key), disk-cached in
   data/lit_cache/; registered as search_literature agent tool.
-- `dashboard.py` — stdlib http.server, one self-contained HTML page rendered
-  fresh per request from DB + notebook, auto-refresh 10s, matplotlib scatter
-  embedded as base64. No new dependencies.
+- `dashboard.py` — "Mission Control": stdlib http.server serving a static
+  shell (`src/athanor/web/` — vanilla JS + CSS in the MATERIA workbench
+  design language, IBM Plex bundled) plus `/api/snapshot` and
+  `/api/benchmark` JSON read fresh per request from DB + notebook + mission
+  config. Client renders the discovery-loop funnel, SVG gap-vs-hull map,
+  event feed, top candidates, and notebook; auto-refresh 10s. Read-only by
+  design (config-over-code applies to the UI) and still zero new
+  dependencies — no node, no build step. Hit/rediscovery flags come from
+  `metrics.row_flags`, the single source of the hit rule.
 
 ## Architecture
 

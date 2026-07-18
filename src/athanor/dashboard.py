@@ -1,159 +1,256 @@
-"""Live campaign dashboard: watch the agent explore, zero extra dependencies.
+"""Mission Control: live campaign dashboard (Phase 5).
 
-A stdlib http.server renders one self-contained HTML page per request straight
-from the campaign DB + notebook (auto-refresh every 10 s): iteration stats,
-top candidates, a gap-vs-hull map with the target region, and the notebook
-stream. Run alongside `athanor run`:
+Same footprint as the Phase 4 dashboard — stdlib http.server, zero new
+dependencies — but the page is now a static shell (src/athanor/web/) that
+fetches /api/snapshot JSON and renders client-side. The server stays
+read-only: it renders the DB, notebook, and mission config; it never edits
+them (config-over-code applies to the UI too).
 
-    uv run athanor dashboard          # http://localhost:8517
+Routes:
+    /                    the Mission Control shell (index.html)
+    /api/snapshot        full campaign state as JSON, read fresh per request
+    /api/benchmark       latest benchmark table + plot, when one exists
+    /assets/<name>       css / js / woff2 from the packaged web/ directory
 """
 
 from __future__ import annotations
 
-import base64
-import html
-import io
 import json
+import re
+from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from pathlib import Path
 
 from athanor.config import MissionConfig
 from athanor.db import CandidateDB
+from athanor.metrics import row_flags
 from athanor.notebook import LabNotebook
+
+WEB_DIR = Path(__file__).parent / "web"
+
+_NUMERIC = ("formation_energy_per_atom", "e_above_hull", "band_gap_ev")
+
+
+def _scrub(row: dict) -> dict:
+    """Repair legacy rows where numpy scalars were stored as raw BLOBs.
+
+    Older campaign DBs hold 4/8-byte little-endian floats in numeric columns
+    (numpy's buffer protocol slipped past sqlite3). The dashboard renders
+    history, so it must read them; new writes are coerced in CandidateDB.add.
+    """
+    import struct
+
+    for k in _NUMERIC:
+        v = row.get(k)
+        if isinstance(v, bytes):
+            row[k] = (struct.unpack("<f", v)[0] if len(v) == 4
+                      else struct.unpack("<d", v)[0] if len(v) == 8 else None)
+    return row
+
+_ASSET_TYPES = {
+    ".css": "text/css; charset=utf-8",
+    ".js": "text/javascript; charset=utf-8",
+    ".woff2": "font/woff2",
+    ".png": "image/png",
+    ".svg": "image/svg+xml",
+}
+
+
+def _feed_events(db_rows: list[dict], nb_entries: list[dict],
+                 cfg: MissionConfig, limit: int = 30) -> list[dict]:
+    """Merge candidate rows and notebook entries into one recent-first feed."""
+    events = []
+    for r in db_rows:
+        when = (r.get("created_at") or "")[:16]  # YYYY-MM-DD HH:MM
+        base = {"when": when, "iteration": r["iteration"], "formula": r["formula"]}
+        if r["status"] == "scored":
+            flags = row_flags(r, cfg)
+            gap = r["band_gap_ev"]
+            hull = r["e_above_hull"]
+            detail = " · ".join(
+                ([f"gap {gap:.2f} eV"] if gap is not None else [])
+                + ([f"hull {hull:.3f}"] if hull is not None else [])
+            )
+            if flags["hit"]:
+                kind, text = "hit", f"{detail} — novel, in window"
+            elif flags["rediscovery"]:
+                kind, text = "rediscovery", f"{detail} — hold-out re-found"
+            elif not r["converged"]:
+                kind, text = "score", "relaxation did not converge"
+            else:
+                kind, text = "score", detail or "scored"
+            events.append({**base, "kind": kind, "text": text})
+        elif r["status"] == "error":
+            events.append({**base, "kind": "error",
+                           "text": (r.get("error") or "evaluation error")[:140]})
+        elif r["status"] == "filtered_out":
+            reasons = json.loads(r["filter_reasons"]) if r["filter_reasons"] else []
+            veto = next((s for s in reasons if s.startswith("critic:")), None)
+            if veto:
+                events.append({**base, "kind": "veto",
+                               "text": veto.removeprefix("critic:").strip()[:140]})
+            else:
+                events.append({**base, "kind": "filtered",
+                               "text": "; ".join(reasons)[:140] or "filtered"})
+        # plain "proposed" rows are working state, not events — skip
+    for e in nb_entries:
+        # notebook stamp "YYYY-MM-DD HH:MM UTC" -> sortable "YYYY-MM-DD HH:MM"
+        events.append({
+            "when": e["when"].removesuffix(" UTC"),
+            "iteration": e["iteration"], "formula": None,
+            "kind": "notebook",
+            "text": f"[{e['type']}] {e['text']}"[:180],
+        })
+    events.sort(key=lambda e: e["when"], reverse=True)
+    return events[:limit]
 
 
 def campaign_snapshot(cfg: MissionConfig) -> dict:
     """Everything the dashboard shows, read fresh from disk."""
-    snap = {"scored": [], "iterations": {}, "top": [], "notebook": ""}
+    snap: dict = {
+        "mission": {
+            "name": cfg.mission.name,
+            "description": cfg.mission.description,
+            "band_gap_ev": list(cfg.target.band_gap_ev),
+            "band_gap_ideal_ev": cfg.target.band_gap_ideal_ev,
+            "e_above_hull_max": cfg.target.e_above_hull_max_ev_per_atom,
+            "allowed_elements": cfg.chemistry.allowed_elements,
+            "excluded_elements": cfg.chemistry.excluded_elements,
+            "max_elements": cfg.chemistry.max_elements_per_compound,
+            "budget": cfg.budget.model_dump(),
+            "llm": {"backend": cfg.llm.backend, "model": cfg.llm.model},
+            "critic": {"enabled": cfg.critic.enabled,
+                       "backend": cfg.critic.backend, "model": cfg.critic.model},
+            "holdout_formulas": cfg.evaluation.holdout_formulas,
+        },
+        "iterations": [], "candidates": [], "top": [],
+        "notebook": [], "feed": [], "totals": {},
+        "meta": {
+            "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+            "last_activity": None, "running": False,
+        },
+    }
+
+    nb_entries = (LabNotebook(cfg.paths.notebook).entries()
+                  if cfg.paths.notebook.exists() else [])
+    snap["notebook"] = nb_entries
+
     if cfg.paths.db.exists():
         db = CandidateDB(cfg.paths.db)
-        snap["scored"] = db.all_scored()
-        iters = sorted({r["iteration"] for r in snap["scored"]})
-        snap["iterations"] = {i: db.iteration_summary(i) for i in iters}
-        snap["top"] = db.top_candidates(10)
+        snap["iterations"] = db.counts_by_iteration()
+        snap["candidates"] = [
+            {**r, "flags": row_flags({**r, "status": "scored"}, cfg)}
+            for r in map(_scrub, db.all_scored())
+        ]
+        snap["top"] = [{**t, "flags": row_flags(t, cfg)}
+                       for t in map(_scrub, db.top_candidates(10))]
+        recent = [_scrub(r) for r in db.recent_events(60)]
+        snap["feed"] = _feed_events(recent, nb_entries[-10:], cfg)
+        if recent and recent[0].get("created_at"):
+            newest = recent[0]["created_at"]
+            snap["meta"]["last_activity"] = newest[:16]
+            age = (datetime.now(timezone.utc)
+                   - datetime.fromisoformat(newest + "+00:00")).total_seconds()
+            snap["meta"]["running"] = age < 300
         db.close()
-    if cfg.paths.notebook.exists():
-        snap["notebook"] = LabNotebook(cfg.paths.notebook).read(last_n_entries=8)
+
+    t = snap["totals"]
+    t["proposed"] = sum(i["proposed"] + i["filtered_out"] + i["scored"] + i["error"]
+                        for i in snap["iterations"])
+    t["filtered_out"] = sum(i["filtered_out"] for i in snap["iterations"])
+    t["vetoed"] = sum(i["vetoed"] for i in snap["iterations"])
+    t["scored"] = sum(i["scored"] for i in snap["iterations"])
+    t["errors"] = sum(i["error"] for i in snap["iterations"])
+    t["hits"] = sum(1 for c in snap["candidates"] if c["flags"]["hit"])
+    t["rediscoveries"] = sum(1 for c in snap["candidates"] if c["flags"]["rediscovery"])
+    t["iterations_done"] = len(snap["iterations"])
+    t["relaxations_used"] = t["scored"] + t["errors"]
+    t["relaxations_budget"] = (cfg.budget.iterations
+                               * cfg.budget.max_relaxations_per_iteration)
+    dists = [c["flags"]["gap_distance"] for c in snap["candidates"]
+             if c["flags"]["gap_distance"] is not None]
+    t["best_gap_distance"] = round(min(dists), 3) if dists else None
     return snap
 
 
-def _scatter_png(cfg: MissionConfig, scored: list[dict]) -> str | None:
-    """Gap-vs-hull map as base64 PNG; None when nothing to plot."""
-    pts = [(r["e_above_hull"], r["band_gap_ev"], r["iteration"]) for r in scored
-           if r["e_above_hull"] is not None and r["band_gap_ev"] is not None]
-    if not pts:
-        return None
-
-    import matplotlib
-
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    from matplotlib.patches import Rectangle
-
-    lo, hi = cfg.target.band_gap_ev
-    hull_max = cfg.target.e_above_hull_max_ev_per_atom
-    fig, ax = plt.subplots(figsize=(6.5, 4.2))
-    xs, ys, cs = zip(*pts)
-    sc = ax.scatter(xs, ys, c=cs, cmap="viridis", s=42, edgecolor="k", linewidth=0.4)
-    ax.add_patch(Rectangle((0, lo), hull_max, hi - lo, alpha=0.18, color="green",
-                           label="target region"))
-    ax.set_xlabel("energy above hull (eV/atom)")
-    ax.set_ylabel("band gap, HSE fidelity (eV)")
-    ax.set_xlim(left=-0.005)
-    ax.legend(loc="upper right", fontsize=8)
-    fig.colorbar(sc, ax=ax, label="iteration")
-    fig.tight_layout()
-    buf = io.BytesIO()
-    fig.savefig(buf, format="png", dpi=110)
-    plt.close(fig)
-    return base64.b64encode(buf.getvalue()).decode()
-
-
-def render_html(cfg: MissionConfig) -> str:
-    snap = campaign_snapshot(cfg)
-    lo, hi = cfg.target.band_gap_ev
-
-    iter_rows = "".join(
-        f"<tr><td>{i}</td><td>{stats.get('proposed', 0)}</td>"
-        f"<td>{stats.get('filtered_out', 0)}</td><td>{stats.get('scored', 0)}</td>"
-        f"<td>{stats.get('error', 0)}</td></tr>"
-        for i, stats in snap["iterations"].items()
-    ) or "<tr><td colspan=5>no data yet</td></tr>"
-
-    top_rows = "".join(
-        f"<tr><td>{html.escape(r['formula'])}</td>"
-        f"<td>{r['band_gap_ev']:.2f}</td><td>{r['e_above_hull']:.3f}</td>"
-        f"<td>{r['iteration']}</td>"
-        f"<td>{html.escape((r['hypothesis'] or '')[:120])}</td></tr>"
-        for r in snap["top"]
-        if r["band_gap_ev"] is not None and r["e_above_hull"] is not None
-    ) or "<tr><td colspan=5>none yet</td></tr>"
-
-    png = _scatter_png(cfg, snap["scored"])
-    plot_html = (f'<img src="data:image/png;base64,{png}" alt="gap vs hull">'
-                 if png else "<p><em>no scored candidates yet</em></p>")
-
-    notebook_html = html.escape(snap["notebook"][-6000:]) or "(empty)"
-
-    return f"""<!DOCTYPE html>
-<html><head><meta charset="utf-8"><meta http-equiv="refresh" content="10">
-<title>Athanor — {html.escape(cfg.mission.name)}</title>
-<style>
- body {{ font-family: -apple-system, sans-serif; margin: 2rem; color: #1a1a1a; }}
- h1 {{ font-size: 1.3rem; }} h2 {{ font-size: 1.05rem; margin-top: 1.6rem; }}
- table {{ border-collapse: collapse; font-size: 0.85rem; }}
- td, th {{ border: 1px solid #ccc; padding: 4px 10px; text-align: left; }}
- th {{ background: #f0f0f0; }}
- pre {{ background: #f7f7f5; padding: 1rem; font-size: 0.78rem;
-        white-space: pre-wrap; max-height: 24rem; overflow-y: auto; }}
- .grid {{ display: flex; gap: 2.5rem; flex-wrap: wrap; }}
-</style></head><body>
-<h1>Athanor: {html.escape(cfg.mission.name)}</h1>
-<p>target: gap in [{lo}, {hi}] eV &middot; hull &le;
-{cfg.target.e_above_hull_max_ev_per_atom} eV/atom &middot;
-backend: {html.escape(cfg.llm.backend)} ({html.escape(cfg.llm.model)}) &middot;
-auto-refreshes every 10 s</p>
-<div class="grid">
-<div><h2>iterations</h2>
-<table><tr><th>iter</th><th>proposed</th><th>filtered</th><th>scored</th><th>errors</th></tr>
-{iter_rows}</table></div>
-<div><h2>composition-space map</h2>{plot_html}</div>
-</div>
-<h2>top candidates</h2>
-<table><tr><th>formula</th><th>gap (eV)</th><th>hull (eV/atom)</th><th>iter</th><th>hypothesis</th></tr>
-{top_rows}</table>
-<h2>lab notebook (latest entries)</h2>
-<pre>{notebook_html}</pre>
-</body></html>"""
+def benchmark_snapshot(benchmark_dir: Path = Path("data/benchmark/latest")) -> dict:
+    """Latest benchmark comparison, parsed from its markdown artifact."""
+    md = benchmark_dir / "benchmark.md"
+    if not md.exists():
+        return {"available": False}
+    lines = md.read_text().splitlines()
+    header = next((ln for ln in lines if ln.startswith("# ")), "")
+    budget = next((ln for ln in lines if ln.startswith("budget:")), "")
+    hit_def = next((ln for ln in lines if ln.startswith("hit =")), "")
+    table_lines = [ln for ln in lines if ln.startswith("|")]
+    rows = []
+    if len(table_lines) >= 3:
+        cols = [c.strip() for c in table_lines[0].strip("|").split("|")]
+        for ln in table_lines[2:]:
+            cells = [c.strip() for c in ln.strip("|").split("|")]
+            rows.append(dict(zip(cols, cells)))
+    return {
+        "available": True,
+        "title": header.removeprefix("# ").removeprefix("Benchmark:").strip(),
+        "budget": budget.removeprefix("budget:").strip(),
+        "hit_definition": hit_def.removeprefix("hit =").strip(),
+        "rows": rows,
+        "has_plot": (benchmark_dir / "benchmark.png").exists(),
+    }
 
 
 def serve(cfg: MissionConfig, port: int = 8517) -> None:
+    benchmark_dir = Path("data/benchmark/latest")
+
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):  # noqa: N802 (stdlib API)
-            if self.path not in ("/", "/index.html"):
-                self.send_response(404)
-                self.end_headers()
-                return
-            body = render_html(cfg).encode()
-            self.send_response(200)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
+            try:
+                if self.path in ("/", "/index.html"):
+                    self._send(200, "text/html; charset=utf-8",
+                               (WEB_DIR / "index.html").read_bytes())
+                elif self.path == "/api/snapshot":
+                    body = json.dumps(campaign_snapshot(cfg)).encode()
+                    self._send(200, "application/json; charset=utf-8", body)
+                elif self.path == "/api/benchmark":
+                    body = json.dumps(benchmark_snapshot(benchmark_dir)).encode()
+                    self._send(200, "application/json; charset=utf-8", body)
+                elif self.path == "/api/benchmark/plot.png":
+                    png = benchmark_dir / "benchmark.png"
+                    if png.exists():
+                        self._send(200, "image/png", png.read_bytes())
+                    else:
+                        self._send(404, "text/plain", b"no benchmark plot")
+                elif self.path.startswith("/assets/"):
+                    name = self.path.removeprefix("/assets/").split("?", 1)[0]
+                    # flat whitelist: no path separators, known extensions only
+                    if re.fullmatch(r"[\w.-]+", name) and (WEB_DIR / name).is_file():
+                        ctype = _ASSET_TYPES.get(Path(name).suffix)
+                        if ctype:
+                            self._send(200, ctype, (WEB_DIR / name).read_bytes())
+                            return
+                    self._send(404, "text/plain", b"not found")
+                else:
+                    self._send(404, "text/plain", b"not found")
+            except Exception as exc:  # the dashboard must never take down a run
+                self._send(500, "text/plain", f"dashboard error: {exc}".encode())
+
+        def _send(self, code: int, ctype: str, body: bytes) -> None:
+            self.send_response(code)
+            self.send_header("Content-Type", ctype)
             self.send_header("Content-Length", str(len(body)))
+            if self.path.endswith((".woff2", ".png")):
+                self.send_header("Cache-Control", "max-age=86400")
+            elif self.path.startswith("/assets/"):
+                self.send_header("Cache-Control", "no-cache")
             self.end_headers()
             self.wfile.write(body)
 
         def log_message(self, *args):  # quiet
             pass
 
+    httpd = HTTPServer(("127.0.0.1", port), Handler)
+    print(f"athanor dashboard: http://localhost:{port}  (Ctrl-C to stop)")
     try:
-        server = HTTPServer(("127.0.0.1", port), Handler)
-    except OSError as exc:
-        if exc.errno == 48:  # EADDRINUSE
-            raise SystemExit(
-                f"port {port} is already in use (another dashboard running?) — "
-                f"stop it or pass --port {port + 1}"
-            ) from None
-        raise
-    print(f"dashboard: http://localhost:{port} (ctrl-c to stop)")
-    try:
-        server.serve_forever()
+        httpd.serve_forever()
     except KeyboardInterrupt:
-        server.server_close()
+        pass

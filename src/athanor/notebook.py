@@ -7,10 +7,15 @@ the agent (and tests) can parse them back.
 
 from __future__ import annotations
 
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
 ENTRY_TYPES = ("hypothesis", "observation", "reflection", "decision", "report")
+
+_HEADER = re.compile(
+    r"^\[(?P<type>\w+)\] iteration (?P<iteration>\d+) — (?P<when>.+?)\s*$"
+)
 
 
 class LabNotebook:
@@ -38,3 +43,24 @@ class LabNotebook:
         header, entries = parts[0], parts[1:]
         keep = entries[-last_n_entries:]
         return header + "".join("\n## " + e for e in keep)
+
+    def entries(self, last_n: int | None = None) -> list[dict]:
+        """Structured entries for the dashboard: newest last.
+
+        Each dict: {type, iteration, when, text}. Blocks whose header doesn't
+        match the write() format are skipped rather than crashing the page.
+        """
+        blocks = self.path.read_text().split("\n## ")[1:]
+        out = []
+        for block in blocks:
+            head, _, body = block.partition("\n")
+            m = _HEADER.match(head)
+            if not m:
+                continue
+            out.append({
+                "type": m["type"],
+                "iteration": int(m["iteration"]),
+                "when": m["when"],
+                "text": body.strip(),
+            })
+        return out[-last_n:] if last_n is not None else out

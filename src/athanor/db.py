@@ -58,6 +58,11 @@ class CandidateDB:
         d = asdict(row)
         d["substitution"] = json.dumps(d["substitution"]) if d["substitution"] else None
         d["filter_reasons"] = json.dumps(d["filter_reasons"]) if d["filter_reasons"] else None
+        # numpy scalars (e.g. CHGNet's float32) bind as BLOBs via the buffer
+        # protocol — coerce so numbers are stored as SQLite REALs.
+        for k in ("formation_energy_per_atom", "e_above_hull", "band_gap_ev"):
+            if d[k] is not None:
+                d[k] = float(d[k])
         cols = ", ".join(d)
         placeholders = ", ".join(f":{k}" for k in d)
         cur = self._conn.execute(
@@ -104,6 +109,42 @@ class CandidateDB:
             (iteration,),
         )
         return {r["status"]: r["n"] for r in cur.fetchall()}
+
+    def counts_by_iteration(self) -> list[dict]:
+        """Per-iteration funnel: status counts plus critic vetoes.
+
+        Vetoes are the subset of filtered_out whose filter_reasons carry the
+        "critic:" prefix written by evaluate_candidates.
+        """
+        cur = self._conn.execute(
+            """SELECT iteration, status, COUNT(*) n,
+                      SUM(CASE WHEN status = 'filtered_out'
+                               AND filter_reasons LIKE '%critic:%'
+                          THEN 1 ELSE 0 END) vetoed
+               FROM candidates GROUP BY iteration, status ORDER BY iteration"""
+        )
+        out: dict[int, dict] = {}
+        for r in cur.fetchall():
+            row = out.setdefault(
+                r["iteration"],
+                {"iteration": r["iteration"], "proposed": 0, "filtered_out": 0,
+                 "vetoed": 0, "scored": 0, "error": 0},
+            )
+            if r["status"] in row:
+                row[r["status"]] = r["n"]
+            row["vetoed"] += r["vetoed"] or 0
+        return list(out.values())
+
+    def recent_events(self, limit: int = 40) -> list[dict]:
+        """Newest candidate rows for the dashboard feed (all statuses)."""
+        cur = self._conn.execute(
+            """SELECT iteration, formula, status, filter_reasons, hypothesis,
+                      converged, e_above_hull, band_gap_ev, is_novel, error,
+                      created_at
+               FROM candidates ORDER BY id DESC LIMIT ?""",
+            (limit,),
+        )
+        return [dict(r) for r in cur.fetchall()]
 
     def close(self) -> None:
         self._conn.close()

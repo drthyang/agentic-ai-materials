@@ -39,12 +39,37 @@ class CampaignMetrics:
         }
 
 
-def compute_metrics(name: str, db: CandidateDB, cfg: MissionConfig) -> CampaignMetrics:
-    m = CampaignMetrics(name=name)
+def row_flags(row: dict, cfg: MissionConfig) -> dict:
+    """Classify one scored row against the mission's hit definition.
+
+    Returns {on_target, near_stable, hit, rediscovery, gap_distance}. The
+    single source of the hit rule — compute_metrics and the dashboard must
+    agree by construction.
+    """
     lo, hi = cfg.target.band_gap_ev
     ideal = cfg.target.band_gap_ideal_ev
     hull_max = cfg.target.e_above_hull_max_ev_per_atom
     holdout = {Composition(f).reduced_formula for f in cfg.evaluation.holdout_formulas}
+
+    flags = {"on_target": False, "near_stable": False, "hit": False,
+             "rediscovery": False, "gap_distance": None}
+    if row["status"] != "scored" or not row["converged"]:
+        return flags
+    gap = row["band_gap_ev"]
+    hull = row["e_above_hull"]
+    if gap is not None:
+        flags["gap_distance"] = abs(gap - ideal)
+    flags["on_target"] = gap is not None and lo <= gap <= hi
+    flags["near_stable"] = hull is not None and hull <= hull_max
+    not_known = row["is_novel"] != 0  # 1 or NULL(unknown) both count
+    flags["hit"] = flags["on_target"] and flags["near_stable"] and not_known
+    reduced = Composition(row["formula"]).reduced_formula
+    flags["rediscovery"] = reduced in holdout and flags["on_target"]
+    return flags
+
+
+def compute_metrics(name: str, db: CandidateDB, cfg: MissionConfig) -> CampaignMetrics:
+    m = CampaignMetrics(name=name)
 
     cur = db._conn.execute("SELECT * FROM candidates")
     rows = [dict(r) for r in cur.fetchall()]
@@ -63,20 +88,13 @@ def compute_metrics(name: str, db: CandidateDB, cfg: MissionConfig) -> CampaignM
         if r["status"] != "scored":
             continue
         m.scored += 1
-        if not r["converged"]:
-            continue
-        gap = r["band_gap_ev"]
-        hull = r["e_above_hull"]
-        if gap is not None:
-            gap_distances.append(abs(gap - ideal))
-        on_target = gap is not None and lo <= gap <= hi
-        near_stable = hull is not None and hull <= hull_max
-        not_known = r["is_novel"] != 0  # 1 or NULL(unknown) both count
-        if on_target and near_stable and not_known:
+        flags = row_flags(r, cfg)
+        if flags["gap_distance"] is not None:
+            gap_distances.append(flags["gap_distance"])
+        if flags["hit"]:
             m.hits += 1
             m.hit_formulas.append(r["formula"])
-        reduced = Composition(r["formula"]).reduced_formula
-        if reduced in holdout and on_target:
+        if flags["rediscovery"]:
             m.rediscoveries.append(r["formula"])
 
     total_relax = m.scored + m.errors

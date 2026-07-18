@@ -279,25 +279,133 @@ def test_literature_registered_as_agent_tool(cfg):
 # dashboard
 # --------------------------------------------------------------------------
 
-def test_dashboard_renders_with_data(cfg):
+def _seed_campaign(cfg):
+    """One of each: hit, chemistry-filtered, critic-vetoed, error."""
     db = CandidateDB(cfg.paths.db)
     db.add(CandidateRow(iteration=1, formula="AgAlSe2", status="scored",
                         converged=True, formation_energy_per_atom=-0.5,
                         e_above_hull=0.02, band_gap_ev=1.38, is_novel=True,
                         hypothesis="test hypothesis"))
+    db.add(CandidateRow(iteration=1, formula="PbSe", status="filtered_out",
+                        filter_reasons=["excluded element Pb"]))
+    db.add(CandidateRow(iteration=1, formula="Cu3SbS4", status="filtered_out",
+                        filter_reasons=["critic: likely known famatinite"]))
+    db.add(CandidateRow(iteration=1, formula="AgGaTe2", status="error",
+                        error="relaxation exceeded max steps"))
     db.close()
     LabNotebook(cfg.paths.notebook).write("hypothesis", 1, "try silver")
 
-    from athanor.dashboard import render_html
 
-    page = render_html(cfg)
-    assert "AgAlSe2" in page
-    assert "data:image/png;base64," in page  # scatter rendered
-    assert "try silver" in page
+def test_snapshot_totals_flags_and_feed(cfg):
+    _seed_campaign(cfg)
+    from athanor.dashboard import campaign_snapshot
+
+    snap = campaign_snapshot(cfg)
+    t = snap["totals"]
+    assert (t["proposed"], t["scored"], t["errors"]) == (4, 1, 1)
+    assert t["filtered_out"] == 2 and t["vetoed"] == 1
+    assert t["hits"] == 1 and t["relaxations_used"] == 2
+
+    hit = next(c for c in snap["candidates"] if c["formula"] == "AgAlSe2")
+    assert hit["flags"]["hit"] is True and hit["flags"]["rediscovery"] is False
+
+    kinds = {e["kind"] for e in snap["feed"]}
+    assert {"hit", "veto", "filtered", "error", "notebook"} <= kinds
+    veto = next(e for e in snap["feed"] if e["kind"] == "veto")
+    assert veto["formula"] == "Cu3SbS4" and "famatinite" in veto["text"]
+
+    assert snap["notebook"][0]["type"] == "hypothesis"
+    assert snap["notebook"][0]["text"] == "try silver"
+    json.dumps(snap)  # the whole snapshot must be JSON-serializable
 
 
-def test_dashboard_renders_empty_campaign(cfg):
-    from athanor.dashboard import render_html
+def test_snapshot_rediscovery_flag(cfg):
+    cfg.evaluation.holdout_formulas = ["CuGaSe2"]
+    db = CandidateDB(cfg.paths.db)
+    db.add(CandidateRow(iteration=1, formula="CuGaSe2", status="scored",
+                        converged=True, e_above_hull=0.01, band_gap_ev=1.42,
+                        is_novel=True))
+    db.close()
+    from athanor.dashboard import campaign_snapshot
 
-    page = render_html(cfg)  # no db, no notebook on disk
-    assert "no data yet" in page
+    snap = campaign_snapshot(cfg)
+    assert snap["totals"]["rediscoveries"] == 1
+    assert snap["candidates"][0]["flags"]["rediscovery"] is True
+
+
+def test_snapshot_repairs_legacy_blob_floats(cfg):
+    """Old DBs hold numpy float32 values stored as raw 4-byte BLOBs."""
+    import struct
+
+    db = CandidateDB(cfg.paths.db)
+    db.add(CandidateRow(iteration=1, formula="GaCuSe2", status="scored",
+                        converged=True, e_above_hull=0.01, band_gap_ev=1.2,
+                        is_novel=True))
+    db._conn.execute("UPDATE candidates SET formation_energy_per_atom = ?",
+                     (struct.pack("<f", -0.75),))
+    db._conn.commit()
+    db.close()
+    from athanor.dashboard import campaign_snapshot
+
+    snap = campaign_snapshot(cfg)
+    e = snap["candidates"][0]["formation_energy_per_atom"]
+    assert abs(e - (-0.75)) < 1e-6
+    json.dumps(snap)
+
+
+def test_db_add_coerces_numpy_scalars(cfg):
+    np = pytest.importorskip("numpy")
+    db = CandidateDB(cfg.paths.db)
+    db.add(CandidateRow(iteration=1, formula="InP", status="scored",
+                        converged=True,
+                        formation_energy_per_atom=np.float32(-0.5),
+                        e_above_hull=np.float64(0.02),
+                        band_gap_ev=np.float32(1.3), is_novel=True))
+    row = db.all_scored()[0]
+    db.close()
+    assert isinstance(row["formation_energy_per_atom"], float)
+    assert isinstance(row["band_gap_ev"], float)
+
+
+def test_snapshot_empty_campaign(cfg):
+    from athanor.dashboard import campaign_snapshot
+
+    snap = campaign_snapshot(cfg)  # no db, no notebook on disk
+    assert snap["totals"]["iterations_done"] == 0
+    assert snap["candidates"] == [] and snap["feed"] == []
+    assert snap["meta"]["running"] is False
+    json.dumps(snap)
+
+
+def test_notebook_structured_entries(cfg):
+    nb = LabNotebook(cfg.paths.notebook)
+    nb.write("hypothesis", 1, "first idea")
+    nb.write("reflection", 2, "it worked")
+    entries = nb.entries()
+    assert [e["type"] for e in entries] == ["hypothesis", "reflection"]
+    assert entries[1]["iteration"] == 2 and entries[1]["text"] == "it worked"
+    assert nb.entries(last_n=1)[0]["type"] == "reflection"
+
+
+def test_benchmark_snapshot_parses_markdown(tmp_path):
+    from athanor.dashboard import benchmark_snapshot
+
+    (tmp_path / "benchmark.md").write_text(
+        "# Benchmark: pv-absorber-v1\n\nbudget: 5 x 20\n\n"
+        "| strategy | hits |\n|---|---|\n| random | 1 |\n| agent | 4 |\n\n"
+        "hit = converged + on-target\n")
+    b = benchmark_snapshot(tmp_path)
+    assert b["available"] and b["title"] == "pv-absorber-v1"
+    assert b["rows"][1] == {"strategy": "agent", "hits": "4"}
+    assert b["has_plot"] is False
+    assert benchmark_snapshot(tmp_path / "missing") == {"available": False}
+
+
+def test_web_shell_ships_with_package():
+    from athanor.dashboard import WEB_DIR
+
+    index = (WEB_DIR / "index.html").read_text()
+    for mount in ("mission-card", "pipeline", "map", "feed", "top-body"):
+        assert f'id="{mount}"' in index
+    for asset in ("app.css", "app.js", "ibm-plex-sans-var.woff2"):
+        assert (WEB_DIR / asset).exists()
