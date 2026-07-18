@@ -294,6 +294,8 @@ class BayesOptBaseline(_BaseRunner):
         }
 
     def rank_candidates(self, cands: list) -> list:
+        if not cands:  # dedup/filters can empty a batch late in a campaign
+            return cands
         X, y = [], []
         for r in self.db.all_scored():
             u = self.utility(r["band_gap_ev"], r["e_above_hull"])
@@ -303,8 +305,16 @@ class BayesOptBaseline(_BaseRunner):
         if len(y) < self.min_train:
             self.rng.shuffle(cands)
             return cands
-        gp = _GP()
-        gp.fit(X, y)
-        ei = gp.expected_improvement([featurize_composition(c.formula) for c in cands])
-        order = sorted(range(len(cands)), key=lambda i: -ei[i])
-        return [cands[i] for i in order]
+        try:
+            gp = _GP()
+            gp.fit(X, y)
+            ei = gp.expected_improvement(
+                [featurize_composition(c.formula) for c in cands])
+            order = sorted(range(len(cands)), key=lambda i: -ei[i])
+            return [cands[i] for i in order]
+        except Exception as exc:
+            # Fail open, like the critic: a flaky ranker may cost efficiency,
+            # never a campaign.
+            log.warning("[bayesopt] EI ranking failed (%s); shuffling", exc)
+            self.rng.shuffle(cands)
+            return cands

@@ -83,6 +83,22 @@ def test_bayesopt_baseline_respects_budget_and_is_deterministic(
     assert all(r["hypothesis"] == "baseline:bayesopt" for r in rows)
 
 
+def test_bayesopt_rank_survives_empty_pool_and_gp_failure(cfg, tmp_path):
+    """Regression: dedup can empty a late batch; EI on 0 candidates crashed."""
+    from athanor.baselines import BayesOptBaseline
+
+    db = CandidateDB(tmp_path / "e.db")
+    for i, f in enumerate(["CuGaSe2", "AgGaSe2", "CuInS2", "CuGaS2",
+                           "AgAlSe2", "ZnGeAs2"]):
+        db.add(_scored_row(1, f, 1.0 + i / 10, 0.01))
+    bo = BayesOptBaseline(cfg, db, seed=0)
+    assert bo.rank_candidates([]) == []  # enough training data, empty pool
+
+    class _Cand:
+        formula = "not a formula ///"  # featurization must not kill the run
+    assert len(bo.rank_candidates([_Cand()])) == 1
+
+
 def test_bayesopt_gp_ranks_known_good_region_first():
     import numpy as np
 
