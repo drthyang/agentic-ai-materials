@@ -5,7 +5,7 @@
 # dominate current research. This mission hunts stable compositions with
 # visible gaps under a strict heavy-metal veto.
 #
-# Use: cp config/missions/qd-emitter.yaml config/mission.yaml && matdiscover run
+# Use: cp config/missions/qd-emitter.yaml config/mission.yaml && athanor run
 
 mission:
   name: qd-emitter-v1

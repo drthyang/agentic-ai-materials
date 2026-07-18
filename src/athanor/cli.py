@@ -1,7 +1,7 @@
 """Command-line entry point.
 
-    matdiscover check                    # verify env, keys, model availability
-    matdiscover run --iterations 3       # run a discovery campaign
+    athanor check                    # verify env, keys, model availability
+    athanor run --iterations 3       # run a discovery campaign
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ import sys
 
 
 def cmd_check(_args: argparse.Namespace) -> int:
-    from matdiscover.config import load_mission
+    from athanor.config import load_mission
 
     cfg = load_mission("config/mission.yaml")
     print(f"mission: {cfg.mission.name}")
@@ -45,9 +45,9 @@ def cmd_check(_args: argparse.Namespace) -> int:
 def cmd_run(args: argparse.Namespace) -> int:
     import logging
 
-    from matdiscover.agent.loop import run_campaign
-    from matdiscover.config import load_mission
-    from matdiscover.llm import make_backend
+    from athanor.agent.loop import run_campaign
+    from athanor.config import load_mission
+    from athanor.llm import make_backend
 
     logging.basicConfig(
         level=logging.DEBUG if args.verbose else logging.INFO,
@@ -71,8 +71,8 @@ def cmd_run(args: argparse.Namespace) -> int:
 def cmd_benchmark(args: argparse.Namespace) -> int:
     import logging
 
-    from matdiscover.benchmark import run_benchmark
-    from matdiscover.config import load_mission
+    from athanor.benchmark import run_benchmark
+    from athanor.config import load_mission
 
     logging.basicConfig(
         level=logging.DEBUG if args.verbose else logging.INFO,
@@ -89,7 +89,7 @@ def cmd_benchmark(args: argparse.Namespace) -> int:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(prog="matdiscover")
+    parser = argparse.ArgumentParser(prog="athanor")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("check", help="verify environment and configuration")
 
@@ -131,8 +131,8 @@ def main() -> None:
     if args.command == "dashboard":
         from pathlib import Path
 
-        from matdiscover.config import load_mission
-        from matdiscover.dashboard import serve
+        from athanor.config import load_mission
+        from athanor.dashboard import serve
 
         cfg = load_mission(args.mission)
         if args.latest:

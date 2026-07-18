@@ -16,10 +16,10 @@ import os
 
 from pymatgen.core import Lattice, Structure
 
-from matdiscover.config import load_mission
-from matdiscover.tools.candidates import substitute_prototype
-from matdiscover.tools.filters import filter_candidates
-from matdiscover.tools.scoring import relax_and_score
+from athanor.config import load_mission
+from athanor.tools.candidates import substitute_prototype
+from athanor.tools.filters import filter_candidates
+from athanor.tools.scoring import relax_and_score
 
 
 def chalcopyrite_prototype() -> Structure:
@@ -73,7 +73,7 @@ def main() -> None:
 
     # 3. Novelty check (needs MP key)
     if has_mp_key:
-        from matdiscover.tools.mp_search import is_novel
+        from athanor.tools.mp_search import is_novel
         for c in passed:
             c_novel = is_novel(c.formula)
             print(f"  {c.formula:16s} novel vs MP: {c_novel}")

@@ -12,7 +12,7 @@ import smact
 from smact.screening import smact_validity
 from pymatgen.core import Composition
 
-from matdiscover.config import MissionConfig
+from athanor.config import MissionConfig
 
 
 @dataclass

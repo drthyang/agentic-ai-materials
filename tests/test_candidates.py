@@ -1,8 +1,8 @@
 import pytest
 from pymatgen.core import Lattice, Structure
 
-from matdiscover.config import load_mission
-from matdiscover.tools.candidates import substitute_prototype
+from athanor.config import load_mission
+from athanor.tools.candidates import substitute_prototype
 
 
 @pytest.fixture

@@ -32,7 +32,7 @@ def search_literature(query: str, rows: int = 5) -> list[dict] | dict:
             _API,
             params={"query": query, "rows": rows,
                     "select": "title,DOI,issued,container-title"},
-            headers={"User-Agent": "matdiscover/0.1 (materials discovery research)"},
+            headers={"User-Agent": "athanor/0.1 (materials discovery research)"},
             timeout=20.0,
         )
         resp.raise_for_status()

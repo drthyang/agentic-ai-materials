@@ -17,15 +17,15 @@ from dataclasses import dataclass, field
 
 from pymatgen.core import Structure
 
-from matdiscover.config import MissionConfig
-from matdiscover.db import CandidateDB, CandidateRow
-from matdiscover.llm.base import ToolSpec
-from matdiscover.notebook import LabNotebook
-from matdiscover.prototypes import PROTOTYPES, get_prototype
-from matdiscover.agent.registry import ToolRegistry
-from matdiscover.tools.candidates import substitute_prototype
-from matdiscover.tools.filters import filter_candidates
-from matdiscover.tools.scoring import relax_and_score
+from athanor.config import MissionConfig
+from athanor.db import CandidateDB, CandidateRow
+from athanor.llm.base import ToolSpec
+from athanor.notebook import LabNotebook
+from athanor.prototypes import PROTOTYPES, get_prototype
+from athanor.agent.registry import ToolRegistry
+from athanor.tools.candidates import substitute_prototype
+from athanor.tools.filters import filter_candidates
+from athanor.tools.scoring import relax_and_score
 
 
 @dataclass
@@ -45,7 +45,7 @@ class CampaignContext:
     iteration: int = 0
     relaxations_used: int = 0
     structures: dict[str, Proposed] = field(default_factory=dict)
-    critic: object | None = None  # matdiscover.agent.critic.Critic when enabled
+    critic: object | None = None  # athanor.agent.critic.Critic when enabled
 
     def start_iteration(self, i: int) -> None:
         self.iteration = i
@@ -121,7 +121,7 @@ def build_registry(ctx: CampaignContext) -> ToolRegistry:
             return {"error": "MP_API_KEY not set; database search unavailable"}
         from pymatgen.core import Composition
 
-        from matdiscover.tools.mp_search import search_known_materials as _search
+        from athanor.tools.mp_search import search_known_materials as _search
 
         # rediscovery hold-out: masked materials must not leak via search
         masked = {Composition(f).reduced_formula
@@ -187,7 +187,7 @@ def build_registry(ctx: CampaignContext) -> ToolRegistry:
                 continue
             novel = None
             if has_mp_key:
-                from matdiscover.tools.mp_search import is_novel
+                from athanor.tools.mp_search import is_novel
 
                 novel = is_novel(
                     cand.formula,
@@ -357,7 +357,7 @@ def build_registry(ctx: CampaignContext) -> ToolRegistry:
 
     # -- search_literature ----------------------------------------------------
     def search_literature(query: str, rows: int = 5) -> dict:
-        from matdiscover.tools.literature import search_literature as _lit
+        from athanor.tools.literature import search_literature as _lit
 
         results = _lit(query, rows=rows)
         if isinstance(results, dict):  # error dict

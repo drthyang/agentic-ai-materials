@@ -30,7 +30,7 @@ notebook → hypothesis → propose family → filters → critic → CHGNet/hul
 
 | role | what it is | file(s) |
 |---|---|---|
-| **Proposer** | qwen3:32b via Ollama (local). Hypothesizes, decides which tools to call | `src/matdiscover/llm/`, `agent/loop.py` |
+| **Proposer** | qwen3:32b via Ollama (local). Hypothesizes, decides which tools to call | `src/athanor/llm/`, `agent/loop.py` |
 | **Critic** | gemma4:26b — different model family on purpose. Reviews each evaluation batch *before* compute; vetoes are free | `agent/critic.py` |
 | **Tools** | the agent's only hands: search MP, search literature, propose, evaluate, notebook I/O | `agent/tools.py` (schemas) over `tools/` (implementations) |
 | **Physics** | CHGNet relaxation → formation energy → energy above MP convex hull; MEGNet (HSE fidelity) band gap | `tools/scoring.py` |
@@ -117,11 +117,11 @@ chemistry it found is externally corroborated.
 ## 7. Commands
 
 ```bash
-uv run matdiscover check                    # environment status
-uv run matdiscover run --iterations 3      # one agent campaign
-uv run matdiscover dashboard               # watch live (localhost:8517); --latest for benchmarks
-uv run matdiscover benchmark --iterations 5 --seed N   # full comparison (~2h with agent)
-uv run matdiscover benchmark --skip-agent  # baselines only (~10 min)
+uv run athanor check                    # environment status
+uv run athanor run --iterations 3      # one agent campaign
+uv run athanor dashboard               # watch live (localhost:8517); --latest for benchmarks
+uv run athanor benchmark --iterations 5 --seed N   # full comparison (~2h with agent)
+uv run athanor benchmark --skip-agent  # baselines only (~10 min)
 uv run pytest                              # 59 hermetic tests (no GPU/network)
 ```
 
@@ -129,7 +129,7 @@ uv run pytest                              # 59 hermetic tests (no GPU/network)
 
 ```
 config/           mission.yaml (active) + missions/ (QD emitter, TCO)
-src/matdiscover/  tools/ (physics+filters+search) · agent/ (loop, critic,
+src/athanor/  tools/ (physics+filters+search) · agent/ (loop, critic,
                   prompts, tool schemas) · llm/ (Ollama/Anthropic backends)
                   baselines.py · metrics.py · benchmark.py · dashboard.py
 results/          committed analyses of every experiment (start here)

@@ -13,7 +13,7 @@ from itertools import product
 
 from pymatgen.core import Structure
 
-from matdiscover.config import MissionConfig
+from athanor.config import MissionConfig
 
 
 @dataclass

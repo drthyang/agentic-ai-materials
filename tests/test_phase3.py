@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import pytest
 
-from matdiscover.baselines import RandomBaseline, SimilarityBaseline, element_similarity
-from matdiscover.config import load_mission
-from matdiscover.db import CandidateDB, CandidateRow
-from matdiscover.metrics import comparison_table, compute_metrics
-from matdiscover.tools.scoring import ScoreResult
+from athanor.baselines import RandomBaseline, SimilarityBaseline, element_similarity
+from athanor.config import load_mission
+from athanor.db import CandidateDB, CandidateRow
+from athanor.metrics import comparison_table, compute_metrics
+from athanor.tools.scoring import ScoreResult
 
 
 @pytest.fixture
@@ -33,7 +33,7 @@ def fake_scoring(monkeypatch):
                            e_above_hull=0.01, band_gap_ev=gap,
                            volume_change_pct=0.0)
 
-    monkeypatch.setattr("matdiscover.baselines.relax_and_score", fake)
+    monkeypatch.setattr("athanor.baselines.relax_and_score", fake)
     return fake
 
 
@@ -119,7 +119,7 @@ def test_comparison_table_renders(cfg, tmp_path):
 def test_benchmark_lock_blocks_concurrent_run(tmp_path, monkeypatch):
     import os
 
-    import matdiscover.benchmark as bm
+    import athanor.benchmark as bm
 
     monkeypatch.setattr(bm, "_LOCK", tmp_path / ".lock")
     (tmp_path / ".lock").write_text(str(os.getpid()))  # "another" live process
@@ -129,7 +129,7 @@ def test_benchmark_lock_blocks_concurrent_run(tmp_path, monkeypatch):
 
 
 def test_benchmark_lock_reclaims_stale_and_cleans_up(tmp_path, monkeypatch):
-    import matdiscover.benchmark as bm
+    import athanor.benchmark as bm
 
     lock = tmp_path / ".lock"
     monkeypatch.setattr(bm, "_LOCK", lock)
@@ -144,20 +144,20 @@ def test_benchmark_lock_reclaims_stale_and_cleans_up(tmp_path, monkeypatch):
 # --------------------------------------------------------------------------
 
 def test_is_novel_holdout_short_circuits_without_network():
-    from matdiscover.tools.mp_search import is_novel
+    from athanor.tools.mp_search import is_novel
 
     # holdout member -> treated as novel, no MP call attempted (no key needed)
     assert is_novel("CuGaSe2", holdout=frozenset({"GaCuSe2"})) is True
 
 
 def test_agent_search_masks_holdout(cfg, tmp_path, monkeypatch):
-    from matdiscover.agent.tools import CampaignContext, build_registry
-    from matdiscover.llm.base import ToolCall
-    from matdiscover.notebook import LabNotebook
-    import matdiscover.tools.mp_search as mp
+    from athanor.agent.tools import CampaignContext, build_registry
+    from athanor.llm.base import ToolCall
+    from athanor.notebook import LabNotebook
+    import athanor.tools.mp_search as mp
 
     monkeypatch.setenv("MP_API_KEY", "fake-key-for-test")
-    from matdiscover.tools.mp_search import KnownMaterial
+    from athanor.tools.mp_search import KnownMaterial
 
     def fake_search(q, use_cache=True):
         return [KnownMaterial("mp-1", "CuGaSe2", 1.2, 0.0, True),

@@ -6,7 +6,7 @@ with the workflow spelled out. Claude tolerates this fine; Qwen needs it.
 
 from __future__ import annotations
 
-from matdiscover.config import MissionConfig
+from athanor.config import MissionConfig
 
 SYSTEM_PROMPT = """\
 You are a computational materials scientist running a discovery campaign. You

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from matdiscover.config import load_mission
+from athanor.config import load_mission
 
 MISSIONS = ["config/mission.yaml", *sorted(Path("config/missions").glob("*.yaml"))]
 

@@ -1,5 +1,5 @@
-from matdiscover.config import load_mission
-from matdiscover.tools.filters import check_composition, filter_candidates
+from athanor.config import load_mission
+from athanor.tools.filters import check_composition, filter_candidates
 
 
 def cfg():

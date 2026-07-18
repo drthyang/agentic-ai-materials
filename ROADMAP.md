@@ -25,7 +25,7 @@ principles carried forward:
   discovery improve with model capability? (The capability-vs-outcome curve
   is the most interesting writeup angle.)
 - **CdCuSe2 dossier** — literature deep-dive + DFT validation export
-  (`matdiscover export`: VASP/Quantum ESPRESSO inputs for top candidates).
+  (`athanor export`: VASP/Quantum ESPRESSO inputs for top candidates).
 - **Mission gallery** *(started, see config/missions/)* — display-industry
   targets that work with today's surrogates:
   - `qd-emitter.yaml` — heavy-metal-free quantum-dot emitter candidates

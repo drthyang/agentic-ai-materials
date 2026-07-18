@@ -11,8 +11,8 @@ from dataclasses import dataclass, field
 
 from pymatgen.core import Composition
 
-from matdiscover.config import MissionConfig
-from matdiscover.db import CandidateDB
+from athanor.config import MissionConfig
+from athanor.db import CandidateDB
 
 
 @dataclass

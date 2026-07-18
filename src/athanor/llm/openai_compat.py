@@ -15,9 +15,9 @@ import uuid
 
 import httpx
 
-from matdiscover.llm.base import LLMBackend, LLMResponse, ToolCall, ToolSpec
+from athanor.llm.base import LLMBackend, LLMResponse, ToolCall, ToolSpec
 
-log = logging.getLogger("matdiscover.llm")
+log = logging.getLogger("athanor.llm")
 
 
 class OpenAICompatBackend(LLMBackend):

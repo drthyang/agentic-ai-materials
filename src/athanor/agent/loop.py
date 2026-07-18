@@ -13,15 +13,15 @@ import logging
 from datetime import datetime, timezone
 from pathlib import Path
 
-from matdiscover.agent.prompts import FINAL_REPORT_PROMPT, SYSTEM_PROMPT, iteration_kickoff
-from matdiscover.agent.registry import ToolRegistry
-from matdiscover.agent.tools import CampaignContext, build_registry
-from matdiscover.config import MissionConfig
-from matdiscover.db import CandidateDB
-from matdiscover.llm.base import LLMBackend
-from matdiscover.notebook import LabNotebook
+from athanor.agent.prompts import FINAL_REPORT_PROMPT, SYSTEM_PROMPT, iteration_kickoff
+from athanor.agent.registry import ToolRegistry
+from athanor.agent.tools import CampaignContext, build_registry
+from athanor.config import MissionConfig
+from athanor.db import CandidateDB
+from athanor.llm.base import LLMBackend
+from athanor.notebook import LabNotebook
 
-log = logging.getLogger("matdiscover.loop")
+log = logging.getLogger("athanor.loop")
 
 
 def run_campaign(
@@ -37,11 +37,11 @@ def run_campaign(
         notebook=LabNotebook(cfg.paths.notebook),
     )
     if cfg.critic.enabled:
-        from matdiscover.agent.critic import Critic
+        from athanor.agent.critic import Critic
 
         critic_backend = backend
         if cfg.critic.backend or cfg.critic.model:
-            from matdiscover.llm import make_backend
+            from athanor.llm import make_backend
 
             llm = cfg.llm.model_copy()
             llm.backend = cfg.critic.backend or llm.backend

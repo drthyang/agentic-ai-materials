@@ -1,4 +1,4 @@
-# matdiscover — agent onboarding
+# Athanor — agent onboarding
 
 Closed-loop "AI materials scientist." Read PLAN.md for the full build plan.
 Status: Phases 0–4 complete (tool layer; agent loop with pluggable LLM
@@ -11,13 +11,13 @@ magnetism/active-learning, then new-surrogate work).
 ## Commands
 
 ```bash
-uv run pytest                              # 39 tests, all should pass
-uv run matdiscover check                   # env/key status
-uv run matdiscover run --iterations 1      # discovery campaign (needs Ollama up)
-uv run matdiscover benchmark --skip-agent  # baselines only (no LLM needed)
-uv run matdiscover benchmark               # full agent-vs-baselines comparison
+uv run pytest                              # 60 tests, all should pass
+uv run athanor check                   # env/key status
+uv run athanor run --iterations 1      # discovery campaign (needs Ollama up)
+uv run athanor benchmark --skip-agent  # baselines only (no LLM needed)
+uv run athanor benchmark               # full agent-vs-baselines comparison
 uv run python scripts/smoke_pipeline.py    # end-to-end pipeline, no agent
-uv run matdiscover dashboard               # live view at localhost:8517
+uv run athanor dashboard               # live view at localhost:8517
 ```
 
 ## Phase 4 (critic, literature, dashboard)
@@ -36,12 +36,12 @@ uv run matdiscover dashboard               # live view at localhost:8517
 
 ## Architecture
 
-- `src/matdiscover/tools/` — deterministic tools the agent will call:
+- `src/athanor/tools/` — deterministic tools the agent will call:
   `candidates.py` (prototype substitution), `filters.py` (SMACT + mission
   chemistry, run BEFORE any compute), `mp_search.py` (Materials Project +
   novelty, disk-cached in data/mp_cache/), `scoring.py` (CHGNet relax →
   formation energy → hull; MEGNet band gap)
-- `src/matdiscover/db.py` — SQLite record of every candidate; `notebook.py` —
+- `src/athanor/db.py` — SQLite record of every candidate; `notebook.py` —
   append-only markdown lab notebook (the agent's cross-iteration memory)
 - `config/mission.yaml` — the mission (target windows, element palette,
   compute budgets). Change missions here, never in code.

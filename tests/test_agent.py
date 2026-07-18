@@ -10,14 +10,14 @@ import json
 
 import pytest
 
-from matdiscover.agent.loop import run_campaign
-from matdiscover.agent.registry import ToolRegistry
-from matdiscover.agent.tools import CampaignContext, build_registry
-from matdiscover.config import load_mission
-from matdiscover.db import CandidateDB
-from matdiscover.llm.base import LLMBackend, LLMResponse, ToolCall, ToolSpec
-from matdiscover.notebook import LabNotebook
-from matdiscover.tools.scoring import ScoreResult
+from athanor.agent.loop import run_campaign
+from athanor.agent.registry import ToolRegistry
+from athanor.agent.tools import CampaignContext, build_registry
+from athanor.config import load_mission
+from athanor.db import CandidateDB
+from athanor.llm.base import LLMBackend, LLMResponse, ToolCall, ToolSpec
+from athanor.notebook import LabNotebook
+from athanor.tools.scoring import ScoreResult
 
 
 # --------------------------------------------------------------------------
@@ -53,7 +53,7 @@ def registry(ctx, monkeypatch):
             e_above_hull=None, band_gap_ev=1.4, volume_change_pct=-2.0,
         )
 
-    monkeypatch.setattr("matdiscover.agent.tools.relax_and_score", fake_score)
+    monkeypatch.setattr("athanor.agent.tools.relax_and_score", fake_score)
     return build_registry(ctx)
 
 
@@ -182,7 +182,7 @@ def test_full_iteration_with_scripted_backend(cfg, monkeypatch):
             band_gap_ev=1.5, volume_change_pct=0.0,
         )
 
-    monkeypatch.setattr("matdiscover.agent.tools.relax_and_score", fake_score)
+    monkeypatch.setattr("athanor.agent.tools.relax_and_score", fake_score)
 
     script = [
         # iteration 1
@@ -216,7 +216,7 @@ def test_tool_call_budget_terminates_runaway_turn(cfg, monkeypatch):
     def fake_score(structure, max_steps=200, with_hull=True):
         return ScoreResult(formula="X", converged=True)
 
-    monkeypatch.setattr("matdiscover.agent.tools.relax_and_score", fake_score)
+    monkeypatch.setattr("athanor.agent.tools.relax_and_score", fake_score)
     cfg.budget.max_tool_calls_per_iteration = 3
 
     # model that calls read_notebook forever and never yields text
@@ -235,7 +235,7 @@ def test_tool_call_budget_terminates_runaway_turn(cfg, monkeypatch):
 # --------------------------------------------------------------------------
 
 def test_openai_wire_format_roundtrip():
-    from matdiscover.llm.openai_compat import OpenAICompatBackend
+    from athanor.llm.openai_compat import OpenAICompatBackend
 
     wire = OpenAICompatBackend._to_wire(
         {"role": "assistant", "content": "thinking...",

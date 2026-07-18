@@ -6,13 +6,13 @@ import json
 
 import pytest
 
-from matdiscover.agent.critic import Critic
-from matdiscover.agent.tools import CampaignContext, build_registry
-from matdiscover.config import load_mission
-from matdiscover.db import CandidateDB, CandidateRow
-from matdiscover.llm.base import LLMBackend, LLMResponse, ToolCall
-from matdiscover.notebook import LabNotebook
-from matdiscover.tools.scoring import ScoreResult
+from athanor.agent.critic import Critic
+from athanor.agent.tools import CampaignContext, build_registry
+from athanor.config import load_mission
+from athanor.db import CandidateDB, CandidateRow
+from athanor.llm.base import LLMBackend, LLMResponse, ToolCall
+from athanor.notebook import LabNotebook
+from athanor.tools.scoring import ScoreResult
 
 
 @pytest.fixture
@@ -101,7 +101,7 @@ def test_critic_veto_costs_no_budget(cfg, monkeypatch):
                            converged=True, formation_energy_per_atom=-0.5,
                            e_above_hull=0.01, band_gap_ev=1.4)
 
-    monkeypatch.setattr("matdiscover.agent.tools.relax_and_score", fake_score)
+    monkeypatch.setattr("athanor.agent.tools.relax_and_score", fake_score)
     ctx = CampaignContext(cfg=cfg, db=CandidateDB(cfg.paths.db),
                           notebook=LabNotebook(cfg.paths.notebook))
     reg = build_registry(ctx)
@@ -141,7 +141,7 @@ def test_no_critic_means_no_gate(cfg, monkeypatch):
                            converged=True, band_gap_ev=1.4, e_above_hull=0.01,
                            formation_energy_per_atom=-0.5)
 
-    monkeypatch.setattr("matdiscover.agent.tools.relax_and_score", fake_score)
+    monkeypatch.setattr("athanor.agent.tools.relax_and_score", fake_score)
     ctx = CampaignContext(cfg=cfg, db=CandidateDB(cfg.paths.db),
                           notebook=LabNotebook(cfg.paths.notebook))
     reg = build_registry(ctx)
@@ -162,8 +162,8 @@ def test_no_critic_means_no_gate(cfg, monkeypatch):
 def test_openai_backend_retries_timeouts(monkeypatch):
     import httpx
 
-    from matdiscover.llm import openai_compat
-    from matdiscover.llm.openai_compat import OpenAICompatBackend
+    from athanor.llm import openai_compat
+    from athanor.llm.openai_compat import OpenAICompatBackend
 
     monkeypatch.setattr(openai_compat.time, "sleep", lambda s: None)
     backend = OpenAICompatBackend(model="test")
@@ -191,8 +191,8 @@ def test_openai_backend_retries_timeouts(monkeypatch):
 def test_openai_backend_gives_up_after_retries(monkeypatch):
     import httpx
 
-    from matdiscover.llm import openai_compat
-    from matdiscover.llm.openai_compat import OpenAICompatBackend
+    from athanor.llm import openai_compat
+    from athanor.llm.openai_compat import OpenAICompatBackend
 
     monkeypatch.setattr(openai_compat.time, "sleep", lambda s: None)
     backend = OpenAICompatBackend(model="test")
@@ -207,7 +207,7 @@ def test_openai_backend_gives_up_after_retries(monkeypatch):
 
 def test_campaign_survives_dead_backend(cfg, monkeypatch, tmp_path):
     """A backend that dies mid-campaign costs iterations, not the whole run."""
-    from matdiscover.agent.loop import run_campaign
+    from athanor.agent.loop import run_campaign
 
     cfg.paths.reports = tmp_path / "reports"
     cfg.critic.enabled = False
@@ -228,7 +228,7 @@ def test_campaign_survives_dead_backend(cfg, monkeypatch, tmp_path):
 # --------------------------------------------------------------------------
 
 def test_literature_parses_and_caches(cfg, monkeypatch, tmp_path):
-    import matdiscover.tools.literature as lit
+    import athanor.tools.literature as lit
 
     monkeypatch.setattr(lit, "_CACHE_DIR", tmp_path / "lit")
     calls = {"n": 0}
@@ -258,7 +258,7 @@ def test_literature_parses_and_caches(cfg, monkeypatch, tmp_path):
 
 
 def test_literature_error_returns_dict_not_raise(cfg, monkeypatch):
-    import matdiscover.tools.literature as lit
+    import athanor.tools.literature as lit
 
     def boom(*a, **k):
         raise OSError("network down")
@@ -288,7 +288,7 @@ def test_dashboard_renders_with_data(cfg):
     db.close()
     LabNotebook(cfg.paths.notebook).write("hypothesis", 1, "try silver")
 
-    from matdiscover.dashboard import render_html
+    from athanor.dashboard import render_html
 
     page = render_html(cfg)
     assert "AgAlSe2" in page
@@ -297,7 +297,7 @@ def test_dashboard_renders_with_data(cfg):
 
 
 def test_dashboard_renders_empty_campaign(cfg):
-    from matdiscover.dashboard import render_html
+    from athanor.dashboard import render_html
 
     page = render_html(cfg)  # no db, no notebook on disk
     assert "no data yet" in page

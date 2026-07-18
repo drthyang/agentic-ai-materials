@@ -9,7 +9,7 @@
 # current surrogates cannot see (see ROADMAP.md, long-term item 2). Treat
 # hits as "transparent stable oxides worth a dopability study", not as TCOs.
 #
-# Use: cp config/missions/tco.yaml config/mission.yaml && matdiscover run
+# Use: cp config/missions/tco.yaml config/mission.yaml && athanor run
 
 mission:
   name: tco-v1

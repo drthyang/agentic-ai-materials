@@ -16,10 +16,10 @@ import logging
 import re
 from dataclasses import dataclass
 
-from matdiscover.config import MissionConfig
-from matdiscover.llm.base import LLMBackend
+from athanor.config import MissionConfig
+from athanor.llm.base import LLMBackend
 
-log = logging.getLogger("matdiscover.critic")
+log = logging.getLogger("athanor.critic")
 
 CRITIC_SYSTEM = """\
 You are a skeptical senior materials scientist reviewing computational

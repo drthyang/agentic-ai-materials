@@ -6,7 +6,7 @@ comparison experiment by flipping `llm.backend` in mission.yaml.
 
 from __future__ import annotations
 
-from matdiscover.llm.base import LLMBackend, LLMResponse, ToolCall, ToolSpec
+from athanor.llm.base import LLMBackend, LLMResponse, ToolCall, ToolSpec
 
 
 class AnthropicBackend(LLMBackend):

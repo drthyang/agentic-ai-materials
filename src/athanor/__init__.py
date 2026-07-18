@@ -1,4 +1,4 @@
-"""matdiscover: agentic AI for materials discovery."""
+"""Athanor: agentic AI for materials discovery."""
 
 import os
 from pathlib import Path

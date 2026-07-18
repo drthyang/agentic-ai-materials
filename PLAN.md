@@ -103,7 +103,7 @@ Milestone: a hand-written script chains these end-to-end for one known family
 - Implement the hypothesize→propose→screen→reflect loop with iteration caps and
   cost guardrails (max structures relaxed per iteration)
 - Persist everything: every hypothesis, candidate, score, and decision
-Milestone: `python -m matdiscover run --iterations 5` completes a campaign
+Milestone: `python -m athanor run --iterations 5` completes a campaign
 unattended and the notebook reads like coherent science.
 
 ### Phase 3 — Make it rigorous (2 days)

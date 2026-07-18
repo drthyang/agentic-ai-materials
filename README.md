@@ -1,4 +1,8 @@
-# matdiscover — Agentic AI for Materials Discovery
+# Athanor — Agentic AI for Materials Discovery
+
+> An *athanor* is the alchemists' furnace: built to sustain a slow
+> transmutation, self-feeding, running unattended. This one has a skeptic
+> inside.
 
 A closed-loop **"AI materials scientist"**: an LLM agent that states chemical
 hypotheses, proposes candidate materials, screens them with physics-grounded
@@ -32,10 +36,10 @@ uv sync --extra dev
 export MP_API_KEY=...        # free key: materialsproject.org/api (or put in .env)
 ollama pull qwen3:32b        # the default local scientist (needs ~20 GB RAM)
 
-uv run matdiscover check                   # verify environment
-uv run matdiscover run --iterations 3     # run a discovery campaign
-uv run matdiscover dashboard               # watch it live at localhost:8517
-uv run matdiscover benchmark               # agent vs random vs similarity
+uv run athanor check                   # verify environment
+uv run athanor run --iterations 3     # run a discovery campaign
+uv run athanor dashboard               # watch it live at localhost:8517
+uv run athanor benchmark               # agent vs random vs similarity
 ```
 
 ## Missions
@@ -84,12 +88,12 @@ distances; MEGNet gaps worse). Outputs are *candidates for validation*, never
 
 ## Layout
 
-- `src/matdiscover/tools/` — deterministic tool layer (filters, scoring,
+- `src/athanor/tools/` — deterministic tool layer (filters, scoring,
   MP search, literature)
-- `src/matdiscover/agent/` — registry, campaign tools, critic, prompts, loop
-- `src/matdiscover/llm/` — provider-agnostic backends (Ollama/OpenAI-compat,
+- `src/athanor/agent/` — registry, campaign tools, critic, prompts, loop
+- `src/athanor/llm/` — provider-agnostic backends (Ollama/OpenAI-compat,
   Anthropic)
-- `src/matdiscover/{baselines,metrics,benchmark,dashboard}.py` — the
+- `src/athanor/{baselines,metrics,benchmark,dashboard}.py` — the
   evaluation machinery
 - `config/` — missions; `tests/` — hermetic suite (`uv run pytest`, no
   network/GPU needed)

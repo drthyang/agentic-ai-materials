@@ -63,7 +63,7 @@ def formation_energy_per_atom(structure: Structure) -> float:
     the patched entry pipeline below (see e_above_hull), but for a quick score
     we approximate with CHGNet energies of elemental ground states, cached.
     """
-    from matdiscover.tools._references import elemental_reference_energy
+    from athanor.tools._references import elemental_reference_energy
 
     e_total = _chgnet().predict_structure(structure)["e"] * len(structure)
     comp = structure.composition
@@ -87,7 +87,7 @@ def e_above_hull(structure: Structure, use_cache: bool = True) -> float | None:
 
     from pymatgen.analysis.phase_diagram import PhaseDiagram, PDEntry
 
-    from matdiscover.tools.mp_search import _require_key
+    from athanor.tools.mp_search import _require_key
     from mp_api.client import MPRester
 
     chemsys = "-".join(sorted(el.symbol for el in structure.composition.elements))

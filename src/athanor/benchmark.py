@@ -13,12 +13,12 @@ from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 
-from matdiscover.baselines import RandomBaseline, SimilarityBaseline
-from matdiscover.config import MissionConfig
-from matdiscover.db import CandidateDB
-from matdiscover.metrics import CampaignMetrics, comparison_table, compute_metrics
+from athanor.baselines import RandomBaseline, SimilarityBaseline
+from athanor.config import MissionConfig
+from athanor.db import CandidateDB
+from athanor.metrics import CampaignMetrics, comparison_table, compute_metrics
 
-log = logging.getLogger("matdiscover.benchmark")
+log = logging.getLogger("athanor.benchmark")
 
 _LOCK = Path("data/benchmark/.lock")
 
@@ -67,7 +67,7 @@ def _run_benchmark_locked(
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S") + f"-seed{seed}"
     outdir = Path("data/benchmark") / stamp
     outdir.mkdir(parents=True, exist_ok=True)
-    # stable pointer for the dashboard: matdiscover dashboard --latest
+    # stable pointer for the dashboard: athanor dashboard --latest
     latest = Path("data/benchmark/latest")
     latest.unlink(missing_ok=True)
     latest.symlink_to(stamp)
@@ -82,8 +82,8 @@ def _run_benchmark_locked(
         db.close()
 
     if include_agent:
-        from matdiscover.agent.loop import run_campaign
-        from matdiscover.llm import make_backend
+        from athanor.agent.loop import run_campaign
+        from athanor.llm import make_backend
 
         agent_cfg = cfg.model_copy(deep=True)
         agent_cfg.paths.db = outdir / "agent.db"

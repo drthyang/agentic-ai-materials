@@ -19,7 +19,7 @@ AI4Science workshop (fast visibility). arXiv first regardless.
 ## Abstract (draft)
 
 Large-language-model agents are widely proposed as autonomous materials
-scientists, but are rarely evaluated against controls. We built a closed-loop
+scientists, but are rarely evaluated against controls. We built Athanor, a closed-loop
 discovery agent that runs entirely on consumer hardware — a local 32B-parameter
 proposer, an independent 26B critic, and physics-grounded tools (universal
 interatomic potential relaxation, convex-hull thermodynamics, surrogate band

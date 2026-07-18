@@ -20,14 +20,14 @@ from dataclasses import dataclass
 
 from pymatgen.core import Element
 
-from matdiscover.config import MissionConfig
-from matdiscover.db import CandidateDB, CandidateRow
-from matdiscover.prototypes import PROTOTYPES, get_prototype
-from matdiscover.tools.candidates import substitute_prototype
-from matdiscover.tools.filters import filter_candidates
-from matdiscover.tools.scoring import relax_and_score
+from athanor.config import MissionConfig
+from athanor.db import CandidateDB, CandidateRow
+from athanor.prototypes import PROTOTYPES, get_prototype
+from athanor.tools.candidates import substitute_prototype
+from athanor.tools.filters import filter_candidates
+from athanor.tools.scoring import relax_and_score
 
-log = logging.getLogger("matdiscover.baselines")
+log = logging.getLogger("athanor.baselines")
 
 
 @dataclass
@@ -106,7 +106,7 @@ class _BaseRunner:
                 break
             novel = None
             if self.has_mp_key:
-                from matdiscover.tools.mp_search import is_novel
+                from athanor.tools.mp_search import is_novel
 
                 novel = is_novel(cand.formula,
                                  holdout=frozenset(self.cfg.evaluation.holdout_formulas))

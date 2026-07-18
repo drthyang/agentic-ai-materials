@@ -22,7 +22,7 @@ def elemental_reference_energy(symbol: str) -> float:
         return _memory[symbol]
 
     structure = _elemental_structure(symbol)
-    from matdiscover.tools.scoring import _chgnet, relax_structure
+    from athanor.tools.scoring import _chgnet, relax_structure
 
     relaxed, _converged = relax_structure(structure, max_steps=100)
     e = float(_chgnet().predict_structure(relaxed)["e"])

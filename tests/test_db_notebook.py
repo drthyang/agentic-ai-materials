@@ -1,5 +1,5 @@
-from matdiscover.db import CandidateDB, CandidateRow
-from matdiscover.notebook import LabNotebook
+from athanor.db import CandidateDB, CandidateRow
+from athanor.notebook import LabNotebook
 
 
 def test_db_roundtrip(tmp_path):

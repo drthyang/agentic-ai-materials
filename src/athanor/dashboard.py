@@ -3,9 +3,9 @@
 A stdlib http.server renders one self-contained HTML page per request straight
 from the campaign DB + notebook (auto-refresh every 10 s): iteration stats,
 top candidates, a gap-vs-hull map with the target region, and the notebook
-stream. Run alongside `matdiscover run`:
+stream. Run alongside `athanor run`:
 
-    uv run matdiscover dashboard          # http://localhost:8517
+    uv run athanor dashboard          # http://localhost:8517
 """
 
 from __future__ import annotations
@@ -16,9 +16,9 @@ import io
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-from matdiscover.config import MissionConfig
-from matdiscover.db import CandidateDB
-from matdiscover.notebook import LabNotebook
+from athanor.config import MissionConfig
+from athanor.db import CandidateDB
+from athanor.notebook import LabNotebook
 
 
 def campaign_snapshot(cfg: MissionConfig) -> dict:
@@ -96,7 +96,7 @@ def render_html(cfg: MissionConfig) -> str:
 
     return f"""<!DOCTYPE html>
 <html><head><meta charset="utf-8"><meta http-equiv="refresh" content="10">
-<title>matdiscover — {html.escape(cfg.mission.name)}</title>
+<title>Athanor — {html.escape(cfg.mission.name)}</title>
 <style>
  body {{ font-family: -apple-system, sans-serif; margin: 2rem; color: #1a1a1a; }}
  h1 {{ font-size: 1.3rem; }} h2 {{ font-size: 1.05rem; margin-top: 1.6rem; }}
@@ -107,7 +107,7 @@ def render_html(cfg: MissionConfig) -> str:
         white-space: pre-wrap; max-height: 24rem; overflow-y: auto; }}
  .grid {{ display: flex; gap: 2.5rem; flex-wrap: wrap; }}
 </style></head><body>
-<h1>matdiscover: {html.escape(cfg.mission.name)}</h1>
+<h1>Athanor: {html.escape(cfg.mission.name)}</h1>
 <p>target: gap in [{lo}, {hi}] eV &middot; hull &le;
 {cfg.target.e_above_hull_max_ev_per_atom} eV/atom &middot;
 backend: {html.escape(cfg.llm.backend)} ({html.escape(cfg.llm.model)}) &middot;

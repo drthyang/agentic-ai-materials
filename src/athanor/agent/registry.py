@@ -10,7 +10,7 @@ import json
 from dataclasses import dataclass, field
 from typing import Callable
 
-from matdiscover.llm.base import ToolCall, ToolSpec
+from athanor.llm.base import ToolCall, ToolSpec
 
 
 @dataclass

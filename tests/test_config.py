@@ -1,4 +1,4 @@
-from matdiscover.config import load_mission
+from athanor.config import load_mission
 
 
 def test_mission_loads():
