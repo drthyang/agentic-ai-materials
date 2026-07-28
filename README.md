@@ -108,6 +108,10 @@ distances; MEGNet gaps worse). Outputs are *candidates for validation*, never
 - `config/` — missions; `tests/` — hermetic suite (`uv run pytest`, no
   network/GPU needed)
 
+The dashboard UI is specified in [WIREFRAMES.md](WIREFRAMES.md) — text
+wireframes of every page, card, and state, traced from the shipped
+`src/athanor/web/` implementation.
+
 ## Where this is going
 
 See [ROADMAP.md](ROADMAP.md) — short term: finish the benchmark matrix and
