@@ -1,0 +1,330 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 1024" width="1240" height="1024" role="img" aria-labelledby="ttl desc">
+<title id="ttl">Page 1 — Campaign, full desktop layout</title>
+<desc id="desc">The default view in four rows, read top-left to bottom-right as what we are looking for, how far we have got, how the loop is running, and what it found: mission, campaign and agent-and-critic cards; the full-width discovery-loop funnel; the composition-space map beside the live agent feed; and the top-candidates table beside the lab-notebook panel.</desc>
+<defs>
+<marker id="arw" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
+<path d="M0 0 L8 4 L0 8 Z" fill="#94897a"/>
+</marker>
+<linearGradient id="ffade" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+<stop offset="1" stop-color="#ffffff" stop-opacity="1"/>
+</linearGradient>
+</defs>
+<rect width="1240" height="1024" fill="#faf7f2"/>
+<g font-family="'IBM Plex Sans',ui-sans-serif,-apple-system,'Segoe UI',Roboto,sans-serif" dominant-baseline="middle" fill="#191714">
+
+<g fill="#ffffff" stroke="#e8e2d8">
+  <rect x="20" y="20" width="390" height="230" rx="12"/>
+  <rect x="424" y="20" width="390" height="230" rx="12"/>
+  <rect x="828" y="20" width="390" height="230" rx="12"/>
+  <rect x="20" y="264" width="1198" height="196" rx="12"/>
+  <rect x="20" y="474" width="794" height="320" rx="12"/>
+  <rect x="828" y="474" width="390" height="320" rx="12"/>
+  <rect x="20" y="808" width="794" height="196" rx="12"/>
+  <rect x="828" y="808" width="390" height="196" rx="12"/>
+</g>
+
+<g font-size="9.5" font-weight="600" letter-spacing="0.85" fill="#94897a">
+  <text x="36" y="42">MISSION</text>
+  <text x="440" y="42">CAMPAIGN</text>
+  <text x="844" y="42">AGENT &amp; CRITIC</text>
+  <text x="36" y="286">DISCOVERY LOOP — ITERATION &lt;8&gt;</text>
+  <text x="36" y="496">COMPOSITION SPACE — GAP VS STABILITY</text>
+  <text x="844" y="496">AGENT FEED</text>
+  <text x="36" y="830">TOP CANDIDATES</text>
+  <text x="844" y="830">LAB NOTEBOOK</text>
+</g>
+<g stroke="#eee7da">
+  <line x1="36" y1="56" x2="394" y2="56"/>
+  <line x1="440" y1="56" x2="798" y2="56"/>
+  <line x1="844" y1="56" x2="1202" y2="56"/>
+  <line x1="36" y1="300" x2="1202" y2="300"/>
+  <line x1="36" y1="514" x2="798" y2="514"/>
+  <line x1="844" y1="510" x2="1202" y2="510"/>
+  <line x1="36" y1="846" x2="798" y2="846"/>
+  <line x1="844" y1="846" x2="1202" y2="846"/>
+</g>
+
+<!-- ============ MISSION ============ -->
+<rect x="252" y="32" width="142" height="19" rx="5" fill="#f3eee4"/>
+<text x="323" y="41.5" font-size="8.5" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#5f594f" text-anchor="middle">config/mission.yaml</text>
+<rect x="36" y="66" width="74" height="19" rx="9.5" fill="#eaf0fe" stroke="#b9c6f4"/>
+<circle cx="47" cy="75.5" r="3" fill="#1f4fd8"/>
+<text x="55" y="75.5" font-size="9" fill="#1f4fd8">running</text>
+<text x="36" y="100" font-size="14" font-weight="700">PV absorber</text>
+<g font-size="9.5" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#5f594f">
+  <text x="36" y="120">gap 1.1–1.7 eV (ideal 1.35)</text>
+  <text x="36" y="134">hull ≤ 0.05 eV/atom · ≤ 4 elements</text>
+</g>
+<g font-size="9" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" text-anchor="middle">
+  <rect x="36" y="148" width="25" height="18" rx="4" fill="#f3eee4"/><text x="48.5" y="157">Cu</text>
+  <rect x="66" y="148" width="25" height="18" rx="4" fill="#f3eee4"/><text x="78.5" y="157">Ag</text>
+  <rect x="96" y="148" width="25" height="18" rx="4" fill="#f3eee4"/><text x="108.5" y="157">Ga</text>
+  <rect x="126" y="148" width="25" height="18" rx="4" fill="#f3eee4"/><text x="138.5" y="157">In</text>
+  <rect x="156" y="148" width="25" height="18" rx="4" fill="#f3eee4"/><text x="168.5" y="157">Se</text>
+  <rect x="186" y="148" width="20" height="18" rx="4" fill="#f3eee4"/><text x="196" y="157">S</text>
+  <rect x="211" y="148" width="25" height="18" rx="4" fill="#f3eee4"/><text x="223.5" y="157">Zn</text>
+  <rect x="241" y="148" width="25" height="18" rx="4" fill="#f3eee4"/><text x="253.5" y="157">Sn</text>
+  <rect x="276" y="148" width="25" height="18" rx="4" fill="#fdf0ea" stroke="#f2cdbb"/><text x="288.5" y="157" fill="#a03415">Pb</text>
+  <rect x="306" y="148" width="25" height="18" rx="4" fill="#fdf0ea" stroke="#f2cdbb"/><text x="318.5" y="157" fill="#a03415">Cd</text>
+  <line x1="280" y1="157" x2="297" y2="157" stroke="#a03415"/>
+  <line x1="310" y1="157" x2="327" y2="157" stroke="#a03415"/>
+</g>
+<g font-size="9.5" fill="#94897a">
+  <text x="36" y="186">Targets &amp; budgets live in mission.yaml —</text>
+  <text x="36" y="200">this view reads, never edits.</text>
+</g>
+
+<!-- ============ CAMPAIGN ============ -->
+<rect x="656" y="32" width="142" height="19" rx="5" fill="#f3eee4"/>
+<text x="727" y="41.5" font-size="8.5" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#5f594f" text-anchor="middle">last write &lt;14:06&gt; UTC</text>
+<g font-size="18" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#1f4fd8">
+  <text x="440" y="84">&lt;8&gt;<tspan fill="#191714">/</tspan>&lt;12&gt;</text>
+  <text x="630" y="84">&lt;96&gt;</text>
+  <text x="440" y="134">&lt;41&gt;</text>
+  <text x="630" y="134" fill="#3f6b25">&lt;3&gt;</text>
+</g>
+<g font-size="9" font-weight="600" letter-spacing="0.8" fill="#94897a">
+  <text x="440" y="102">ITERATIONS</text>
+  <text x="630" y="102">PROPOSED</text>
+  <text x="440" y="152">SCORED</text>
+  <text x="630" y="152">HITS · &lt;1&gt; REDISCOVERY</text>
+</g>
+<rect x="440" y="176" width="358" height="5" rx="2.5" fill="#eee7da"/>
+<rect x="440" y="176" width="147" height="5" rx="2.5" fill="#1f4fd8"/>
+<g font-size="9.5" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace">
+  <text x="440" y="198" fill="#94897a">relaxations &lt;41&gt; / &lt;100&gt;</text>
+  <text x="798" y="198" fill="#a03415" text-anchor="end">errors &lt;2&gt;</text>
+</g>
+
+<!-- ============ AGENT & CRITIC ============ -->
+<text x="844" y="74" font-size="11.5"><tspan font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#1f4fd8">&lt;qwen3:32b&gt;</tspan><tspan fill="#5f594f">  via ollama</tspan></text>
+<g font-size="9.5" fill="#5f594f">
+  <text x="844" y="94">critic &lt;gemma4:26b&gt; · fresh context</text>
+  <text x="844" y="108">per review · fails open</text>
+</g>
+<g font-size="9" text-anchor="middle">
+  <rect x="844" y="122" width="148" height="19" rx="9.5" fill="#faf3e3" stroke="#e8d9ae"/>
+  <text x="918" y="131.5" fill="#6b5310">&lt;7&gt; vetoes · 0 eV spent</text>
+  <rect x="844" y="148" width="158" height="19" rx="9.5" fill="#f3eee4"/>
+  <text x="923" y="157.5" fill="#5f594f">&lt;19&gt; filtered pre-compute</text>
+  <rect x="1010" y="148" width="106" height="19" rx="9.5" fill="#fdf0ea" stroke="#f2cdbb"/>
+  <text x="1063" y="157.5" fill="#a03415">&lt;2&gt; relax errors</text>
+</g>
+<g font-size="9.5" fill="#94897a">
+  <text x="844" y="186">Vetoes cost zero relaxation budget —</text>
+  <text x="844" y="200">recorded as filtered_out for audit.</text>
+</g>
+
+<!-- ============ DISCOVERY LOOP ============ -->
+<rect x="1012" y="277" width="190" height="19" rx="5" fill="#f3eee4"/>
+<text x="1107" y="286.5" font-size="8.5" fill="#5f594f" text-anchor="middle">fresh context · notebook is memory</text>
+<g fill="#fffdf9" stroke="#e8e2d8">
+  <rect x="36" y="314" width="180" height="84" rx="8"/>
+  <rect x="282" y="314" width="180" height="84" rx="8"/>
+  <rect x="528" y="314" width="180" height="84" rx="8"/>
+  <rect x="1020" y="314" width="180" height="84" rx="8"/>
+</g>
+<rect x="774" y="314" width="180" height="84" rx="8" fill="#eaf0fe" stroke="#b9c6f4"/>
+<g font-size="9" font-weight="600" letter-spacing="0.8" fill="#94897a">
+  <text x="50" y="332">PROPOSE</text>
+  <text x="296" y="332">FILTER</text>
+  <text x="542" y="332">CRITIC</text>
+  <text x="788" y="332" fill="#1f4fd8">EVALUATE</text>
+  <text x="1034" y="332">RECORD</text>
+</g>
+<rect x="854" y="325" width="38" height="14" rx="7" fill="#1f4fd8"/>
+<text x="873" y="332" font-size="7.5" fill="#ffffff" text-anchor="middle">active</text>
+<g font-size="16" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#1f4fd8">
+  <text x="50" y="356">&lt;68&gt;</text>
+  <text x="296" y="356">&lt;49&gt;</text>
+  <text x="542" y="356">&lt;42&gt;</text>
+  <text x="788" y="356">&lt;41&gt;<tspan fill="#5f594f"> / </tspan>&lt;12&gt;</text>
+  <text x="1034" y="356" fill="#3f6b25">+&lt;2&gt;<tspan fill="#5f594f" font-size="11"> hits</tspan></text>
+</g>
+<g font-size="8.5" fill="#94897a">
+  <text x="50" y="374">prototype substitution,</text><text x="50" y="386">notebook + literature</text>
+  <text x="296" y="374">SMACT + mission chemistry</text><text x="296" y="386">— before any compute</text>
+  <text x="542" y="374">independent review ·</text><text x="542" y="386">skeptical persona</text>
+  <text x="788" y="374" fill="#1f4fd8">CHGNet relax → E_hull ·</text><text x="788" y="386" fill="#1f4fd8">MEGNet gap (HSE)</text>
+  <text x="1034" y="374">DB rows · &lt;3&gt; notebook</text><text x="1034" y="386">entries</text>
+</g>
+<g stroke="#94897a">
+  <line x1="224" y1="356" x2="274" y2="356" marker-end="url(#arw)"/>
+  <line x1="470" y1="356" x2="520" y2="356" marker-end="url(#arw)"/>
+  <line x1="716" y1="356" x2="766" y2="356" marker-end="url(#arw)"/>
+  <line x1="962" y1="356" x2="1012" y2="356" marker-end="url(#arw)"/>
+</g>
+<g font-size="7.5" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" text-anchor="middle">
+  <rect x="216" y="328" width="66" height="15" rx="4" fill="#f3eee4"/>
+  <text x="249" y="335.5" fill="#5f594f">−19 filtered</text>
+  <rect x="462" y="328" width="66" height="15" rx="4" fill="#fdf0ea" stroke="#f2cdbb"/>
+  <text x="495" y="335.5" fill="#a03415">−7 vetoed</text>
+  <rect x="708" y="328" width="66" height="15" rx="4" fill="#fdf0ea" stroke="#f2cdbb"/>
+  <text x="741" y="335.5" fill="#a03415">−2 error</text>
+</g>
+<rect x="36" y="410" width="1164" height="32" rx="8" fill="none" stroke="#ddd5c7" stroke-dasharray="5 5"/>
+<text x="52" y="426" font-size="11" fill="#94897a">↺</text>
+<text x="70" y="426" font-size="9.5" fill="#5f594f">Loop closes through the lab notebook — the next iteration starts from a fresh context and reads what this one learned.</text>
+<text x="1186" y="426" font-size="9" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#94897a" text-anchor="end">next: iteration 9 / 12</text>
+
+<!-- ============ COMPOSITION SPACE ============ -->
+<rect x="560" y="486" width="110" height="19" rx="6" fill="#f3eee4" stroke="#e8e2d8"/>
+<rect x="562" y="488" width="54" height="15" rx="5" fill="#ffffff" stroke="#ddd5c7"/>
+<text x="589" y="495.5" font-size="8.5" text-anchor="middle">status</text>
+<text x="643" y="495.5" font-size="8.5" fill="#94897a" text-anchor="middle">iteration</text>
+<text x="798" y="490" font-size="8.5" font-weight="600" letter-spacing="0.8" fill="#94897a" text-anchor="end">BEST |GAP−IDEAL|</text>
+<text x="798" y="505" font-size="11" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" text-anchor="end">&lt;0.05 eV&gt;</text>
+
+<g stroke="#eee7da" stroke-dasharray="2 4">
+  <line x1="84" y1="653.75" x2="782" y2="653.75"/>
+  <line x1="84" y1="597.5" x2="782" y2="597.5"/>
+  <line x1="84" y1="541.25" x2="782" y2="541.25"/>
+</g>
+<rect x="84" y="614.4" width="102.6" height="33.7" fill="#3f6b25" opacity="0.09"/>
+<rect x="84" y="614.4" width="102.6" height="33.7" fill="none" stroke="#3f6b25" stroke-dasharray="4 4" opacity="0.55"/>
+<text x="194" y="620" font-size="8.5" fill="#3f6b25">target window</text>
+<g fill="#1f4fd8" opacity="0.62">
+  <circle cx="125.1" cy="577.8" r="4"/><circle cx="207.2" cy="594.7" r="4"/>
+  <circle cx="268.7" cy="669.5" r="4"/><circle cx="330.4" cy="600.3" r="4"/>
+  <circle cx="371.4" cy="563.8" r="4"/><circle cx="186.6" cy="684.7" r="4"/>
+  <circle cx="453.5" cy="630.1" r="4"/><circle cx="515.1" cy="586.3" r="4"/>
+  <circle cx="576.7" cy="656.6" r="4"/><circle cx="638.2" cy="611.6" r="4"/>
+  <circle cx="699.8" cy="572.2" r="4"/><circle cx="412.5" cy="676.3" r="4"/>
+  <circle cx="289.2" cy="552.5" r="4"/><circle cx="227.7" cy="639.7" r="4"/>
+  <circle cx="145.6" cy="603.1" r="4"/><circle cx="535.6" cy="651.0" r="4"/>
+  <circle cx="658.8" cy="620.0" r="4"/><circle cx="350.9" cy="690.3" r="4"/>
+  <circle cx="474.0" cy="546.9" r="4"/><circle cx="597.2" cy="594.7" r="4"/>
+</g>
+<circle cx="108.6" cy="614.4" r="5.5" fill="#3f6b25" stroke="#faf7f2" stroke-width="2"/>
+<text x="119" y="607" font-size="9" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#3f6b25">CdCuSe₂</text>
+<circle cx="92.2" cy="634.1" r="5.5" fill="#a87a10" stroke="#faf7f2" stroke-width="2"/>
+<text x="102" y="642" font-size="9" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#a87a10">AlSb</text>
+<rect x="598" y="536" width="180" height="18" rx="5" fill="#ffffff" opacity="0.86"/>
+<circle cx="608" cy="545" r="4" fill="#1f4fd8" opacity="0.62"/>
+<text x="616" y="545" font-size="8.5" fill="#5f594f">scored</text>
+<circle cx="666" cy="545" r="4.5" fill="#3f6b25" stroke="#faf7f2" stroke-width="1.4"/>
+<text x="674" y="545" font-size="8.5" fill="#5f594f">hit</text>
+<circle cx="700" cy="545" r="4.5" fill="#a87a10" stroke="#faf7f2" stroke-width="1.4"/>
+<text x="708" y="545" font-size="8.5" fill="#5f594f">rediscovery</text>
+<g stroke="#e8e2d8">
+  <line x1="84" y1="530" x2="84" y2="710"/>
+  <line x1="84" y1="710" x2="782" y2="710"/>
+</g>
+<g font-size="8.5" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#b3a993" text-anchor="middle">
+  <text x="84" y="722">0.00</text><text x="186.6" y="722">0.05</text><text x="289.2" y="722">0.10</text>
+  <text x="391.8" y="722">0.15</text><text x="494.4" y="722">0.20</text><text x="597.1" y="722">0.25</text>
+  <text x="699.7" y="722">0.30</text>
+</g>
+<g font-size="8.5" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#b3a993" text-anchor="end">
+  <text x="76" y="710">0</text><text x="76" y="653.75">1</text>
+  <text x="76" y="597.5">2</text><text x="76" y="541.25">3</text>
+</g>
+<text x="433" y="740" font-size="9.5" fill="#94897a" text-anchor="middle">energy above hull (eV/atom)</text>
+<text x="52" y="620" font-size="9.5" fill="#94897a" text-anchor="middle" transform="rotate(-90 52 620)">band gap, HSE (eV)</text>
+<line x1="36" y1="756" x2="798" y2="756" stroke="#eee7da"/>
+<text x="36" y="772" font-size="9.5" fill="#94897a">&lt;41&gt; scored candidates · &lt;8&gt; iterations · hover a point for formula, gap, hull, iteration</text>
+
+<!-- ============ AGENT FEED ============ -->
+<rect x="1096" y="486" width="106" height="19" rx="5" fill="#f3eee4"/>
+<text x="1149" y="495.5" font-size="8.5" fill="#5f594f" text-anchor="middle">last &lt;40&gt; events</text>
+<g font-size="8.5" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#b3a993">
+  <text x="844" y="526">07-18</text><text x="844" y="539">14:06:15</text>
+  <text x="844" y="570">07-18</text><text x="844" y="583">14:05:02</text>
+  <text x="844" y="614">07-18</text><text x="844" y="627">14:03:40</text>
+  <text x="844" y="658">07-18</text><text x="844" y="671">14:02:11</text>
+  <text x="844" y="702">07-18</text><text x="844" y="715">14:01:30</text>
+  <text x="844" y="746">07-18</text><text x="844" y="759">14:00:12</text>
+</g>
+<g font-size="7.5" font-weight="700" letter-spacing="0.5" text-anchor="middle">
+  <rect x="904" y="518" width="58" height="16" rx="4" fill="#faf3e3" stroke="#e8d9ae"/><text x="933" y="526" fill="#6b5310">NTBK</text>
+  <rect x="904" y="562" width="58" height="16" rx="4" fill="#fdf0ea" stroke="#f2cdbb"/><text x="933" y="570" fill="#a03415">VETO</text>
+  <rect x="904" y="606" width="58" height="16" rx="4" fill="#eff5ea" stroke="#d3e2c4"/><text x="933" y="614" fill="#3f6b25">HIT</text>
+  <rect x="904" y="650" width="58" height="16" rx="4" fill="#eaf0fe" stroke="#b9c6f4"/><text x="933" y="658" fill="#1f4fd8">SCORE</text>
+  <rect x="904" y="694" width="58" height="16" rx="4" fill="#f3eee4"/><text x="933" y="702" fill="#5f594f">FILTER</text>
+  <rect x="904" y="738" width="58" height="16" rx="4" fill="#faf3e3" stroke="#e8d9ae"/><text x="933" y="746" fill="#a87a10">REDIS</text>
+</g>
+<g font-size="9.5" fill="#5f594f">
+  <text x="970" y="526">reflection logged</text><text x="970" y="539">(iteration 8)</text>
+  <text x="970" y="570">ZnSnP₂ — critic: P/Sn</text><text x="970" y="583">ratio unphysical</text>
+  <text x="970" y="614">CdCuSe₂ novel · 1.70 eV</text><text x="970" y="627">· hull 0.003 eV/atom</text>
+  <text x="970" y="658">CuInSe₂ gap 1.04 eV</text><text x="970" y="671">· hull 0.012 eV/atom</text>
+  <text x="970" y="702">19 dropped by SMACT</text><text x="970" y="715">+ mission chemistry</text>
+  <text x="970" y="746">AlSb matches mp-1018100</text><text x="970" y="759">— counted as rediscovery</text>
+</g>
+<g stroke="#eee7da">
+  <line x1="844" y1="552" x2="1202" y2="552"/><line x1="844" y1="596" x2="1202" y2="596"/>
+  <line x1="844" y1="640" x2="1202" y2="640"/><line x1="844" y1="684" x2="1202" y2="684"/>
+  <line x1="844" y1="728" x2="1202" y2="728"/>
+</g>
+<rect x="830" y="764" width="386" height="28" rx="10" fill="url(#ffade)"/>
+
+<!-- ============ TOP CANDIDATES ============ -->
+<rect x="596" y="820" width="202" height="19" rx="5" fill="#f3eee4"/>
+<text x="697" y="829.5" font-size="8" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#5f594f" text-anchor="middle">ranked by |gap − ideal| in window</text>
+<g font-size="8.5" font-weight="600" letter-spacing="0.7" fill="#94897a">
+  <text x="36" y="864">FORMULA</text>
+  <text x="230" y="864" text-anchor="end">GAP (eV)</text>
+  <text x="330" y="864" text-anchor="end">HULL (eV/at)</text>
+  <text x="376" y="864" text-anchor="end">ITER</text>
+  <text x="400" y="864">STATUS</text>
+  <text x="530" y="864">HYPOTHESIS</text>
+</g>
+<line x1="36" y1="876" x2="798" y2="876" stroke="#eee7da"/>
+<g font-size="10.5" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace">
+  <text x="36" y="894">CdCuSe₂</text><text x="36" y="920">AlSb</text>
+  <text x="36" y="946">ZnGeP₂</text><text x="36" y="972">CuGaSe₂</text>
+</g>
+<g font-size="10" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" text-anchor="end">
+  <text x="230" y="894">1.70</text><text x="330" y="894">0.003</text><text x="376" y="894">3</text>
+  <text x="230" y="920">1.62</text><text x="330" y="920">0.000</text><text x="376" y="920">6</text>
+  <text x="230" y="946">1.94</text><text x="330" y="946">0.021</text><text x="376" y="946">4</text>
+  <text x="230" y="972" fill="#b3a993">—</text><text x="330" y="972" fill="#b3a993">—</text><text x="376" y="972">2</text>
+</g>
+<g font-size="8.5" text-anchor="middle">
+  <rect x="400" y="885" width="84" height="17" rx="8.5" fill="#eff5ea" stroke="#d3e2c4"/>
+  <text x="442" y="894" fill="#3f6b25">● hit · novel</text>
+  <rect x="400" y="911" width="84" height="17" rx="8.5" fill="#faf3e3" stroke="#e8d9ae"/>
+  <text x="442" y="920" fill="#a87a10">◆ rediscovery</text>
+  <rect x="400" y="937" width="50" height="17" rx="8.5" fill="#f3eee4"/>
+  <text x="425" y="946" fill="#5f594f">scored</text>
+  <rect x="400" y="963" width="50" height="17" rx="8.5" fill="#f3eee4"/>
+  <text x="425" y="972" fill="#5f594f">scored</text>
+</g>
+<g font-size="9.5" fill="#5f594f">
+  <text x="530" y="894">Cd-for-Zn on the chalcopyrite…</text>
+  <text x="530" y="920">III–V zinc-blende reference…</text>
+  <text x="530" y="946">Chalcopyrite analogue with…</text>
+  <text x="530" y="972" fill="#b3a993">—</text>
+</g>
+<g stroke="#eee7da">
+  <line x1="36" y1="907" x2="798" y2="907"/><line x1="36" y1="933" x2="798" y2="933"/>
+  <line x1="36" y1="959" x2="798" y2="959"/>
+</g>
+
+<!-- ============ LAB NOTEBOOK ============ -->
+<rect x="1082" y="820" width="120" height="20" rx="7" fill="none" stroke="#ddd5c7"/>
+<text x="1142" y="830" font-size="8.5" fill="#1f4fd8" text-anchor="middle">Open full notebook</text>
+<rect x="844" y="858" width="3" height="54" rx="1.5" fill="#1f4fd8"/>
+<rect x="844" y="922" width="3" height="54" rx="1.5" fill="#3f6b25"/>
+<g font-size="7.5" text-anchor="middle">
+  <rect x="856" y="858" width="60" height="15" rx="4" fill="#eaf0fe" stroke="#b9c6f4"/>
+  <text x="886" y="865.5" fill="#1f4fd8">hypothesis</text>
+  <rect x="856" y="922" width="58" height="15" rx="4" fill="#eff5ea" stroke="#d3e2c4"/>
+  <text x="885" y="929.5" fill="#3f6b25">reflection</text>
+</g>
+<g font-size="8" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#b3a993" text-anchor="end">
+  <text x="1202" y="865.5">iter 8 · 13:58</text>
+  <text x="1202" y="929.5">iter 7 · 13:41</text>
+</g>
+<g font-size="9" fill="#5f594f">
+  <text x="856" y="884">Chalcopyrite Cu–In–Se derivatives should land near</text>
+  <text x="856" y="896">1.3 eV if the Ga fraction stays under a third — worth</text>
+  <text x="856" y="908">two relaxations this iteration.</text>
+  <text x="856" y="948">Two of three vetoes were right: the Sn-rich family</text>
+  <text x="856" y="960">sits 0.2 eV above the window. Push Cd-for-Zn next,</text>
+  <text x="856" y="972">where both hits came from.</text>
+</g>
+<text x="844" y="992" font-size="8" fill="#b3a993">left border: blue hypothesis · amber decision · green reflection · grey observation · faint report</text>
+</g>
+</svg>

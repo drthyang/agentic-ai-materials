@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 330" width="960" height="330" role="img" aria-labelledby="ttl desc">
+<title id="ttl">Wireframe legend</title>
+<desc id="desc">Notation used in the Athanor Mission Control wireframes: panels, chips, pills, dynamic value slots, flow connectors, active surfaces, the live status dot and scrolling regions.</desc>
+<defs>
+<linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+<stop offset="1" stop-color="#faf7f2" stop-opacity="0.95"/>
+</linearGradient>
+<marker id="arw" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+<path d="M0 0 L8 4 L0 8 Z" fill="#94897a"/>
+</marker>
+</defs>
+<rect width="960" height="330" fill="#faf7f2"/>
+<g font-family="'IBM Plex Sans',ui-sans-serif,-apple-system,'Segoe UI',Roboto,sans-serif" dominant-baseline="middle" fill="#191714">
+
+  <text x="24" y="28" font-size="10.5" font-weight="600" letter-spacing="0.9" fill="#94897a">WIREFRAME LEGEND</text>
+  <text x="24" y="48" font-size="10.5" fill="#94897a">Notation used in every figure. Each colour is a shipped token from app.css — nothing here is decorative.</text>
+  <line x1="24" y1="64" x2="936" y2="64" stroke="#eee7da"/>
+
+  <rect x="24" y="76" width="124" height="32" rx="10" fill="#ffffff" stroke="#e8e2d8"/>
+  <text x="86" y="92" font-size="9.5" fill="#b3a993" text-anchor="middle">card</text>
+  <text x="164" y="92" font-size="10.5" fill="#5f594f">panel boundary — 1px border, 12px radius, white surface</text>
+
+  <rect x="500" y="76" width="124" height="32" rx="10" fill="#eaf0fe" stroke="#b9c6f4"/>
+  <text x="562" y="92" font-size="9.5" font-weight="600" fill="#1f4fd8" text-anchor="middle">EVALUATE</text>
+  <text x="640" y="92" font-size="10.5" fill="#5f594f">active surface — where compute is being spent now</text>
+
+  <rect x="24" y="130" width="124" height="20" rx="5" fill="#f3eee4"/>
+  <text x="86" y="140" font-size="9" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#5f594f" text-anchor="middle">config/mission.yaml</text>
+  <text x="164" y="140" font-size="10.5" fill="#5f594f">chip — mono; names a source, a budget or a constant</text>
+
+  <line x1="500" y1="140" x2="538" y2="140" stroke="#94897a" marker-end="url(#arw)"/>
+  <rect x="552" y="131" width="72" height="18" rx="5" fill="#f3eee4"/>
+  <text x="588" y="140" font-size="8.5" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#5f594f" text-anchor="middle">−19 filtered</text>
+  <text x="640" y="140" font-size="10.5" fill="#5f594f">flow connector — the chip names what was lost there</text>
+
+  <rect x="24" y="178" width="88" height="20" rx="10" fill="#eaf0fe" stroke="#b9c6f4"/>
+  <circle cx="38" cy="188" r="3.2" fill="#1f4fd8"/>
+  <text x="47" y="188" font-size="9.5" fill="#1f4fd8">running</text>
+  <text x="164" y="188" font-size="10.5" fill="#5f594f">pill — tinted state badge (blue · green · amber · warm-red)</text>
+
+  <circle cx="512" cy="188" r="8" fill="#1f4fd8" opacity="0.16"/>
+  <circle cx="512" cy="188" r="4" fill="#1f4fd8"/>
+  <text x="528" y="188" font-size="10" font-weight="600" letter-spacing="0.85" fill="#94897a">STATUS</text>
+  <text x="640" y="188" font-size="10.5" fill="#5f594f">live dot — pulses while running, grey when idle</text>
+
+  <g font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#1f4fd8">
+    <text x="24" y="236" font-size="12">&lt;n&gt;</text>
+    <text x="58" y="236" font-size="11">&lt;qwen3:32b&gt;</text>
+  </g>
+  <text x="164" y="236" font-size="10.5" fill="#5f594f">dynamic value from /api/snapshot — §9 maps every one</text>
+
+  <rect x="500" y="214" width="124" height="34" rx="7" fill="#ffffff" stroke="#e8e2d8"/>
+  <g stroke="#eee7da">
+    <line x1="510" y1="224" x2="600" y2="224"/>
+    <line x1="510" y1="234" x2="586" y2="234"/>
+    <line x1="510" y1="244" x2="596" y2="244"/>
+  </g>
+  <rect x="501" y="231" width="122" height="16" fill="url(#fade)"/>
+  <text x="640" y="236" font-size="10.5" fill="#5f594f">region scrolls past the edge (its own scrollbar)</text>
+
+  <rect x="24" y="272" width="912" height="40" rx="9" fill="#faf3e3" stroke="#e8d9ae"/>
+  <g font-size="10.5" fill="#6b5310">
+    <text x="42" y="286">Read-only by design — no control writes back to the campaign. Changing what a</text>
+    <text x="42" y="301">mission targets is a config/mission.yaml edit, never a click.</text>
+  </g>
+</g>
+</svg>

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" width="900" height="300" role="img" aria-labelledby="ttl desc">
+<title id="ttl">Agent and critic card</title>
+<desc id="desc">The agent and critic card: which model runs the loop and through which backend, the critic's model and its fail-open contract, then pills counting vetoes, pre-compute filtering and relaxation errors, and a note that vetoes cost zero relaxation budget.</desc>
+<rect width="900" height="300" fill="#faf7f2"/>
+<g font-family="'IBM Plex Sans',ui-sans-serif,-apple-system,'Segoe UI',Roboto,sans-serif" dominant-baseline="middle" fill="#191714">
+
+  <rect x="24" y="24" width="460" height="252" rx="12" fill="#ffffff" stroke="#e8e2d8"/>
+
+  <text x="44" y="50" font-size="10.5" font-weight="600" letter-spacing="0.9" fill="#94897a">AGENT &amp; CRITIC</text>
+  <line x1="44" y1="68" x2="464" y2="68" stroke="#eee7da"/>
+
+  <text x="44" y="90" font-size="13"><tspan font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#1f4fd8">&lt;qwen3:32b&gt;</tspan><tspan fill="#5f594f">  via ollama</tspan></text>
+  <g font-size="10.5" fill="#5f594f">
+    <text x="44" y="112">critic <tspan font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#1f4fd8">&lt;gemma4:26b&gt;</tspan> · fresh context per</text>
+    <text x="44" y="128">review · fails open</text>
+  </g>
+
+  <rect x="44" y="146" width="152" height="21" rx="10" fill="#faf3e3" stroke="#e8d9ae"/>
+  <text x="120" y="156.5" font-size="9.5" fill="#6b5310" text-anchor="middle">&lt;7&gt; vetoes · 0 eV spent</text>
+  <rect x="204" y="146" width="164" height="21" rx="10" fill="#f3eee4"/>
+  <text x="286" y="156.5" font-size="9.5" fill="#5f594f" text-anchor="middle">&lt;19&gt; filtered pre-compute</text>
+  <rect x="44" y="173" width="112" height="21" rx="10" fill="#fdf0ea" stroke="#f2cdbb"/>
+  <text x="100" y="183.5" font-size="9.5" fill="#a03415" text-anchor="middle">&lt;2&gt; relax errors</text>
+
+  <g font-size="10.5" fill="#94897a">
+    <text x="44" y="222">Vetoes cost zero relaxation budget —</text>
+    <text x="44" y="238">recorded as filtered_out rows for audit.</text>
+  </g>
+
+  <!-- annotations -->
+  <g stroke="#ddd5c7" stroke-dasharray="3 3">
+    <line x1="486" y1="90" x2="506" y2="90"/>
+    <line x1="486" y1="120" x2="506" y2="120"/>
+    <line x1="486" y1="157" x2="506" y2="157"/>
+    <line x1="486" y1="184" x2="506" y2="184"/>
+    <line x1="486" y1="230" x2="506" y2="230"/>
+  </g>
+  <g font-size="10.5" fill="#5f594f">
+    <text x="514" y="90">mission.llm.{model, provider}</text>
+    <text x="514" y="113">mission.critic — or "critic disabled in</text>
+    <text x="514" y="128">mission.yaml" when it is switched off</text>
+    <text x="514" y="157">note pill (amber) · dim pill (grey)</text>
+    <text x="514" y="184">warn pill, rendered only when errors &gt; 0</text>
+    <text x="514" y="223">The critic gates evaluate_candidates inside</text>
+    <text x="514" y="238">the tool, so a veto never spends budget —</text>
+    <text x="514" y="253">and a flaky critic can only save compute.</text>
+  </g>
+</g>
+</svg>

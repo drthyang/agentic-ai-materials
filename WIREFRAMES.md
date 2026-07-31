@@ -1,10 +1,14 @@
 # Athanor Mission Control — wireframes
 
-Text wireframes of the dashboard UI (`athanor dashboard`, and the baked
-static twin from `athanor export-pages`). These are **descriptive, not
-aspirational**: every box, label, and number below is traced from the
-shipped implementation, so this doubles as a spec to review changes
-against.
+Wireframes of the dashboard UI (`athanor dashboard`, and the baked static twin
+from `athanor export-pages`). These are **descriptive, not aspirational**:
+every box, label, and number below is traced from the shipped implementation,
+so this doubles as a spec to review changes against.
+
+The figures are hand-written SVG in [`docs/wireframes/`](docs/wireframes/) —
+one file per figure, self-contained, no build step and no dependencies, the
+same rule the UI itself follows. Colours are the shipped tokens from
+`app.css`, so a wireframe and a screenshot should be the same picture.
 
 Source of truth for each region:
 
@@ -19,26 +23,29 @@ The UI is **read-only by design** — no control writes back to the campaign.
 Changing what a mission targets is a `config/mission.yaml` edit, never a
 click.
 
+### Figures
+
+| § | Figure |
+|---|---|
+| 0 | [legend](docs/wireframes/00-legend.svg) |
+| 1 | [frame — global chrome](docs/wireframes/01-frame.svg) |
+| 2 | [page ① campaign, full layout](docs/wireframes/02-campaign-page.svg) |
+| 3.1–3.3 | [mission](docs/wireframes/03-mission-card.svg) · [campaign](docs/wireframes/04-campaign-card.svg) · [agent & critic](docs/wireframes/05-agent-critic-card.svg) |
+| 3.4 | [discovery loop](docs/wireframes/06-discovery-loop.svg) |
+| 3.5 | [composition map](docs/wireframes/07-composition-map.svg) |
+| 3.6–3.8 | [agent feed](docs/wireframes/08-agent-feed.svg) · [top candidates](docs/wireframes/09-top-candidates.svg) · [notebook panel](docs/wireframes/10-notebook-panel.svg) |
+| 4–5 | [page ② benchmark](docs/wireframes/11-benchmark-page.svg) · [page ③ notebook](docs/wireframes/12-notebook-page.svg) |
+| 6 | [states](docs/wireframes/13-states.svg) |
+| 7 | [responsive ≤ 980px](docs/wireframes/14-responsive.svg) |
+
 ---
 
 ## 0. Legend
 
-```
-┌───┐   card / panel boundary (1px --border, 12px radius)
-├───┤   internal divider
-│   │
-▓▓▓▓    filled / active surface (--primary, white ink)
-░░░░    tinted surface (--primary-tint-bg or a pill background)
-▁▁▁▁    scrollable region continues past the edge
-( … )   button / clickable control
-[ … ]   chip (mono, small, --chip-bg)
-< … >   dynamic value injected by app.js
-●       live status dot (pulses when a campaign is running)
-→       pipeline flow connector
-```
+![Wireframe legend: card, chip, pill, dynamic slot, active surface, flow connector, status dot, scrolling region](docs/wireframes/00-legend.svg)
 
-Anything in `< >` comes from `/api/snapshot`; §9 maps each one to its
-JSON field.
+Anything in `<…>` comes from `/api/snapshot`; §9 maps each one to its JSON
+field.
 
 ---
 
@@ -47,26 +54,7 @@ JSON field.
 Present on all three pages. Header and status bar are `flex-wrap: wrap`, so
 they reflow rather than clip on narrow viewports.
 
-```
-┌──────────────────────────────────────────────────────────────────────────────────────┐
-│ ▓▓▓  Athanor — Mission Control                 │  ① Campaign  ② Benchmark  ③ Notebook │
-│ ▓▓▓  Closed-loop materials discovery ·  [v0.1] │  ▓▓▓▓▓▓▓▓▓▓                          │
-│      agent + critic + surrogates               │                       ( Export CSV ) │
-├──────────────────────────────────────────────────────────────────────────────────────┤
-│ ● STATUS  Iteration <n> of <N> · running · last activity <HH:MM:SS> UTC              │
-│                        [agent <model>]  [critic <model>]  [refreshed <HH:MM> UTC]    │
-├──────────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                      │
-│                              « page content — §2 / §4 / §5 »                         │
-│                                                                                      │
-├──────────────────────────────────────────────────────────────────────────────────────┤
-│ ⚠ Surrogate screening only — CHGNet relaxations and MEGNet band gaps (HSE fidelity). │
-│   Candidates are leads, not discoveries: validate with DFT before any claim.          │
-├──────────────────────────────────────────────────────────────────────────────────────┤
-│      Athanor · read-only view of the campaign DB, lab notebook, and mission config    │
-│                          · auto-refreshes every 10 s                                  │
-└──────────────────────────────────────────────────────────────────────────────────────┘
-```
+![Global chrome: header with brand mark, version chip, three page pills and Export CSV; status bar with live dot, message and model chips; the page content slot; the disclaimer bar; the footer](docs/wireframes/01-frame.svg)
 
 Notes
 
@@ -98,64 +86,7 @@ main : max-width 1480px · padding 16px 24px 24px · grid 3 × 1fr · gap 14px
 The default view. Four rows; read top-left → bottom-right as *what we're
 looking for → how far we've got → how the loop is running → what it found*.
 
-```
-┌──────────────────────────┐┌──────────────────────────┐┌──────────────────────────┐
-│ MISSION  [config/mission ││ CAMPAIGN  [last write    ││ AGENT & CRITIC           │
-│           .yaml]         ││            <ts> UTC]     ││                          │
-│ ░● running░              ││  <8>/<12>      <96>      ││ <qwen3:32b>  via ollama  │
-│ PV absorber              ││  ITERATIONS    PROPOSED  ││ critic <model> · fresh   │
-│ gap 1.1–1.7 eV (ideal    ││                          ││ context per review ·     │
-│ 1.35) · hull ≤ 0.05      ││  <41>          <3>       ││ fails open               │
-│ eV/atom · ≤ 4 elements   ││  SCORED        HITS ·    ││ ░<7> vetoes · 0 eV░      │
-│ [Cu][Ag][Ga][In][Se][S]  ││                <1> redis ││ ░<19> filtered pre-      │
-│ [Zn][Sn][P̶b̶][C̶d̶]         ││ ▔▔▔▔▔▔▔▔▔▔▔░░░░░░░░░░░  ││  compute░                │
-│ Targets & budgets live   ││ relax 41/100    errors 2 ││ Vetoes cost zero budget  │
-│ in mission.yaml — this   ││                          ││ — recorded as            │
-│ view reads, never edits. ││                          ││ filtered_out for audit.  │
-└──────────────────────────┘└──────────────────────────┘└──────────────────────────┘
-┌──────────────────────────────────────────────────────────────────────────────────┐
-│ DISCOVERY LOOP — ITERATION <8>              [fresh context · notebook is memory]  │
-│                                                                                  │
-│  ┌────────┐  →   ┌────────┐  →   ┌────────┐  →  ┌────────┐   →  ┌────────┐       │
-│  │PROPOSE │ −19  │ FILTER │ −7   │ CRITIC │ −2  │EVALUATE│      │ RECORD │       │
-│  │  <68>  │filter│  <49>  │vetoed│  <42>  │error│░<41>/12░│     │ +<2>   │       │
-│  │prototype│     │SMACT + │      │indepen-│     │░CHGNet ░│     │ hits   │       │
-│  │substitu-│     │mission │      │dent    │     │░relax → ░│    │DB rows │       │
-│  │tion…   │      │chem…   │      │review  │     │░hull…  ░│     │· 3 nb  │       │
-│  └────────┘      └────────┘      └────────┘     └────────┘      └────────┘       │
-│  ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐   │
-│    ↺ Loop closes through the lab notebook — the next iteration starts from a      │
-│      fresh context and reads what this one learned.     next: iteration 9 / 12    │
-│  └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘   │
-└──────────────────────────────────────────────────────────────────────────────────┘
-┌───────────────────────────────────────────────────────┐┌─────────────────────────┐
-│ COMPOSITION SPACE — GAP VS STABILITY                  ││ AGENT FEED [last 40     │
-│              ░status░ iteration   BEST |GAP−IDEAL| <…> ││             events]     │
-│                                                       ││ 07-18 SCORE  CuInSe₂ …  │
-│  gap ▲                                                ││ 14:02                   │
-│  (eV)│  ○      ○                                      ││ 07-18 HIT    CdCuSe₂ …  │
-│      │    ┌ ─ ─ ─ ─ ─ ┐  ○                            ││ 14:03                   │
-│      │    │ ● CdCuSe₂ │      target window            ││ 07-18 VETO   ZnSnP₂ …   │
-│      │    │  ░░░░░░░  │  ○                            ││ 14:05                   │
-│      │    │ ◆ AlSb    │                               ││ 07-18 NTBK   reflection │
-│      │    └ ─ ─ ─ ─ ─ ┘        ○   ○                  ││ 14:06                   │
-│      │  ○   ○                                         ││ ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁  │
-│      └──────────────────────────────────────────▶     ││                         │
-│         energy above hull (eV/atom)                   ││                         │
-│   ● scored   ● hit (novel)   ● rediscovery            ││                         │
-│  <41> scored candidates · <8> iterations · hover a    ││                         │
-│  point for formula, gap, hull, iteration              ││                         │
-└───────────────────────────────────────────────────────┘└─────────────────────────┘
-┌───────────────────────────────────────────────────────┐┌─────────────────────────┐
-│ TOP CANDIDATES        [ranked by hull within gap …]   ││ LAB NOTEBOOK ( Open full │
-│                                                       ││                notebook )│
-│ FORMULA   GAP (eV)  HULL (eV/at)  ITER  STATUS  HYPO… ││ ░hypothesis░  iter 8 ·  │
-│ CdCuSe₂      1.70        0.003      3   ░● hit░  Cd…  ││ Chalcopyrite Cu–In–Se…  │
-│ AlSb         1.62        0.000      6   ░◆ red░  Sb…  ││ ─────────────────────── │
-│ ZnGeP₂       1.94        0.021      4   ░scored░ Zn…  ││ ░reflection░  iter 7 ·  │
-│ …                                                     ││ Two of three vetoes …   │
-└───────────────────────────────────────────────────────┘└─────────────────────────┘
-```
+![Campaign page: mission, campaign and agent-and-critic cards across the top; the full-width discovery-loop funnel; the composition-space map beside the agent feed; the top-candidates table beside the lab-notebook panel](docs/wireframes/02-campaign-page.svg)
 
 ---
 
@@ -166,19 +97,7 @@ looking for → how far we've got → how the loop is running → what it found*
 Static per campaign — it exists so a reader can judge every number on the
 page against the target that produced it.
 
-```
-┌────────────────────────────────────────────┐
-│ MISSION                [config/mission.yaml]│   ← .upper label + mono chip
-├────────────────────────────────────────────┤
-│ ░● running░   ← .pill.free / .pill.dim ○ idle│
-│ PV absorber                                 │   ← .sum-title 14px/700
-│ gap 1.1–1.7 eV (ideal 1.35) · hull ≤ 0.05   │   ← .sum-meta, mono
-│ eV/atom · ≤ 4 elements                      │
-│ [Cu][Ag][Ga][In][Se][S][Zn][Sn]  [P̶b̶][C̶d̶]   │   ← .elem / .elem.ex
-│ Targets & budgets live in config/mission.   │      (excluded = struck through,
-│ yaml — this view reads, never edits.        │       warm-red)
-└────────────────────────────────────────────┘
-```
+![Mission card, annotated: uppercase label with source chip, running pill, mission name, target windows in mono, allowed element chips with excluded elements struck through](docs/wireframes/03-mission-card.svg)
 
 ### 3.2 Campaign card
 
@@ -186,40 +105,14 @@ Four stats in a 2×2 grid, then the budget meter. `HITS` is the only stat
 that takes a color (`--hit` green) — the page has exactly one number that
 means *success*, and this is it.
 
-```
-┌────────────────────────────────────────────┐
-│ CAMPAIGN                [last write <ts> UTC]│
-├────────────────────────────────────────────┤
-│   <8>/<12>              <96>                │  20px mono, tabular-nums
-│   ITERATIONS            PROPOSED            │  10px uppercase --faint
-│                                             │
-│   <41>                  <3>                 │  ← green when > 0
-│   SCORED                HITS · <1> rediscovery
-│                                             │
-│   ▔▔▔▔▔▔▔▔▔▔▔▔▔░░░░░░░░░░░░░░░░░░░░░░░░░░  │  5px track, --primary fill
-│   relaxations 41 / 100            errors 2  │  10.5px mono, --faint
-└────────────────────────────────────────────┘
-```
+![Campaign card, annotated: iterations, proposed, scored and hits counters above a relaxation-budget meter and an error count](docs/wireframes/04-campaign-card.svg)
 
 The meter is the compute-honesty gauge: relaxations are the real cost, so
 the budget is drawn as a bar rather than buried in text.
 
 ### 3.3 Agent & critic card
 
-```
-┌────────────────────────────────────────────┐
-│ AGENT & CRITIC                              │
-├────────────────────────────────────────────┤
-│ qwen3:32b  via ollama                       │
-│ critic gemma4:26b · fresh context per       │  ← or "critic disabled in
-│ review · fails open                         │     mission.yaml"
-│ ░<7> vetoes · 0 eV spent░  (note pill)      │
-│ ░<19> filtered pre-compute░ (dim pill)      │
-│ ░<2> relax errors░  (warn pill, only if >0) │
-│ Vetoes cost zero relaxation budget —        │
-│ recorded as filtered_out rows for audit.    │
-└────────────────────────────────────────────┘
-```
+![Agent and critic card, annotated: model and backend, critic model and fail-open contract, veto, filtered and error pills](docs/wireframes/05-agent-critic-card.svg)
 
 ### 3.4 Discovery loop (pipeline strip)
 
@@ -227,27 +120,7 @@ The centerpiece: one horizontal funnel for the **latest** iteration, with
 the loss at each step named on the connector. `.pipe-scroll` scrolls
 horizontally below `min-width: 820px` rather than squashing the stages.
 
-```
- stage: min-width 118px, flex 1        flow: fixed 92px, centered
-┌──────────────────┐        ┌──────────────────┐        ┌──────────────────┐
-│ PROPOSE          │   →    │ FILTER           │   →    │ CRITIC           │
-│ <68>             │[−19    │ <49>             │[−7     │ <42>             │
-│ prototype substi-│ filtered]│ SMACT + mission │ vetoed]│ independent      │
-│ tution, notebook │  grey  │ chemistry —      │  warm  │ review ·         │
-│ + literature     │  chip  │ before any compute│ red chip│ skeptical persona│
-└──────────────────┘        └──────────────────┘        └──────────────────┘
-        →              ┌──────────────────┐        →     ┌──────────────────┐
-     [−2 error]        │▓EVALUATE ▓active▓│              │ RECORD           │
-      warm chip        │▓<41> / <12>     ▓│              │ +<2> hits        │← --hit
-                       │▓CHGNet relax →  ▓│              │ DB rows ·        │
-                       │▓E_hull · MEGNet ▓│              │ <3> notebook     │
-                       │▓gap (HSE)       ▓│              │ entries          │
-                       └──────────────────┘              └──────────────────┘
- ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
-   ↺  Loop closes through the lab notebook — the next iteration starts from a
-      fresh context and reads what this one learned.      next: iteration 9 / 12
- └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
-```
+![Discovery loop: propose, filter, critic, evaluate, record, with drop chips on the connectors, Evaluate tinted blue while running, and a dashed loopback strip](docs/wireframes/06-discovery-loop.svg)
 
 State rules
 
@@ -267,31 +140,7 @@ State rules
 A hand-rolled SVG scatter — `viewBox="0 0 860 480"`, margins L64 R24 T20
 B60, `preserveAspectRatio="none"` so it fills the card at any width.
 
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│ COMPOSITION SPACE — GAP VS STABILITY   ░status░ iteration            │
-│                                        BEST |GAP−IDEAL|  <0.05 eV>   │
-├──────────────────────────────────────────────────────────────────────┤
-│  3.0┤ ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·   ● scored  ● hit  ● red │← legend
-│     │      ○                    ○                                     │
-│  2.5┤ ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  │
-│     │  ○        ○                                                     │
-│  2.0┤ ·┌ ─ ─ ─ ─ ─ ─ ─ ─ ┐·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  │
-│     │  │░░░░░░░░░░░░░░░░░│  target window   ← dashed --hit rect,      │
-│  1.5┤ ·│░░● CdCuSe₂ ░░░░░│·  ·  ·  · ·         9% green fill;         │
-│     │  │░░░◆ AlSb ░░░░░░░│                     x: 0 → hull_max        │
-│  1.0┤ ·└ ─ ─ ─ ─ ─ ─ ─ ─ ┘·  ○  ·  ·  ·  ·     y: gap_lo → gap_hi     │
-│     │     ○   ○                    ○                                  │
-│  0.5┤ ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  │
-│  0.0└─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────▶     │
-│         0.00  0.05  0.10  0.15  0.20  0.25  0.30  0.35  0.40          │
-│                    energy above hull (eV/atom)                        │
-│ ← y axis label rotated −90°: "band gap, HSE fidelity (eV)"            │
-├──────────────────────────────────────────────────────────────────────┤
-│ <41> scored candidates · <8> iterations · hover a point for formula,  │
-│ gap, hull, iteration                                                  │
-└──────────────────────────────────────────────────────────────────────┘
-```
+![Composition-space scatter: energy above hull versus band gap, with the target window as a dashed green rectangle, translucent blue scored points, and ringed green hit and amber rediscovery markers carrying formula labels](docs/wireframes/07-composition-map.svg)
 
 Mark spec
 
@@ -318,42 +167,14 @@ Mark spec
 Fixed 3-column grid (`82px · 88px · 1fr`), newest first, `max-height:
 430px`, own scroll.
 
-```
-┌──────────────────────────────────┐
-│ AGENT FEED     [last <40> events]│
-├──────────────────────────────────┤
-│ 07-18   ░SCORE░  CuInSe₂ gap 1.04│  ← time mono 10px --faintest
-│ 14:02:11         eV · hull 0.012 │     tag 9.5px 700 uppercase
-│ ─────────────────────────────────│     formula mono, message --secondary
-│ 07-18   ░HIT░    CdCuSe₂ novel · │
-│ 14:03:40         1.70 eV         │
-│ 07-18   ░VETO░   ZnSnP₂ — critic:│
-│ 14:05:02         P/Sn ratio …    │
-│ 07-18   ░NTBK░   reflection      │
-│ 14:06:15         logged (iter 8) │
-│ ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ │
-└──────────────────────────────────┘
-```
+![Agent feed: timestamped, colour-tagged events newest first, with the full tag palette — filtered, veto, score, hit, rediscovery, error, notebook](docs/wireframes/08-agent-feed.svg)
 
 Tag palette: `filtered` neutral · `veto` warm-red · `score` blue ·
 `hit` green · `rediscovery` amber · `error` warm-red · `notebook` sand.
 
 ### 3.7 Top candidates table
 
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│ TOP CANDIDATES                    [ranked by hull within gap window …] │
-├────────────────────────────────────────────────────────────────────────┤
-│ FORMULA    GAP (eV)  HULL (eV/at)  ITER  STATUS         HYPOTHESIS     │
-│ ─────────────────────────────────────────────────────────────────────  │
-│ CdCuSe₂        1.70         0.003     3  ░● hit · novel░ Cd-for-Zn on… │
-│ AlSb           1.62         0.000     6  ░◆ rediscovery░ III–V zinc-…  │
-│ ZnGeP₂         1.94         0.021     4  ░scored░        Chalcopyrite… │
-│ CuGaSe₂           —             —     2  ░scored░        —             │
-└────────────────────────────────────────────────────────────────────────┘
-   ↑ mono, 600      ↑ right-aligned, tabular-nums    ↑ pill  ↑ 340px ellipsis,
-                                                              full text on hover
-```
+![Top candidates table: formula, gap, hull, iteration, status pill and hypothesis, with numeric columns right-aligned and missing values as em dashes](docs/wireframes/09-top-candidates.svg)
 
 Formulas are rendered with real Unicode subscripts (`CdCuSe2 → CdCuSe₂`)
 by a lookahead regex, so they read as chemistry without a math library.
@@ -364,22 +185,9 @@ Missing values render as `—`, never `null` or `0`.
 Last four entries, newest first, each clamped to three lines. The left
 border encodes entry type.
 
-```
-┌──────────────────────────────────┐
-│ LAB NOTEBOOK  ( Open full notebook)│
-├──────────────────────────────────┤
-│▍░hypothesis░       iter 8 · <ts> │  ▍blue   = hypothesis
-│▍Chalcopyrite Cu–In–Se derivatives│  ▍amber  = decision
-│▍should land near 1.3 eV if the …  │  ▍green  = reflection
-│                                  │  ▍grey   = observation
-│▍░reflection░       iter 7 · <ts> │  ▍faint  = report
-│▍Two of three vetoes were right — │
-│▍the Sn-rich family is off-target…│
-│ ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ │
-└──────────────────────────────────┘
-```
+![Lab notebook panel: entries with a coloured left border encoding type — blue hypothesis, amber decision, green reflection, grey observation, faint report](docs/wireframes/10-notebook-panel.svg)
 
-`( Open full notebook )` is a ghost button that programmatically clicks the
+`Open full notebook` is a ghost button that programmatically clicks the
 ③ Notebook pill — one destination, one implementation.
 
 ---
@@ -390,33 +198,7 @@ A single full-width card. Columns are read from the JSON rather than
 hard-coded, so a new metric in `benchmark.py` appears here with no UI
 change.
 
-```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│ BENCHMARK — <2026-07-07 PV absorber>            [100 relaxations / strategy]  │
-├──────────────────────────────────────────────────────────────────────────────┤
-│ STRATEGY      HITS   HITS/100 RELAX   REDISCOVERIES   BEST |GAP−IDEAL|        │
-│ ────────────────────────────────────────────────────────────────────────────  │
-│ agent            3            3.0                1              0.05          │
-│ similarity       1            1.0                0              0.31          │
-│ random           0            0.0                0              0.62          │
-│                                                                              │
-│ hit = converged · gap in window · hull ≤ max · not confirmed-known            │
-│                                                                              │
-│ ┌────────────────────────────────────────────────────────────┐               │
-│ │                                                            │               │
-│ │        ▇▇▇▇▇                                               │               │
-│ │        ▇▇▇▇▇      ▇▇▇▇▇                                    │  benchmark.png │
-│ │        ▇▇▇▇▇      ▇▇▇▇▇      ▇▇▇▇▇                         │  (matplotlib)  │
-│ │        agent    similarity   random                        │               │
-│ └────────────────────────────────────────────────────────────┘               │
-└──────────────────────────────────────────────────────────────────────────────┘
-```
-
-Empty state:
-
-```
-│ no benchmark run found — produce one with `athanor benchmark`                 │
-```
+![Benchmark page: agent versus similarity and random baselines at equal budget, the shared hit definition, and the matplotlib plot — plus the empty state when no benchmark has been run](docs/wireframes/11-benchmark-page.svg)
 
 ---
 
@@ -425,22 +207,7 @@ Empty state:
 The full scientific record, newest first, unclamped — the same entry
 component as §3.8 with `-webkit-line-clamp` removed and no height cap.
 
-```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│ LAB NOTEBOOK — FULL RECORD                                    [<37> entries]  │
-├──────────────────────────────────────────────────────────────────────────────┤
-│ ▍░reflection░                                       iter 8 · 2026-07-18 14:06 │
-│ ▍Two of three vetoes were right — the Sn-rich family sits 0.2 eV above the    │
-│ ▍window and the critic caught it before compute. Next iteration should push   │
-│ ▍on Cd-for-Zn substitution instead, where the last two hits came from.        │
-│                                                                              │
-│ ▍░hypothesis░                                       iter 8 · 2026-07-18 13:58 │
-│ ▍Chalcopyrite Cu–In–Se derivatives should land near 1.3 eV …                  │
-│                                                                              │
-│ ▍░observation░                                      iter 7 · 2026-07-18 13:41 │
-│ ▍…                                                                           │
-└──────────────────────────────────────────────────────────────────────────────┘
-```
+![Full lab notebook page: unclamped entries newest first, each with its type pill, iteration and timestamp](docs/wireframes/12-notebook-page.svg)
 
 ---
 
@@ -449,19 +216,15 @@ component as §3.8 with `-webkit-line-clamp` removed and no height cap.
 Every panel has an explicit empty state; none of them is a spinner. The
 dashboard is usable — and honest — before a single candidate exists.
 
+![States: cold start with every panel's empty string, the running-versus-idle signal table, the degraded status bar when the server is unreachable, and the recorded-campaign chip](docs/wireframes/13-states.svg)
+
 ### 6.1 Cold start (no campaign yet)
 
-```
-│ ○ STATUS  no campaign data yet — start one with `athanor run`                 │
-
-┌ MISSION ────────────┐  ← still fully populated: the mission exists in config
-┌ CAMPAIGN ───────────┐  ← 0 / 12 iterations, empty meter
-┌ DISCOVERY LOOP ─────┐  "no iterations yet — the loop appears here live"
-┌ COMPOSITION SPACE ──┐  "no scored candidates yet"        (caption hidden)
-┌ AGENT FEED ─────────┐  "no events yet"                   (chip hidden)
-┌ TOP CANDIDATES ─────┐  "no data yet"                     (colspan=6 row)
-┌ LAB NOTEBOOK ───────┐  "no entries yet"
-```
+The mission card is still fully populated — the mission exists in config
+before any run — and so is the agent card, because the models are known
+before the first call is ever made. Everything downstream of compute says
+so plainly: `no iterations yet`, `no scored candidates yet`, `no events
+yet`, `no data yet`, `no entries yet`.
 
 ### 6.2 Running vs idle
 
@@ -478,20 +241,12 @@ dashboard is usable — and honest — before a single candidate exists.
 Fetch failure leaves the last-rendered content in place and degrades only
 the status bar — a dropped poll must never blank a chart you were reading.
 
-```
-│ ○ STATUS  dashboard server unreachable — retrying…                            │
-```
-
 ### 6.4 Recorded (static) mode
 
 `export-pages` bakes `data/snapshot.json` + `data/benchmark.json`. On first
 load the client tries `api/snapshot`, falls back to the baked file, and
 **cancels the 10s timer** — a recording never changes. The only visual
-difference is one chip, and it is deliberately the warm "note" color:
-
-```
-│ [agent qwen3:32b] [critic gemma4:26b] ░recorded campaign · exported 2026-07-18░│
-```
+difference is one chip, and it is deliberately the warm "note" color.
 
 ---
 
@@ -502,31 +257,7 @@ min-width and scrolls horizontally inside its card; the table and the
 benchmark table do the same. Nothing reflows into a different reading
 order, and no content is hidden at any width.
 
-```
-┌──────────────────────────────┐
-│ ▓ Athanor — Mission Control  │  header wraps to 2–3 rows
-│ ①Campaign ②Bench ③Notebook   │
-│                (Export CSV)  │
-├──────────────────────────────┤
-│ ● STATUS  Iteration 8 of 12  │  chips wrap below
-│ [agent …] [critic …]         │
-├──────────────────────────────┤
-│ ┌ MISSION ─────────────────┐ │
-│ ┌ CAMPAIGN ────────────────┐ │
-│ ┌ AGENT & CRITIC ──────────┐ │
-│ ┌ DISCOVERY LOOP ──────────┐ │
-│ │ ┌────┐→┌────┐→┌────┐ ▁▁▁ │ │ ← horizontal scroll, stages keep 118px
-│ ┌ COMPOSITION SPACE ───────┐ │
-│ │ (SVG scales; min-height  │ │
-│ │  380px)                  │ │
-│ ┌ AGENT FEED ──────────────┐ │
-│ ┌ TOP CANDIDATES ──────────┐ │
-│ │ table scrolls sideways ▁▁│ │
-│ ┌ LAB NOTEBOOK ────────────┐ │
-├──────────────────────────────┤
-│ ⚠ Surrogate screening only …│
-└──────────────────────────────┘
-```
+![Narrow viewport: every card stacked in source order, with the pipeline and the tables scrolling sideways inside their cards and only the map genuinely scaling](docs/wireframes/14-responsive.svg)
 
 ---
 
@@ -535,16 +266,16 @@ order, and no content is hidden at any width.
 The whole surface has five interactions. That is the design: it is an
 instrument panel, not an app.
 
-```
-( ① / ② / ③ pill )  → toggle main[hidden]; ② lazily fetches the benchmark
-( status | iteration ) → re-render SVG from cached snapshot (no network)
-( Export CSV )      → client-side Blob download of all candidate rows
-( Open full notebook ) → clicks the ③ pill
-  hover a point / a hypothesis cell → native tooltip (SVG <title> / title attr)
+| Control | Effect |
+|---|---|
+| ① / ② / ③ page pill | toggles `main[hidden]`; ② lazily fetches the benchmark |
+| `status` \| `iteration` segment | re-renders the map SVG from the cached snapshot (no network) |
+| Export CSV | client-side Blob download of all candidate rows |
+| Open full notebook | clicks the ③ pill |
+| hover a point / a hypothesis cell | native tooltip (SVG `<title>` / `title` attribute) |
 
-auto:  setInterval 10 s → GET api/snapshot → renderAll()   (cancelled in
-       recorded mode)
-```
+Plus one automatic behaviour: `setInterval` 10 s → `GET api/snapshot` →
+`renderAll()`, cancelled in recorded mode.
 
 Keyboard/a11y: all controls are real `<button>`s with a visible
 `:focus-visible` ring; cards carry `aria-label`s; the map exposes
@@ -581,7 +312,8 @@ benchmark table, and paper always agree.
 ## 10. Token reference
 
 Colors live only in the `:root` block of `app.css`; nothing below is
-duplicated in markup.
+duplicated in markup, and the figures in `docs/wireframes/` use these same
+values verbatim.
 
 ```
 surfaces   --page-bg #faf7f2   --surface #ffffff   --raised #fffdf9
@@ -610,4 +342,5 @@ Design rules the wireframes encode:
    shows survivors overstates the method.
 5. **No build step.** Vanilla JS, hand-written SVG, bundled fonts, zero
    dependencies — the UI ships inside the Python package, mirroring the
-   stdlib-only server.
+   stdlib-only server. These wireframes are hand-written SVG for the same
+   reason.

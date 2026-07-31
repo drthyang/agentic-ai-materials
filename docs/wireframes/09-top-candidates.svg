@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1140 400" width="1140" height="400" role="img" aria-labelledby="ttl desc">
+<title id="ttl">Top candidates table</title>
+<desc id="desc">A ranked table of candidates with formula, band gap, energy above hull, iteration, a status pill and the agent's hypothesis. Numeric columns are right-aligned with tabular figures; missing values render as an em dash.</desc>
+<rect width="1140" height="400" fill="#faf7f2"/>
+<g font-family="'IBM Plex Sans',ui-sans-serif,-apple-system,'Segoe UI',Roboto,sans-serif" dominant-baseline="middle" fill="#191714">
+
+  <rect x="20" y="20" width="1100" height="240" rx="12" fill="#ffffff" stroke="#e8e2d8"/>
+  <text x="40" y="46" font-size="10.5" font-weight="600" letter-spacing="0.9" fill="#94897a">TOP CANDIDATES</text>
+  <rect x="860" y="36" width="240" height="20" rx="5" fill="#f3eee4"/>
+  <text x="980" y="46" font-size="9" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#5f594f" text-anchor="middle">ranked by |gap − ideal| within window</text>
+  <line x1="40" y1="64" x2="1100" y2="64" stroke="#eee7da"/>
+
+  <g font-size="9.5" font-weight="600" letter-spacing="0.8" fill="#94897a">
+    <text x="40" y="82">FORMULA</text>
+    <text x="300" y="82" text-anchor="end">GAP (eV)</text>
+    <text x="430" y="82" text-anchor="end">HULL (eV/at)</text>
+    <text x="500" y="82" text-anchor="end">ITER</text>
+    <text x="530" y="82">STATUS</text>
+    <text x="700" y="82">HYPOTHESIS</text>
+  </g>
+  <line x1="40" y1="96" x2="1100" y2="96" stroke="#eee7da"/>
+
+  <g font-size="11.5" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-weight="600">
+    <text x="40" y="116">CdCuSe₂</text>
+    <text x="40" y="148">AlSb</text>
+    <text x="40" y="180">ZnGeP₂</text>
+    <text x="40" y="212">CuGaSe₂</text>
+  </g>
+  <g font-size="11" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#191714" text-anchor="end">
+    <text x="300" y="116">1.70</text><text x="430" y="116">0.003</text><text x="500" y="116">3</text>
+    <text x="300" y="148">1.62</text><text x="430" y="148">0.000</text><text x="500" y="148">6</text>
+    <text x="300" y="180">1.94</text><text x="430" y="180">0.021</text><text x="500" y="180">4</text>
+    <text x="300" y="212" fill="#b3a993">—</text><text x="430" y="212" fill="#b3a993">—</text><text x="500" y="212">2</text>
+  </g>
+
+  <g font-size="9.5" text-anchor="middle">
+    <rect x="530" y="107" width="94" height="18" rx="9" fill="#eff5ea" stroke="#d3e2c4"/>
+    <text x="577" y="116" fill="#3f6b25">● hit · novel</text>
+    <rect x="530" y="139" width="94" height="18" rx="9" fill="#faf3e3" stroke="#e8d9ae"/>
+    <text x="577" y="148" fill="#a87a10">◆ rediscovery</text>
+    <rect x="530" y="171" width="58" height="18" rx="9" fill="#f3eee4"/>
+    <text x="559" y="180" fill="#5f594f">scored</text>
+    <rect x="530" y="203" width="58" height="18" rx="9" fill="#f3eee4"/>
+    <text x="559" y="212" fill="#5f594f">scored</text>
+  </g>
+
+  <g font-size="10.5" fill="#5f594f">
+    <text x="700" y="116">Cd-for-Zn on the chalcopyrite backbone; Cd…</text>
+    <text x="700" y="148">III–V zinc-blende reference held out of MP…</text>
+    <text x="700" y="180">Chalcopyrite analogue with Ge on the group…</text>
+    <text x="700" y="212" fill="#b3a993">—</text>
+  </g>
+
+  <g stroke="#eee7da">
+    <line x1="40" y1="132" x2="1100" y2="132"/>
+    <line x1="40" y1="164" x2="1100" y2="164"/>
+    <line x1="40" y1="196" x2="1100" y2="196"/>
+  </g>
+
+  <!-- column callouts -->
+  <g stroke="#ddd5c7" stroke-dasharray="3 3">
+    <line x1="60" y1="262" x2="60" y2="274"/>
+    <line x1="280" y1="262" x2="280" y2="274"/>
+    <line x1="560" y1="262" x2="560" y2="274"/>
+    <line x1="760" y1="262" x2="760" y2="274"/>
+  </g>
+  <g font-size="9.5" fill="#b3a993">
+    <text x="40" y="284">mono, 600</text>
+    <text x="216" y="284">right-aligned, tabular-nums</text>
+    <text x="530" y="284">pill</text>
+    <text x="700" y="284">340px, ellipsis — full text on hover</text>
+  </g>
+
+  <text x="40" y="314" font-size="10" font-weight="600" letter-spacing="0.85" fill="#94897a">NOTES</text>
+  <line x1="40" y1="326" x2="1100" y2="326" stroke="#eee7da"/>
+  <g font-size="10.5" fill="#5f594f">
+    <text x="40" y="344">Formulas render with real Unicode subscripts (CdCuSe2 → CdCuSe₂) through a lookahead regex — chemistry without a math library.</text>
+    <text x="40" y="362">Missing values render as — , never null or 0. A candidate that failed to converge still appears; it simply has nothing to report.</text>
+    <text x="40" y="380">Status comes from metrics.row_flags server-side, so the table, the map and the benchmark can never disagree about what a hit is.</text>
+  </g>
+</g>
+</svg>

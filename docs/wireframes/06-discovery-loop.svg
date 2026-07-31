@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 450" width="1240" height="450" role="img" aria-labelledby="ttl desc">
+<title id="ttl">Discovery loop — the pipeline strip</title>
+<desc id="desc">A horizontal funnel for the latest iteration: propose, filter, critic, evaluate, record. Each connector carries a chip naming what was lost at that step. Evaluate is tinted blue while the campaign is running; Record's count is green. A dashed loopback strip below states that the loop closes through the lab notebook.</desc>
+<defs>
+<marker id="arw" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+<path d="M0 0 L8 4 L0 8 Z" fill="#94897a"/>
+</marker>
+</defs>
+<rect width="1240" height="450" fill="#faf7f2"/>
+<g font-family="'IBM Plex Sans',ui-sans-serif,-apple-system,'Segoe UI',Roboto,sans-serif" dominant-baseline="middle" fill="#191714">
+
+  <rect x="20" y="20" width="1200" height="286" rx="12" fill="#ffffff" stroke="#e8e2d8"/>
+  <text x="40" y="46" font-size="10.5" font-weight="600" letter-spacing="0.9" fill="#94897a">DISCOVERY LOOP — ITERATION &lt;8&gt;</text>
+  <rect x="1000" y="36" width="200" height="20" rx="5" fill="#f3eee4"/>
+  <text x="1100" y="46" font-size="9.5" fill="#5f594f" text-anchor="middle">fresh context · notebook is memory</text>
+  <line x1="40" y1="64" x2="1200" y2="64" stroke="#eee7da"/>
+
+  <!-- stages -->
+  <g>
+    <rect x="40" y="80" width="180" height="96" rx="9" fill="#fffdf9" stroke="#e8e2d8"/>
+    <rect x="285" y="80" width="180" height="96" rx="9" fill="#fffdf9" stroke="#e8e2d8"/>
+    <rect x="530" y="80" width="180" height="96" rx="9" fill="#fffdf9" stroke="#e8e2d8"/>
+    <rect x="775" y="80" width="180" height="96" rx="9" fill="#eaf0fe" stroke="#b9c6f4"/>
+    <rect x="1020" y="80" width="180" height="96" rx="9" fill="#fffdf9" stroke="#e8e2d8"/>
+  </g>
+  <g font-size="10" font-weight="600" letter-spacing="0.85" fill="#94897a">
+    <text x="56" y="102">PROPOSE</text>
+    <text x="301" y="102">FILTER</text>
+    <text x="546" y="102">CRITIC</text>
+    <text x="791" y="102" fill="#1f4fd8">EVALUATE</text>
+    <text x="1036" y="102">RECORD</text>
+  </g>
+  <rect x="860" y="94" width="44" height="16" rx="8" fill="#1f4fd8"/>
+  <text x="882" y="102" font-size="8.5" fill="#ffffff" text-anchor="middle">active</text>
+
+  <g font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="18" font-weight="600" fill="#1f4fd8">
+    <text x="56" y="128">&lt;68&gt;</text>
+    <text x="301" y="128">&lt;49&gt;</text>
+    <text x="546" y="128">&lt;42&gt;</text>
+    <text x="791" y="128">&lt;41&gt;<tspan fill="#5f594f"> / </tspan>&lt;12&gt;</text>
+    <text x="1036" y="128" fill="#3f6b25">+&lt;2&gt;<tspan fill="#5f594f" font-size="12"> hits</tspan></text>
+  </g>
+
+  <g font-size="9.5" fill="#94897a">
+    <text x="56" y="148">prototype substitution,</text>
+    <text x="56" y="162">notebook + literature</text>
+    <text x="301" y="148">SMACT + mission chemistry</text>
+    <text x="301" y="162">— before any compute</text>
+    <text x="546" y="148">independent review ·</text>
+    <text x="546" y="162">skeptical persona</text>
+    <text x="791" y="148" fill="#1f4fd8">CHGNet relax → E_hull ·</text>
+    <text x="791" y="162" fill="#1f4fd8">MEGNet gap (HSE)</text>
+    <text x="1036" y="148">DB rows · &lt;3&gt; notebook</text>
+    <text x="1036" y="162">entries</text>
+  </g>
+
+  <!-- connectors -->
+  <g stroke="#94897a">
+    <line x1="228" y1="128" x2="277" y2="128" marker-end="url(#arw)"/>
+    <line x1="473" y1="128" x2="522" y2="128" marker-end="url(#arw)"/>
+    <line x1="718" y1="128" x2="767" y2="128" marker-end="url(#arw)"/>
+    <line x1="963" y1="128" x2="1012" y2="128" marker-end="url(#arw)"/>
+  </g>
+  <g font-size="8.5" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" text-anchor="middle">
+    <rect x="220" y="96" width="65" height="17" rx="5" fill="#f3eee4"/>
+    <text x="252" y="104.5" fill="#5f594f">−19 filtered</text>
+    <rect x="465" y="96" width="65" height="17" rx="5" fill="#fdf0ea" stroke="#f2cdbb"/>
+    <text x="497" y="104.5" fill="#a03415">−7 vetoed</text>
+    <rect x="710" y="96" width="65" height="17" rx="5" fill="#fdf0ea" stroke="#f2cdbb"/>
+    <text x="742" y="104.5" fill="#a03415">−2 error</text>
+  </g>
+
+  <!-- loopback -->
+  <rect x="40" y="194" width="1160" height="36" rx="8" fill="none" stroke="#ddd5c7" stroke-dasharray="5 5"/>
+  <text x="58" y="212" font-size="13" fill="#94897a">↺</text>
+  <text x="78" y="212" font-size="10.5" fill="#5f594f">Loop closes through the lab notebook — the next iteration starts from a fresh context and reads what this one learned.</text>
+  <text x="1184" y="212" font-size="10" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#94897a" text-anchor="end">next: iteration 9 / 12</text>
+
+  <text x="40" y="256" font-size="10" fill="#b3a993">.pipe-scroll scrolls horizontally below min-width 820px rather than squashing the stages · stage min-width 118px, flex 1 · flow column fixed 92px</text>
+  <text x="40" y="278" font-size="10" fill="#b3a993">A funnel that showed only survivors would overstate the method, so every loss — filtered, vetoed, errored — is named on the connector that caused it.</text>
+
+  <!-- rules strip -->
+  <rect x="20" y="326" width="1200" height="104" rx="9" fill="#f6f1e8" stroke="#e8e2d8"/>
+  <text x="40" y="348" font-size="10" font-weight="600" letter-spacing="0.85" fill="#94897a">DERIVED, NOT STORED</text>
+  <g font-size="10" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#5f594f">
+    <text x="40" y="370">Propose  = proposed + filtered_out + scored + error</text>
+    <text x="40" y="386">Filter   = Propose − (filtered_out − vetoed)</text>
+    <text x="40" y="402">Critic   = Filter − vetoed</text>
+    <text x="40" y="418">Evaluate = scored + error</text>
+  </g>
+  <text x="620" y="348" font-size="10" font-weight="600" letter-spacing="0.85" fill="#94897a">STATE RULES</text>
+  <g font-size="10" fill="#5f594f">
+    <text x="620" y="370">.stage.active (blue tint) is on Evaluate only while meta.running is true.</text>
+    <text x="620" y="386">.stage.terminal colours Record's count --hit green.</text>
+    <text x="620" y="402">A connector draws its chip only when the drop is non-zero; the arrow always draws.</text>
+    <text x="620" y="418">The loopback is dashed — a narrative edge (memory), not a flow inside this iteration.</text>
+  </g>
+</g>
+</svg>

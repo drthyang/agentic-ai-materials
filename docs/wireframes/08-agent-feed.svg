@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" width="900" height="420" role="img" aria-labelledby="ttl desc">
+<title id="ttl">Agent feed</title>
+<desc id="desc">A fixed three-column event list — timestamp, coloured tag, message — newest first, scrolling inside its own card. The tag palette distinguishes filtered, veto, score, hit, rediscovery, error and notebook events.</desc>
+<defs>
+<linearGradient id="feedfade" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+<stop offset="1" stop-color="#ffffff" stop-opacity="1"/>
+</linearGradient>
+</defs>
+<rect width="900" height="420" fill="#faf7f2"/>
+<g font-family="'IBM Plex Sans',ui-sans-serif,-apple-system,'Segoe UI',Roboto,sans-serif" dominant-baseline="middle" fill="#191714">
+
+  <rect x="24" y="24" width="420" height="372" rx="12" fill="#ffffff" stroke="#e8e2d8"/>
+  <text x="44" y="50" font-size="10.5" font-weight="600" letter-spacing="0.9" fill="#94897a">AGENT FEED</text>
+  <rect x="316" y="40" width="108" height="20" rx="5" fill="#f3eee4"/>
+  <text x="370" y="50" font-size="9" fill="#5f594f" text-anchor="middle">last &lt;40&gt; events</text>
+  <line x1="44" y1="68" x2="424" y2="68" stroke="#eee7da"/>
+
+  <g font-size="9.5" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#b3a993">
+    <text x="44" y="92">07-18</text><text x="44" y="106">14:06:15</text>
+    <text x="44" y="140">07-18</text><text x="44" y="154">14:05:02</text>
+    <text x="44" y="188">07-18</text><text x="44" y="202">14:03:40</text>
+    <text x="44" y="236">07-18</text><text x="44" y="250">14:02:11</text>
+    <text x="44" y="284">07-18</text><text x="44" y="298">14:01:30</text>
+    <text x="44" y="332">07-18</text><text x="44" y="346">14:00:12</text>
+  </g>
+
+  <g font-size="8.5" font-weight="700" letter-spacing="0.6" text-anchor="middle">
+    <rect x="112" y="84" width="60" height="17" rx="5" fill="#faf3e3" stroke="#e8d9ae"/><text x="142" y="92.5" fill="#6b5310">NTBK</text>
+    <rect x="112" y="132" width="60" height="17" rx="5" fill="#fdf0ea" stroke="#f2cdbb"/><text x="142" y="140.5" fill="#a03415">VETO</text>
+    <rect x="112" y="180" width="60" height="17" rx="5" fill="#eff5ea" stroke="#d3e2c4"/><text x="142" y="188.5" fill="#3f6b25">HIT</text>
+    <rect x="112" y="228" width="60" height="17" rx="5" fill="#eaf0fe" stroke="#b9c6f4"/><text x="142" y="236.5" fill="#1f4fd8">SCORE</text>
+    <rect x="112" y="276" width="60" height="17" rx="5" fill="#f3eee4"/><text x="142" y="284.5" fill="#5f594f">FILTER</text>
+    <rect x="112" y="324" width="60" height="17" rx="5" fill="#faf3e3" stroke="#e8d9ae"/><text x="142" y="332.5" fill="#a87a10">REDIS</text>
+  </g>
+
+  <g font-size="10" fill="#5f594f">
+    <text x="188" y="92">reflection logged</text><text x="188" y="106">(iteration 8)</text>
+    <text x="188" y="140">ZnSnP₂ — critic: P/Sn</text><text x="188" y="154">ratio unphysical</text>
+    <text x="188" y="188">CdCuSe₂ novel · 1.70 eV</text><text x="188" y="202">· hull 0.003 eV/atom</text>
+    <text x="188" y="236">CuInSe₂ gap 1.04 eV</text><text x="188" y="250">· hull 0.012 eV/atom</text>
+    <text x="188" y="284">19 dropped by SMACT</text><text x="188" y="298">+ mission chemistry</text>
+    <text x="188" y="332">AlSb matches mp-1018100</text><text x="188" y="346">— counted as rediscovery</text>
+  </g>
+
+  <g stroke="#eee7da">
+    <line x1="44" y1="118" x2="424" y2="118"/>
+    <line x1="44" y1="166" x2="424" y2="166"/>
+    <line x1="44" y1="214" x2="424" y2="214"/>
+    <line x1="44" y1="262" x2="424" y2="262"/>
+    <line x1="44" y1="310" x2="424" y2="310"/>
+  </g>
+  <rect x="26" y="352" width="416" height="42" rx="10" fill="url(#feedfade)"/>
+
+  <!-- annotations -->
+  <text x="470" y="50" font-size="10" font-weight="600" letter-spacing="0.85" fill="#94897a">TAG PALETTE</text>
+  <line x1="470" y1="62" x2="876" y2="62" stroke="#eee7da"/>
+  <g font-size="8.5" font-weight="700" letter-spacing="0.6" text-anchor="middle">
+    <rect x="470" y="70" width="62" height="17" rx="5" fill="#f3eee4"/><text x="501" y="78.5" fill="#5f594f">FILTER</text>
+    <rect x="470" y="96" width="62" height="17" rx="5" fill="#fdf0ea" stroke="#f2cdbb"/><text x="501" y="104.5" fill="#a03415">VETO</text>
+    <rect x="470" y="122" width="62" height="17" rx="5" fill="#eaf0fe" stroke="#b9c6f4"/><text x="501" y="130.5" fill="#1f4fd8">SCORE</text>
+    <rect x="470" y="148" width="62" height="17" rx="5" fill="#eff5ea" stroke="#d3e2c4"/><text x="501" y="156.5" fill="#3f6b25">HIT</text>
+    <rect x="470" y="174" width="62" height="17" rx="5" fill="#faf3e3" stroke="#e8d9ae"/><text x="501" y="182.5" fill="#a87a10">REDIS</text>
+    <rect x="470" y="200" width="62" height="17" rx="5" fill="#fdf0ea" stroke="#f2cdbb"/><text x="501" y="208.5" fill="#a03415">ERROR</text>
+    <rect x="470" y="226" width="62" height="17" rx="5" fill="#faf3e3" stroke="#e8d9ae"/><text x="501" y="234.5" fill="#6b5310">NTBK</text>
+  </g>
+  <g font-size="10" fill="#5f594f">
+    <text x="548" y="78.5">dropped by SMACT or mission chemistry, before compute</text>
+    <text x="548" y="104.5">the critic said no — zero relaxation budget spent</text>
+    <text x="548" y="130.5">relaxed and scored: gap and hull now known</text>
+    <text x="548" y="156.5">on-target, near-hull, converged and not confirmed-known</text>
+    <text x="548" y="182.5">on-target but already known — a rediscovery, not a hit</text>
+    <text x="548" y="208.5">the relaxation failed; the candidate is recorded anyway</text>
+    <text x="548" y="234.5">an entry was appended to the lab notebook</text>
+  </g>
+
+  <text x="470" y="272" font-size="10" font-weight="600" letter-spacing="0.85" fill="#94897a">LAYOUT</text>
+  <line x1="470" y1="284" x2="876" y2="284" stroke="#eee7da"/>
+  <g font-size="10" fill="#5f594f">
+    <text x="470" y="302">Fixed 3-column grid — 82px time · 88px tag · 1fr message. Newest</text>
+    <text x="470" y="317">first, max-height 430px, its own scroll.</text>
+    <text x="470" y="342">Time is mono 10px --faintest, the tag 9.5px/700 uppercase, formulas</text>
+    <text x="470" y="357">mono, the message --secondary.</text>
+  </g>
+  <g font-size="10" fill="#94897a">
+    <text x="470" y="382">The feed is the only place the campaign narrates itself in order —</text>
+    <text x="470" y="397">every other panel on the page is a summary.</text>
+  </g>
+</g>
+</svg>

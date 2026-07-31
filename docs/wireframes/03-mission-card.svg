@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" width="900" height="300" role="img" aria-labelledby="ttl desc">
+<title id="ttl">Mission card</title>
+<desc id="desc">The mission card: an uppercase label with a config/mission.yaml source chip, a running/idle pill, the mission name, the target windows in mono, allowed element chips with excluded elements struck through in warm red, and a note that the view reads the mission but never edits it.</desc>
+<rect width="900" height="300" fill="#faf7f2"/>
+<g font-family="'IBM Plex Sans',ui-sans-serif,-apple-system,'Segoe UI',Roboto,sans-serif" dominant-baseline="middle" fill="#191714">
+
+  <rect x="24" y="24" width="460" height="252" rx="12" fill="#ffffff" stroke="#e8e2d8"/>
+
+  <text x="44" y="50" font-size="10.5" font-weight="600" letter-spacing="0.9" fill="#94897a">MISSION</text>
+  <rect x="322" y="40" width="142" height="20" rx="5" fill="#f3eee4"/>
+  <text x="393" y="50" font-size="9.5" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#5f594f" text-anchor="middle">config/mission.yaml</text>
+  <line x1="44" y1="68" x2="464" y2="68" stroke="#eee7da"/>
+
+  <rect x="44" y="80" width="80" height="21" rx="10" fill="#eaf0fe" stroke="#b9c6f4"/>
+  <circle cx="57" cy="90.5" r="3.2" fill="#1f4fd8"/>
+  <text x="66" y="90.5" font-size="9.5" fill="#1f4fd8">running</text>
+
+  <text x="44" y="120" font-size="15" font-weight="700">PV absorber</text>
+  <g font-size="10.5" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" fill="#5f594f">
+    <text x="44" y="142">gap 1.1–1.7 eV (ideal 1.35) · hull ≤ 0.05 eV/atom</text>
+    <text x="44" y="159">≤ 4 elements</text>
+  </g>
+
+  <g font-size="10" font-family="'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace" text-anchor="middle">
+    <rect x="44" y="176" width="28" height="20" rx="5" fill="#f3eee4"/><text x="58" y="186">Cu</text>
+    <rect x="78" y="176" width="28" height="20" rx="5" fill="#f3eee4"/><text x="92" y="186">Ag</text>
+    <rect x="112" y="176" width="28" height="20" rx="5" fill="#f3eee4"/><text x="126" y="186">Ga</text>
+    <rect x="146" y="176" width="28" height="20" rx="5" fill="#f3eee4"/><text x="160" y="186">In</text>
+    <rect x="180" y="176" width="28" height="20" rx="5" fill="#f3eee4"/><text x="194" y="186">Se</text>
+    <rect x="214" y="176" width="22" height="20" rx="5" fill="#f3eee4"/><text x="225" y="186">S</text>
+    <rect x="242" y="176" width="28" height="20" rx="5" fill="#f3eee4"/><text x="256" y="186">Zn</text>
+    <rect x="276" y="176" width="28" height="20" rx="5" fill="#f3eee4"/><text x="290" y="186">Sn</text>
+    <rect x="318" y="176" width="28" height="20" rx="5" fill="#fdf0ea" stroke="#f2cdbb"/><text x="332" y="186" fill="#a03415">Pb</text>
+    <rect x="352" y="176" width="28" height="20" rx="5" fill="#fdf0ea" stroke="#f2cdbb"/><text x="366" y="186" fill="#a03415">Cd</text>
+    <line x1="324" y1="186" x2="340" y2="186" stroke="#a03415"/>
+    <line x1="358" y1="186" x2="374" y2="186" stroke="#a03415"/>
+  </g>
+
+  <g font-size="10.5" fill="#94897a">
+    <text x="44" y="222">Targets &amp; budgets live in config/mission.yaml —</text>
+    <text x="44" y="238">this view reads, never edits.</text>
+  </g>
+
+  <!-- annotations -->
+  <g stroke="#ddd5c7" stroke-dasharray="3 3">
+    <line x1="486" y1="50" x2="506" y2="50"/>
+    <line x1="486" y1="90" x2="506" y2="90"/>
+    <line x1="486" y1="120" x2="506" y2="120"/>
+    <line x1="486" y1="150" x2="506" y2="150"/>
+    <line x1="486" y1="186" x2="506" y2="186"/>
+    <line x1="486" y1="230" x2="506" y2="230"/>
+  </g>
+  <g font-size="10.5" fill="#5f594f">
+    <text x="514" y="50">.upper label + mono source chip</text>
+    <text x="514" y="90">.pill.free ● running   /   .pill.dim ○ idle</text>
+    <text x="514" y="120">.sum-title 14px/700 — mission.name</text>
+    <text x="514" y="136">.sum-meta, mono — the target windows verbatim,</text>
+    <text x="514" y="151">so every number on the page can be judged</text>
+    <text x="514" y="166">against what produced it</text>
+    <text x="514" y="192">.elem chips; .elem.ex struck through, warm-red</text>
+    <text x="514" y="223">Static per campaign. It is the only card that</text>
+    <text x="514" y="238">never changes while the loop runs.</text>
+  </g>
+</g>
+</svg>
