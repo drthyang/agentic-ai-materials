@@ -101,5 +101,11 @@ uv run athanor export-pages            # static recorded-campaign site -> docs/
   not purge them until the user says those references are updated. Do not rename
   the GitHub repo without asking, for the same reason.
 - uv + Python 3.11 (pinned); `uv sync --extra dev` to set up
-- Commit style: imperative subject, body explains the "why",
-  `Co-Authored-By: Claude <noreply@anthropic.com>` trailer
+- Commit style: imperative subject, body explains the "why". No trailers.
+- Attribution: every commit in this repo is authored solely by
+  `Tsung-Han Yang <tsung-han_yang@alumni.brown.edu>` — no `Co-Authored-By`,
+  no `Claude-Session`. `.claude/settings.json` enforces this two ways:
+  `attribution` blanks the trailers, and a `SessionStart` hook sets the
+  repo-local git identity (`.git/config` is not checked in, so a fresh
+  clone or container would otherwise fall back to whatever the environment
+  defaults to). Do not re-add the trailers.
