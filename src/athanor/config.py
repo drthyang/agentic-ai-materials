@@ -63,6 +63,20 @@ class CriticConfig(BaseModel):
     model: str | None = None
 
 
+class AcquisitionConfig(BaseModel):
+    """The rank_by_surrogate agent tool: a GP over every scored composition,
+    exposed so the agent can ask where expected improvement is highest.
+
+    Advisory and free (no relaxation cost). Disable for the ablation arm of
+    the LLM-vs-LLM+BO comparison; the GP, features, and utility are shared
+    with BayesOptBaseline so the arms differ only in who consults the model.
+    """
+
+    enabled: bool = True
+    min_train: int = 6   # scored compositions needed before the GP is trusted
+    xi: float = 0.01     # EI exploration margin
+
+
 class Evaluation(BaseModel):
     """Phase 3 rediscovery hold-out: these known materials are masked from
     MP search/novelty so a campaign can plausibly 'rediscover' them."""
@@ -83,6 +97,7 @@ class MissionConfig(BaseModel):
     budget: Budget
     llm: LLMConfig = LLMConfig()
     critic: CriticConfig = CriticConfig()
+    acquisition: AcquisitionConfig = AcquisitionConfig()
     evaluation: Evaluation = Evaluation()
     paths: Paths = Paths()
 

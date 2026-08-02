@@ -386,6 +386,107 @@ def build_registry(ctx: CampaignContext) -> ToolRegistry:
         search_literature,
     )
 
+    # -- rank_by_surrogate ----------------------------------------------------
+    def rank_by_surrogate(formulas: list[str] | None = None) -> dict:
+        from athanor.baselines import _GP, featurize_composition, mission_utility
+
+        X, y = [], []
+        for r in ctx.db.all_scored():
+            u = mission_utility(cfg, r["band_gap_ev"], r["e_above_hull"])
+            if u is not None and r["converged"]:
+                X.append(featurize_composition(r["formula"]))
+                y.append(u)
+        min_train = cfg.acquisition.min_train
+        if len(y) < min_train:
+            return {
+                "status": "insufficient_data",
+                "scored_compositions": len(y),
+                "needed": min_train,
+                "note": (
+                    "The surrogate needs more scored compositions before its "
+                    "ranking means anything. Rank by chemistry instead."
+                ),
+            }
+
+        pool = formulas if formulas else sorted(ctx.structures)
+        if not pool:
+            return {"error": "nothing to rank — propose candidates first or "
+                             "pass formulas explicitly"}
+
+        feats, valid, invalid = [], [], []
+        for f in pool:
+            try:
+                feats.append(featurize_composition(f))
+                valid.append(f)
+            except Exception as exc:
+                invalid.append({"formula": f, "error": f"{type(exc).__name__}: {exc}"})
+        if not valid:
+            return {"error": "no rankable formulas", "invalid": invalid}
+
+        try:
+            gp = _GP()
+            gp.fit(X, y)
+            ei = gp.expected_improvement(feats, xi=cfg.acquisition.xi)
+            mu, var = gp.predict(feats)
+        except Exception as exc:
+            # fail open, like the critic: a flaky surrogate may cost
+            # efficiency, never block the campaign
+            return {"error": f"surrogate failed ({type(exc).__name__}: {exc}); "
+                             "rank by chemistry instead"}
+
+        order = sorted(range(len(valid)), key=lambda i: -float(ei[i]))
+        ranked = [
+            {
+                "formula": valid[i],
+                "expected_improvement": _r(float(ei[i]), 4),
+                "predicted_utility": _r(float(mu[i])),
+                "uncertainty": _r(float(var[i]) ** 0.5),
+            }
+            for i in order
+        ]
+        result = {
+            "ranked": ranked,
+            "trained_on": len(y),
+            "utility": "-|gap - ideal| - 10*max(0, hull - near_stable_max); higher is better",
+            "note": "advisory ranking; costs no relaxation budget",
+        }
+        if invalid:
+            result["invalid"] = invalid
+        return result
+
+    if cfg.acquisition.enabled:
+        reg.register(
+            ToolSpec(
+                name="rank_by_surrogate",
+                description=(
+                    "Rank candidate formulas by expected improvement, using a "
+                    "Gaussian-process surrogate fitted to every composition this "
+                    "campaign has scored. High EI = the surrogate expects this "
+                    "composition to beat the campaign's best, or is uncertain "
+                    "enough to be worth probing. Costs no relaxation budget — "
+                    "use it between propose_candidates and evaluate_candidates "
+                    "to decide where to spend. Defaults to ranking the pending "
+                    "proposed candidates; pass formulas to probe compositions "
+                    "before proposing them. Advisory: your chemical reasoning "
+                    "can overrule it, especially early in a campaign."
+                ),
+                input_schema={
+                    "type": "object",
+                    "properties": {
+                        "formulas": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": (
+                                "formulas to rank (default: all pending "
+                                "proposed candidates)"
+                            ),
+                        }
+                    },
+                },
+            ),
+            rank_by_surrogate,
+        )
+
     # -- get_top_candidates ---------------------------------------------------
     def get_top_candidates(limit: int = 10) -> dict:
         rows = ctx.db.top_candidates(limit=limit)

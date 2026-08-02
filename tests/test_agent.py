@@ -151,6 +151,97 @@ def test_duplicate_proposal_rejected(registry, ctx):
 
 
 # --------------------------------------------------------------------------
+# rank_by_surrogate (acquisition tool)
+# --------------------------------------------------------------------------
+
+def _seed_scored(ctx, rows):
+    from athanor.db import CandidateRow
+
+    for formula, gap, hull in rows:
+        ctx.db.add(CandidateRow(
+            iteration=1, formula=formula, status="scored", converged=True,
+            formation_energy_per_atom=-0.5, e_above_hull=hull, band_gap_ev=gap,
+        ))
+
+
+SEED_ROWS = [
+    ("CuInSe2", 1.35, 0.01), ("CuGaSe2", 1.60, 0.00), ("CuInS2", 1.50, 0.02),
+    ("AgInSe2", 1.20, 0.04), ("ZnSnP2", 1.90, 0.08), ("CuAlSe2", 2.60, 0.03),
+    ("AgGaS2", 2.70, 0.01), ("ZnGeAs2", 1.15, 0.06),
+]
+
+
+def test_surrogate_rank_cold_start_reports_insufficient_data(registry):
+    out = json.loads(registry.execute(call("rank_by_surrogate", formulas=["CuInSe2"])))
+    assert out["status"] == "insufficient_data"
+    assert out["scored_compositions"] == 0
+    assert out["needed"] == 6
+
+
+def test_surrogate_rank_orders_and_stays_json_native(registry, ctx):
+    _seed_scored(ctx, SEED_ROWS)
+    out = json.loads(registry.execute(call(
+        "rank_by_surrogate", formulas=["CuGaS2", "BaTiO3", "AgAlSe2"])))
+    assert out["trained_on"] == len(SEED_ROWS)
+    assert [type(e["expected_improvement"]) for e in out["ranked"]] == [float] * 3
+    ei = [e["expected_improvement"] for e in out["ranked"]]
+    assert ei == sorted(ei, reverse=True)
+    assert {e["formula"] for e in out["ranked"]} == {"CuGaS2", "BaTiO3", "AgAlSe2"}
+    assert all("predicted_utility" in e and "uncertainty" in e for e in out["ranked"])
+
+
+def test_surrogate_rank_defaults_to_pending_proposals(registry, ctx):
+    _seed_scored(ctx, SEED_ROWS)
+    proposed = json.loads(registry.execute(call(
+        "propose_candidates", substitutions={"In": ["Ga", "Al"]},
+        hypothesis="lighter group-III cations widen the gap")))
+    pending = {p["formula"] for p in proposed["proposed"]}
+    out = json.loads(registry.execute(call("rank_by_surrogate")))
+    assert {e["formula"] for e in out["ranked"]} == pending
+
+
+def test_surrogate_rank_with_nothing_pending_is_an_error(registry, ctx):
+    _seed_scored(ctx, SEED_ROWS)
+    out = json.loads(registry.execute(call("rank_by_surrogate")))
+    assert "nothing to rank" in out["error"]
+
+
+def test_surrogate_rank_reports_bad_formulas_per_item(registry, ctx):
+    _seed_scored(ctx, SEED_ROWS)
+    out = json.loads(registry.execute(call(
+        "rank_by_surrogate", formulas=["CuGaS2", "notachemical!!"])))
+    assert [e["formula"] for e in out["ranked"]] == ["CuGaS2"]
+    assert out["invalid"][0]["formula"] == "notachemical!!"
+
+
+def test_surrogate_tool_disabled_by_config(cfg, monkeypatch):
+    cfg.acquisition.enabled = False
+    ctx = CampaignContext(
+        cfg=cfg, db=CandidateDB(cfg.paths.db), notebook=LabNotebook(cfg.paths.notebook)
+    )
+    reg = build_registry(ctx)
+    assert "rank_by_surrogate" not in {s.name for s in reg.specs}
+    out = json.loads(reg.execute(call("rank_by_surrogate")))
+    assert "unknown tool" in out["error"]
+
+
+def test_surrogate_tool_and_bayesopt_share_one_utility(cfg, tmp_path):
+    from athanor.baselines import BayesOptBaseline, mission_utility
+
+    bo = BayesOptBaseline(cfg, CandidateDB(tmp_path / "u.db"), seed=0)
+    for gap, hull in [(1.4, 0.0), (2.1, 0.12), (None, 0.0), (0.9, None)]:
+        assert bo.utility(gap, hull) == mission_utility(cfg, gap, hull)
+
+
+def test_kickoff_mentions_surrogate_only_when_enabled(cfg):
+    from athanor.agent.prompts import iteration_kickoff
+
+    assert "rank_by_surrogate" in iteration_kickoff(cfg, 1, 10)
+    cfg.acquisition.enabled = False
+    assert "rank_by_surrogate" not in iteration_kickoff(cfg, 1, 10)
+
+
+# --------------------------------------------------------------------------
 # the loop with a scripted backend
 # --------------------------------------------------------------------------
 

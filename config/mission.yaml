@@ -45,6 +45,14 @@ critic:
   backend: null
   model: gemma4:26b
 
+acquisition:
+  # rank_by_surrogate agent tool: GP + expected improvement over every scored
+  # composition, shared with the BayesOpt baseline. Free and advisory.
+  # Disable for the ablation arm of the LLM vs LLM+BO comparison.
+  enabled: true
+  min_train: 6   # scored compositions before the GP ranking is trusted
+  xi: 0.01       # EI exploration margin
+
 evaluation:
   # Rediscovery hold-out: known-good PV absorbers masked from MP search and
   # novelty checks. A campaign that re-finds them proves the search works.

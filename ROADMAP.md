@@ -23,11 +23,13 @@ is controlled evaluation, not more agent demos — evidence first.
   similarity at equal compute; gemma4:26b as critic. Repeat with 3+ seeds for
   error bars; audit critic vetoes against outcomes (were vetoed candidates
   actually bad?).
-- **Bayesian-optimization baseline** *(built 2026-07-18, baselines.py)* —
-  GP + expected improvement over composition features, same budget/filters/
-  scorer as every other strategy. The control a materials-informatics
-  reviewer will ask for; next step is exposing the acquisition function to
-  the agent as a tool (LLM+BO hybrid vs pure BO is the open question).
+- **Bayesian-optimization baseline** *(built 2026-07-18, baselines.py;
+  acquisition tool 2026-08-01)* — GP + expected improvement over composition
+  features, same budget/filters/scorer as every other strategy. The control a
+  materials-informatics reviewer will ask for. The acquisition function is
+  now also an agent tool (`rank_by_surrogate`, gated by `acquisition:` in
+  mission.yaml; same GP/features/utility as the baseline), so the remaining
+  open question — LLM+BO hybrid vs pure BO — is a benchmark run, not a build.
 - **Rediscovery validation** — populate `evaluation.holdout_formulas` with
   known PV absorbers (CuGaSe2, AgGaSe2, CuInS2), measure rediscovery rate.
   This is the credibility experiment.

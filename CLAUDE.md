@@ -70,8 +70,12 @@ uv run athanor export-pages            # static recorded-campaign site -> docs/
 
 ## Phase 3 (benchmark & evaluation)
 
-- `baselines.py` — random + greedy-similarity searchers; identical budget,
-  filters, scorer, and DB schema as the agent. Only substitution choice differs.
+- `baselines.py` — random + greedy-similarity + BayesOpt searchers; identical
+  budget, filters, scorer, and DB schema as the agent. Only candidate choice
+  differs. The BO machinery (GP, `featurize_composition`, `mission_utility`)
+  is also the agent's `rank_by_surrogate` tool — keep them shared, or the
+  LLM-vs-LLM+BO comparison stops being controlled. Toggle via `acquisition:`
+  in mission.yaml.
 - `metrics.py` — shared hit definition (converged + on-target gap + near-hull +
   not confirmed-known); `benchmark.py` orchestrates equal-budget comparison into
   data/benchmark/<stamp>/ with markdown table + png plot.

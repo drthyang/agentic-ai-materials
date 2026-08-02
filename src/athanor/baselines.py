@@ -141,6 +141,24 @@ class _BaseRunner:
         return scored
 
 
+def mission_utility(cfg: MissionConfig, gap: float | None,
+                    hull: float | None) -> float | None:
+    """Scalar 'goodness' of a scored composition; higher is better.
+
+    Gap distance in eV and hull excess in eV/atom x10 are comparable
+    scales, so a candidate 0.1 eV/atom above the near-stable bar pays
+    like a 1 eV gap miss. Shared by BayesOptBaseline and the agent's
+    rank_by_surrogate tool — the LLM+BO comparison is only controlled
+    if both arms optimize the identical objective.
+    """
+    if gap is None:
+        return None
+    y = -abs(gap - cfg.target.band_gap_ideal_ev)
+    if hull is not None:
+        y -= 10.0 * max(0.0, hull - cfg.target.e_above_hull_max_ev_per_atom)
+    return y
+
+
 def featurize_composition(formula: str) -> "np.ndarray":
     """Fraction-weighted elemental-property statistics for a composition.
 
@@ -272,18 +290,7 @@ class BayesOptBaseline(_BaseRunner):
     min_train = 6
 
     def utility(self, gap: float | None, hull: float | None) -> float | None:
-        """Scalar 'goodness' of a scored composition; higher is better.
-
-        Gap distance in eV and hull excess in eV/atom x10 are comparable
-        scales, so a candidate 0.1 eV/atom above the near-stable bar pays
-        like a 1 eV gap miss.
-        """
-        if gap is None:
-            return None
-        y = -abs(gap - self.cfg.target.band_gap_ideal_ev)
-        if hull is not None:
-            y -= 10.0 * max(0.0, hull - self.cfg.target.e_above_hull_max_ev_per_atom)
-        return y
+        return mission_utility(self.cfg, gap, hull)
 
     def choose_substitutions(self, prototype_elements: list[str]) -> dict[str, list[str]]:
         palette = self.cfg.usable_elements

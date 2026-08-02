@@ -56,6 +56,13 @@ Rules:
 
 def iteration_kickoff(cfg: MissionConfig, iteration: int, total: int) -> str:
     lo, hi = cfg.target.band_gap_ev
+    surrogate_tip = (
+        "\nSURROGATE: rank_by_surrogate ranks candidates by expected "
+        "improvement from a GP over everything scored so far. It is free — "
+        "consult it after propose_candidates to decide where to spend "
+        "relaxations, but let chemistry overrule it when they disagree.\n"
+        if cfg.acquisition.enabled else ""
+    )
     return f"""\
 Iteration {iteration} of {total}.
 
@@ -69,7 +76,7 @@ BUDGET THIS ITERATION: {cfg.budget.max_relaxations_per_iteration} relaxations, \
 {cfg.budget.max_tool_calls_per_iteration} tool calls. Aim to spend most of the \
 relaxation budget on NOVEL candidates — known materials do not count as \
 discoveries.
-
+{surrogate_tip}
 Begin with read_notebook, then follow the workflow. End with your plain-text
 iteration summary (no tool call)."""
 
