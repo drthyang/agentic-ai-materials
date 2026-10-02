@@ -27,8 +27,12 @@ mission config ──▶ [LLM hypothesizes] ──▶ propose ──▶ filter (
 
 Why it's interesting: the agent's "experiments" are real physics (ML
 interatomic potentials, convex-hull thermodynamics), success is objectively
-measurable, and every campaign is benchmarked against **non-LLM baselines at
-identical compute** — so "the agent helps" is a claim with a control group.
+measurable, and every campaign is benchmarked against **non-LLM baselines under
+the same relaxation cap** — so "the agent helps" is a claim with a control group.
+That cap equalizes CHGNet relaxations only; it is not matched total compute.
+The proposer and critic LLMs' inference cost is not counted, and the agent
+typically spends a fraction of the cap, so comparisons are per relaxation
+(hits per 100 relaxations).
 
 **New here (or catching up)? Read [WALKTHROUGH.md](WALKTHROUGH.md)** — the
 whole machine and every experiment so far, in order, in ~15 minutes.
