@@ -24,7 +24,8 @@ discovery agent that runs entirely on consumer hardware — a local 32B-paramete
 proposer, an independent 26B critic, and physics-grounded tools (universal
 interatomic potential relaxation, convex-hull thermodynamics, surrogate band
 gaps) — and benchmarked it against random and chemical-similarity substitution
-baselines at identical compute budgets on a photovoltaic-absorber mission.
+baselines under the same relaxation cap (LLM inference cost not counted) on a
+photovoltaic-absorber mission.
 The naive agent performed coherent, literature-grounded science yet scored
 zero: it searched exclusively in known chemical space (the "known-materials
 trap"). A single prompt-level change making novelty an explicit, binding
@@ -68,7 +69,7 @@ essential to measuring either.
 2. **System** — Fig. 1 architecture; tools/budgets-in-code design;
    proposer/critic model diversity; notebook-as-memory; ground-truth report
    generation. (Condensed WALKTHROUGH §§1–3.)
-3. **Benchmark protocol** — hit definition; equal-compute baselines; seeds;
+3. **Benchmark protocol** — hit definition; baselines under the same relaxation cap; seeds;
    one-variable-at-a-time; novelty via MP + literature audit. (WALKTHROUGH §5.)
 4. **Results**
    4.1 The known-materials trap (benchmark 1)

@@ -17,8 +17,9 @@ constraints (compute budgets, chemistry filters, what gets recorded) live
 **in the tool code**, where the model can't talk its way around them. A
 second LLM (the **critic**) reviews proposals before compute is spent. The
 whole thing runs in **iterations** of the scientific method, keeps a lab
-notebook as its memory, and is judged against **non-LLM baselines given the
-exact same budget** — so "the AI helps" is a measured claim, not a demo.
+notebook as its memory, and is judged against **non-LLM baselines under the
+same relaxation cap** (not matched total compute: the LLMs' own inference
+cost isn't counted) — so "the AI helps" is a measured claim, not a demo.
 
 ```
         ┌─────────────── one iteration ───────────────┐

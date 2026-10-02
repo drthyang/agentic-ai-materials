@@ -24,7 +24,7 @@ Individual leverage = trustworthy + fast + specific, not big.
 
 ## Assets this project already has
 
-1. **Controls** — equal-compute baselines (random, similarity) baked into the
+1. **Controls** — baselines (random, similarity) under the same relaxation cap, baked into the
    benchmark; almost nobody in agentic-materials can back their claims this way.
 2. **Local-first** — a complete discovery loop on a laptop, zero API cost.
    Accessibility story no cloud demo tells; also the substrate for the

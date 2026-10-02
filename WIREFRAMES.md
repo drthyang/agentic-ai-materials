@@ -198,7 +198,7 @@ A single full-width card. Columns are read from the JSON rather than
 hard-coded, so a new metric in `benchmark.py` appears here with no UI
 change.
 
-![Benchmark page: agent versus similarity and random baselines at equal budget, the shared hit definition, and the matplotlib plot — plus the empty state when no benchmark has been run](docs/wireframes/11-benchmark-page.svg)
+![Benchmark page: agent versus similarity and random baselines under the same relaxation cap, the shared hit definition, and the matplotlib plot — plus the empty state when no benchmark has been run](docs/wireframes/11-benchmark-page.svg)
 
 ---
 

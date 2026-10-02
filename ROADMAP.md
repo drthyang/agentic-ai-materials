@@ -14,13 +14,13 @@ principles carried forward:
 ## Short term (days–weeks): finish the science the machine was built for
 
 Agreed priority order (2026-07-18): (1) capability-vs-alignment matrix,
-(2) package the equal-budget protocol as a benchmark others can run,
+(2) package the equal-relaxation-budget protocol as a benchmark others can run,
 (3) Bayesian-optimization baseline + acquisition tool, (4) multi-fidelity
 ladder with uncertainty, (5) magnetism mission. Rationale: the field's gap
 is controlled evaluation, not more agent demos — evidence first.
 
 - **Headline benchmark** *(in progress)* — agent (qwen3:32b) vs random vs
-  similarity at equal compute; gemma4:26b as critic. Repeat with 3+ seeds for
+  similarity under the same relaxation cap; gemma4:26b as critic. Repeat with 3+ seeds for
   error bars; audit critic vetoes against outcomes (were vetoed candidates
   actually bad?).
 - **Bayesian-optimization baseline** *(built 2026-07-18, baselines.py;

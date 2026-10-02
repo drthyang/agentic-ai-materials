@@ -108,7 +108,7 @@ unattended and the notebook reads like coherent science.
 
 ### Phase 3 — Make it rigorous (2 days)
 - Baselines to beat: random substitution and greedy element-similarity
-  substitution with the same compute budget — does the agent's hypothesis-driven
+  substitution with the same relaxation budget — does the agent's hypothesis-driven
   search find more/better candidates?
 - Metrics: # novel candidates with e_above_hull < 50 meV/atom and gap in
   1.1–1.7 eV, per unit of compute

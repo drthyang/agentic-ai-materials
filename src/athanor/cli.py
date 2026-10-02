@@ -103,7 +103,7 @@ def main() -> None:
     run_p.add_argument("--verbose", action="store_true")
 
     bench_p = sub.add_parser(
-        "benchmark", help="agent vs random/similarity baselines at equal budget"
+        "benchmark", help="agent vs random/similarity baselines, same relaxation cap"
     )
     bench_p.add_argument("--mission", default="config/mission.yaml")
     bench_p.add_argument("--iterations", type=int, default=None)

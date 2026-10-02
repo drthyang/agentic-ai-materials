@@ -77,7 +77,7 @@ uv run athanor export-pages            # static recorded-campaign site -> docs/
   LLM-vs-LLM+BO comparison stops being controlled. Toggle via `acquisition:`
   in mission.yaml.
 - `metrics.py` — shared hit definition (converged + on-target gap + near-hull +
-  not confirmed-known); `benchmark.py` orchestrates equal-budget comparison into
+  not confirmed-known); `benchmark.py` orchestrates same-relaxation-cap comparison into
   data/benchmark/<stamp>/ with markdown table + png plot.
 - Rediscovery hold-out: `evaluation.holdout_formulas` in mission.yaml masks
   known materials from MP search + novelty (compared via reduced formula), so

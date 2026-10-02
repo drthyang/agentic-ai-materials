@@ -1,9 +1,10 @@
 """Non-LLM baseline searchers the agent must beat (Phase 3).
 
-Both baselines consume exactly the same budget as the agent (iterations x
-max_relaxations_per_iteration), use the same filters, the same scorer, and
-record to the same DB schema — the ONLY difference is how substitutions are
-chosen. That makes "agent vs baseline" a pure test of hypothesis quality.
+Both baselines get the same relaxation cap as the agent (iterations x
+max_relaxations_per_iteration; the LLMs' inference cost is not counted), use
+the same filters, the same scorer, and record to the same DB schema — the ONLY
+difference is how substitutions are chosen. That makes "agent vs baseline" a
+pure test of hypothesis quality.
 
 - RandomBaseline: uniform random substitutions from the mission palette.
 - SimilarityBaseline: greedy chemical similarity — try the most similar

@@ -25,7 +25,7 @@ does alone. That is the story — and it can't just be *said*, it has to be
 | Skill claimed | Artifact that proves it |
 |---|---|
 | Materials judgment | GGA/r2SCAN energy-scale bug caught from one absurd number; HSE-fidelity choice verified against Si; mission palettes reflecting real constraints (RoHS, In supply) |
-| Experimental design | Equal-compute baselines, seeded runs, rediscovery hold-outs, one shared hit metric |
+| Experimental design | Baselines under the same relaxation cap, seeded runs, rediscovery hold-outs, one shared hit metric |
 | Scientific integrity | Fabricated-report catch → ground-truth-injected reports; backwards-critic catch → model-diversity fix; caveats in every artifact |
 | Software engineering | Pluggable backends, budgets enforced in code, 54 hermetic tests, live dashboard, CI-ready |
 | Communication | Lab notebooks, auto-generated reports, README/ROADMAP, (next) the write-up |

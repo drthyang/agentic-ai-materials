@@ -1,4 +1,4 @@
-"""Phase 3 benchmark: agent vs baselines at identical compute budget.
+"""Phase 3 benchmark: agent vs baselines under the same relaxation budget.
 
 Each strategy gets its own DB/notebook under data/benchmark/<stamp>/ so runs
 never contaminate each other; metrics come from the shared definition in
@@ -52,7 +52,7 @@ def run_benchmark(
     include_agent: bool = True,
     seed: int = 0,
 ) -> Path:
-    """Run all strategies at equal budget; returns the results directory."""
+    """Run all strategies under the same relaxation budget; returns the results directory."""
     with _benchmark_lock():
         return _run_benchmark_locked(cfg, iterations, include_agent, seed)
 
