@@ -5,9 +5,9 @@
 - **Scored candidates**
 | Formula | Iteration | Band gap (eV) | Energy above hull (eV) | Formation energy | Novel? |
 |---------|-----------|----------------|------------------------|-------------------|--------|
-| MgAg₂GeS₄ | 1 | 1.893 | 0.017 | `b'\xce*\\x95\\xbf'` | ✅ |
-| MgAg₂GeSe₄ | 5 | 1.856 | 0.020 | `b'\xa8\\x14L\\xbf'` | ✅ |
-| MgAg₂GeO₄ | 5 | 2.936 | 0.248 | `b'\x86N\\x96\\xbf'` | ✅ |
+| MgAg₂GeS₄ | 1 | 1.893 | 0.017 | -1.165               | ✅ |
+| MgAg₂GeSe₄ | 5 | 1.856 | 0.020 | -0.797               | ✅ |
+| MgAg₂GeO₄ | 5 | 2.936 | 0.248 | -1.174               | ✅ |
 
 - **Hypotheses tested and lessons learned**:
   1. **Iteration 1**: Replaced Cu→Ag, Zn→Mg, Sn→Ge in kesterite-Cu₂ZnSnS₄, keeping +8 cation charge. MgAg₂GeS₄ achieved 2.4 eV band gap (1.89 eV). Succeeded due to preserved charge balance and MP absence of Ag-Ge-Mg compounds.

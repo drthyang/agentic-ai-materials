@@ -3,17 +3,15 @@
 - **Executive summary**: This campaign identified six novel kesterite-derived compounds (iteration 2) with band gaps near the solar cell optimum (1.2–1.9 eV). While zincblende-based hypotheses (iterations 4–5) failed due to charge imbalance issues, the kesterite-Cu₂ZnSnS₄ substitution strategy successfully produced multiple stable candidates with tunable band gaps. The top performer, **CdAg₂GeSe₄**, showed a 0.00 eV energy above hull and 1.28 eV band gap, suggesting thermodynamic stability and photovoltaic suitability. However, higher *e_above_hull* values in other candidates indicate fragility requires further analysis.
 
 - **Scored candidates**  
-  | Formula         | Converged | *E_form* (raw) | *E_above_hull* (eV) | Band gap (eV) | Novel? |
+  | Formula         | Converged | *E_form* (eV/at) | *E_above_hull* (eV) | Band gap (eV) | Novel? |
   |------------------|-----------|----------------|---------------------|---------------|--------|
-  | CdAg₂GeSe₄       | ✅        | b'¸/¿'         | 0.00                | 1.28          | ✅     |
-  | MgAg₂SnSe₄       | ✅        | b'|mV¿'        | 0.02                | 1.59          | ✅     |
-  | CdAg₂GeTe₄       | ✅        | b'(§¿'        | 0.02                | 0.48          | ✅     |
-  | MgAg₂GeSe₄       | ✅        | b'¬L¿'        | 0.02                | 1.86          | ✅     |
-  | MgAg₂GeTe₄       | ✅        | b'©Ø¿'         | 0.02                | 1.49          | ✅     |
-  | CdAg₂SnTe₄       | ✅        | b'–»¿'        | 0.03                | 0.41          | ✅     |
-  | MgAg₂SnTe₄       | ✅        | bÀî¿'         | 0.04                | 1.17          | ✅     |
-
-  > Note: Formation energy values represent raw byte data from CHGNet and require decoding for physical interpretation.
+  | CdAg₂GeSe₄       | ✅        | -0.657         | 0.00                | 1.28          | ✅     |
+  | MgAg₂SnSe₄       | ✅        | -0.838         | 0.02                | 1.59          | ✅     |
+  | CdAg₂GeTe₄       | ✅        | -0.326         | 0.02                | 0.48          | ✅     |
+  | MgAg₂GeSe₄       | ✅        | -0.797         | 0.02                | 1.86          | ✅     |
+  | MgAg₂GeTe₄       | ✅        | -0.423         | 0.02                | 1.49          | ✅     |
+  | CdAg₂SnTe₄       | ✅        | -0.366         | 0.03                | 0.41          | ✅     |
+  | MgAg₂SnTe₄       | ✅        | -0.461         | 0.04                | 1.17          | ✅     |
 
 - **Hypotheses tested**  
   1. **Iteration 1 (chalcopyrite-CuInSe₂ substitutions)**: Replacing In/Ga and Se/S/Te showed promise in literature but yielded only 4/4 known materials, indicating prior exploration of this design space.  

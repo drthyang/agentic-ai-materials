@@ -6,15 +6,15 @@
 
 | Formula          | Converged | Formation Energy (eV/atom) | E_above_hull (eV) | Band Gap (eV) | Novel |
 |------------------|-----------|-----------------------------|--------------------|----------------|-------|
-| ZnAg₂GeSe₄       | 1         | `b'\x84a.\xbf'`            | 0.00               | 1.119          | 1     |
-| ZnAg₂GeTe₄       | 1         | `b'\xf0\x08\xa3\xbe'`       | 0.028              | 1.171          | 1     |
-| InAgS₂           | 1         | `b'\x02\xb5\x98\xbf'`       | 0.00               | 0.477          | 0     |
-| InAgTe₂          | 1         | `b'\x08\x84\xe5\xbe'`        | 0.012              | 0.013          | 0     |
-| InAgSe₂          | 1         | `b'$\x03?\\xbf'`            | 0.022              | 0.711          | 0     |
-| AlAgSe₂          | 1         | `b'\xe0\xef:\xbf'`           | 0.245              | 2.376          | 0     |
-| CaCu₂GeS₄        | 1         | `b'\xec~\xab\xbf'`           | 0.096              | 2.563          | 1     |
-| MgAg₂SnS₄        | 1         | `b':\x9b\x96\xbf'`           | 0.002              | 1.871          | 1     |
-| MgAg₂GeS₄        | 1         | `b'\xd2*\x95\xbf'`           | 0.017              | 1.893          | 1     |
+| ZnAg₂GeSe₄       | 1         | -0.681                     | 0.00               | 1.119          | 1     |
+| ZnAg₂GeTe₄       | 1         | -0.318                      | 0.028              | 1.171          | 1     |
+| InAgS₂           | 1         | -1.193                      | 0.00               | 0.477          | 0     |
+| InAgTe₂          | 1         | -0.448                       | 0.012              | 0.013          | 0     |
+| InAgSe₂          | 1         | -0.746                      | 0.022              | 0.711          | 0     |
+| AlAgSe₂          | 1         | -0.730                       | 0.245              | 2.376          | 0     |
+| CaCu₂GeS₄        | 1         | -1.340                       | 0.096              | 2.563          | 1     |
+| MgAg₂SnS₄        | 1         | -1.177                       | 0.002              | 1.871          | 1     |
+| MgAg₂GeS₄        | 1         | -1.165                       | 0.017              | 1.893          | 1     |
 
 - **Hypotheses tested**:
   - **Iteration 1**: Substituted In→Ga/Al and Se→S/Te in chalcopyrite CuInSe₂. All candidates were non-novel (novel=false), prompting expansion in iteration 2.
