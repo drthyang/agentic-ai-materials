@@ -38,6 +38,14 @@ def test_charge_imbalanced_fails_smact():
     assert not r.passed
 
 
+def test_textbook_iii_v_and_ii_vi_semiconductors_pass():
+    # Regression: smact 4.0's default ICSD24 "medium" commonality filter drops
+    # P3-, falsely rejecting InP/GaP; the wrapper retries with the smact14 set.
+    for formula in ["InP", "GaP", "GaAs", "InSb", "ZnSe"]:
+        r = check_composition(formula, cfg())
+        assert r.passed, f"{formula}: {r.reasons}"
+
+
 def test_batch_preserves_order():
     formulas = ["CuInSe2", "PbS", "AgGaTe2"]
     results = filter_candidates(formulas, cfg())

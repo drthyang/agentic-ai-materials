@@ -56,11 +56,22 @@ def check_composition(formula: str, cfg: MissionConfig) -> FilterResult:
 
 
 def _smact_valid(comp: Composition) -> bool:
-    """SMACT validity: some charge-balanced oxidation-state assignment exists."""
+    """SMACT validity: some charge-balanced oxidation-state assignment exists.
+
+    smact >= 4.0 defaults to ICSD24 oxidation states filtered by commonality;
+    at the default "medium" level, legitimate-but-rare anion states are
+    dropped (e.g. P3- — ICSD is dominated by phosphates — which falsely
+    rejects InP and GaP). If the default screen fails, retry with the classic
+    "smact14" set (the pre-4.0 default), which keeps those states while still
+    rejecting charge-imbalanced compositions.
+    """
     try:
-        return smact_validity(comp)
+        if smact_validity(comp):
+            return True
+        return smact_validity(comp, oxidation_states_set="smact14")
     except TypeError:
-        # Older smact versions want (symbols, counts) rather than a Composition.
+        # Older smact versions want (symbols, counts) rather than a
+        # Composition, and predate the ICSD24 default, so one call suffices.
         el_amt = comp.get_el_amt_dict()
         symbols = tuple(el_amt.keys())
         counts = tuple(int(v) for v in el_amt.values())
