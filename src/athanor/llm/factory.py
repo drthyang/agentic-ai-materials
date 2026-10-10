@@ -16,6 +16,7 @@ def make_backend(cfg: LLMConfig) -> LLMBackend:
     if cfg.backend == "anthropic":
         from athanor.llm.anthropic_backend import AnthropicBackend
 
-        return AnthropicBackend(model=cfg.model)
+        return AnthropicBackend(model=cfg.model, effort=cfg.effort,
+                                max_cost_usd=cfg.max_cost_usd)
     raise ValueError(f"unknown llm backend: {cfg.backend!r} "
                      "(expected 'ollama', 'openai-compat', or 'anthropic')")

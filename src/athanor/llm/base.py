@@ -6,6 +6,9 @@ wire format. Neutral message shapes:
     {"role": "user" | "assistant", "content": str}
     {"role": "assistant", "content": str, "tool_calls": [ToolCall-as-dict]}
     {"role": "tool", "tool_call_id": str, "name": str, "content": str}
+
+An assistant message may also carry "provider_content" (see LLMResponse);
+backends other than the one that produced it ignore the key.
 """
 
 from __future__ import annotations
@@ -40,6 +43,11 @@ class ToolCall:
 class LLMResponse:
     text: str = ""
     tool_calls: list[ToolCall] = field(default_factory=list)
+    # Provider-native content blocks that must be replayed verbatim on the
+    # next request (e.g. Claude's thinking blocks, which the API requires
+    # unchanged before a tool_result). The loop stores this on the neutral
+    # assistant message; only the backend that produced it reads it back.
+    provider_content: dict | None = None
 
 
 class LLMBackend(ABC):

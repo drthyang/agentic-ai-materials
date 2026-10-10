@@ -68,8 +68,44 @@ def cmd_run(args: argparse.Namespace) -> int:
     return 0
 
 
+def apply_arm_overrides(cfg, args: argparse.Namespace):
+    """Apply benchmark ablation-arm flags to a loaded mission config.
+
+    Flags change the run, not the mission file: the effective config is
+    snapshotted to run_config.json, so each arm stays reproducible from its
+    own artifacts.
+    """
+    if getattr(args, "backend", None):
+        cfg.llm.backend = args.backend
+    if getattr(args, "model", None):
+        cfg.llm.model = args.model
+    if getattr(args, "effort", None):
+        cfg.llm.effort = args.effort
+    if getattr(args, "max_cost_usd", None) is not None:
+        cfg.llm.max_cost_usd = args.max_cost_usd
+    if getattr(args, "critic_backend", None):
+        cfg.critic.backend = args.critic_backend
+    if getattr(args, "critic_model", None):
+        cfg.critic.model = args.critic_model
+    if getattr(args, "no_critic", False):
+        cfg.critic.enabled = False
+    if getattr(args, "no_surrogate", False):
+        cfg.acquisition.enabled = False
+    return cfg
+
+
+def _parse_baselines(value: str | None) -> list[str] | None:
+    if value is None:
+        return None
+    value = value.strip()
+    if value in ("", "none"):
+        return []
+    return [v.strip() for v in value.split(",") if v.strip()]
+
+
 def cmd_benchmark(args: argparse.Namespace) -> int:
     import logging
+    from pathlib import Path
 
     from athanor.benchmark import run_benchmark
     from athanor.config import load_mission
@@ -79,10 +115,17 @@ def cmd_benchmark(args: argparse.Namespace) -> int:
         format="%(asctime)s %(name)s %(levelname)s %(message)s",
         datefmt="%H:%M:%S",
     )
-    cfg = load_mission(args.mission)
+    # SDK/transport debug logs can echo request options; never let them into
+    # run logs, even under --verbose
+    for noisy in ("anthropic", "httpcore"):
+        logging.getLogger(noisy).setLevel(logging.WARNING)
+    cfg = apply_arm_overrides(load_mission(args.mission), args)
     outdir = run_benchmark(
         cfg, iterations=args.iterations,
         include_agent=not args.skip_agent, seed=args.seed,
+        baselines=_parse_baselines(args.baselines), tag=args.tag,
+        ledger=Path(args.ledger) if args.ledger else None,
+        spend_cap_usd=args.spend_cap_usd,
     )
     print(f"benchmark artifacts: {outdir}")
     return 0
@@ -110,6 +153,28 @@ def main() -> None:
     bench_p.add_argument("--seed", type=int, default=0)
     bench_p.add_argument("--skip-agent", action="store_true",
                          help="run only the non-LLM baselines")
+    bench_p.add_argument("--baselines", default=None,
+                         help="comma list of baselines to run (random,similarity,"
+                              "bayesopt) or 'none'; default all")
+    bench_p.add_argument("--tag", default="", help="suffix for the run directory name")
+    arm = bench_p.add_argument_group("ablation arm (overrides mission config)")
+    arm.add_argument("--backend", default=None,
+                     help="proposer llm.backend (ollama | openai-compat | anthropic)")
+    arm.add_argument("--model", default=None, help="proposer llm.model")
+    arm.add_argument("--effort", default=None,
+                     help="anthropic output_config.effort (low|medium|high|xhigh|max)")
+    arm.add_argument("--critic-backend", default=None)
+    arm.add_argument("--critic-model", default=None)
+    arm.add_argument("--no-critic", action="store_true", help="disable the critic")
+    arm.add_argument("--no-surrogate", action="store_true",
+                     help="disable the rank_by_surrogate tool (acquisition.enabled=false)")
+    spend = bench_p.add_argument_group("API spend control")
+    spend.add_argument("--max-cost-usd", type=float, default=None,
+                       help="hard stop for this run's proposer API spend")
+    spend.add_argument("--ledger", default=None,
+                       help="CSV ledger to append this run's token usage and cost to")
+    spend.add_argument("--spend-cap-usd", type=float, default=None,
+                       help="refuse to start / stop once the ledger total reaches this")
     bench_p.add_argument("--verbose", action="store_true")
 
     dash_p = sub.add_parser("dashboard", help="live campaign dashboard (localhost)")

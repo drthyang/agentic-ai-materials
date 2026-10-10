@@ -48,6 +48,10 @@ class LLMConfig(BaseModel):
     model: str = "qwen3:32b"
     base_url: str = "http://localhost:11434/v1"
     timeout_s: float = 300.0
+    # anthropic only: output_config.effort (None = the model's API default)
+    effort: str | None = None
+    # anthropic only: hard per-campaign spend stop in USD (None = no cap)
+    max_cost_usd: float | None = None
 
 
 class CriticConfig(BaseModel):
