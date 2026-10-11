@@ -6,7 +6,8 @@
 #
 # Steps: bo-pv, sonnet-ablation, nocritic, qd, opus (the first queue, run as
 # one invocation with no arguments), then nocritic-nosurr and opus3, then the
-# local same-day qwen3:32b arms qwen-nosurr and qwen-surr (no API key passed).
+# local same-day qwen3:32b arms qwen-nosurr and qwen-surr (no API key passed),
+# then nocritic-n5 (4 Sonnet runs, $5 cap).
 #
 # Every agent run: 5 iterations x 20 relaxations (the cap the July qwen
 # runs used), the local gemma4:26b critic unless stated, Claude at
@@ -113,11 +114,18 @@ step() {
       for s in 0 6 7; do local_agent "$s" qwen-nosurr-oct --no-surrogate; done ;;
     qwen-surr)  # fourth cell of model x tool
       for i in 1 2 3; do local_agent $((70 + i)) qwen-surr-oct; done ;;
+    # --- paid, approved 2026-10-11 with a $5 cap: balance the PV 2x2 at n=5 ---
+    nocritic-n5)
+      CAP=23.05  # ledger stood at $18.05 (restated) + the $5 approved for this step
+      for i in 4 5; do
+        agent $((30 + i)) sonnet-surr-nocritic claude-sonnet-5-5 1.25 --no-critic
+        agent $((60 + i)) sonnet-nosurr-nocritic claude-sonnet-5-5 1.25 --no-surrogate --no-critic
+      done ;;
     *) echo "unknown step $1" >&2; return 2 ;;
   esac
 }
 
 steps=("$@")
 [ ${#steps[@]} -eq 0 ] && steps=(bo-pv sonnet-ablation nocritic qd opus nocritic-nosurr opus3 \
-  qwen-nosurr qwen-surr)
+  qwen-nosurr qwen-surr nocritic-n5)
 for s in "${steps[@]}"; do step "$s"; done
