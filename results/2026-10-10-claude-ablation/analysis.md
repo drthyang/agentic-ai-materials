@@ -5,6 +5,54 @@ spend $18.05 of a hard $40 cap (restated 2026-10-11; see Spend). Every number he
 (CHGNet relaxation, Materials Project hull, MEGNet HSE gap), not DFT or
 experiment.*
 
+## Read this first: most hits depend on a defective prototype (2026-10-11)
+
+The chalcopyrite and kesterite prototypes in `src/athanor/prototypes.py`
+are not the structures their docstrings name. Each is an 8-atom cell that
+holds half of the 16-atom conventional cell's atoms in the full
+c ≈ 11 Å box: every atom sits at z ∈ [−0.125, 0.25], leaving a ~7 Å empty
+gap, and the symmetry is P2 rather than I-42d or I-4. Every candidate
+built on them, by every strategy (agents and baselines alike), was
+relaxed from that start, and **all 93 distinct hits in this study are of
+those two types** (none is zinc blende, whose prototype is correct).
+
+`scripts/structure_audit.py` applied each hit's own substitution to a
+correct conventional cell built from the space group and scored it with
+the unchanged pipeline ([structure-audit.csv](structure-audit.csv)):
+
+| mission | found by | distinct hits | still a hit in a correct bulk cell |
+|---|---|---|---|
+| PV | agents | 47 | 14 |
+| PV | baselines | 11 | 4 |
+| QD | agents | 14 | 4 |
+| QD | baselines | 23 | 9 |
+
+Every PV loss is the predicted band gap leaving the window (median shift
+0.56 eV, up to 1.6 eV); none is a stability or convergence failure. In
+the bulk cells 88 of 93 compositions sit on the hull, so in this pipeline
+the stability criterion barely discriminates these families. Counting
+only structure-robust hits per run (PV):
+
+| arm | n | robust hits per run, mean ± SD (range) | raw hits per run |
+|---|---|---|---|
+| random | 8 | 0.5 ± 0.8 (0–2) | 1.0 ± 0.9 |
+| similarity | 8 | 0.9 ± 0.4 (0–1) | 2.0 ± 0.5 |
+| BayesOpt | 8 | 0.2 ± 0.5 (0–1) | 1.5 ± 1.4 |
+| qwen3:32b (July) | 3 | 0.3 ± 0.6 (0–1) | 2.7 ± 1.2 |
+| Sonnet 5.5, no surrogate | 5 | 4.4 ± 1.3 (2–5) | 16.4 ± 2.1 |
+| Sonnet 5.5, + surrogate | 5 | 3.0 ± 1.4 (1–4) | 11.0 ± 2.5 |
+| Opus 5.5 | 3 | 4.3 ± 3.2 (2–8) | 18.7 ± 5.5 |
+
+What survives: Sonnet still beats qwen (p = 0.018) and similarity
+(p = 0.0008), at about a quarter of the raw magnitude. What does not: the
+complete separation of Claude runs from baseline runs (worst Claude run 1
+robust hit, best baseline run 2), the significance of the surrogate-tool
+effect (p = 0.09), and Sonnet's QD edge (p = 0.20 vs similarity). Which
+cell geometry gives the *right* gap is a question for DFT; the point is
+that the hit labels in the tables below depend on a starting geometry the
+benchmark never intended. The prototypes are left unchanged here because
+fixing them changes the protocol for every run; that is the user's call.
+
 ## Headline
 
 | question | answer (PV mission, cap = 100 relaxations per run) |
