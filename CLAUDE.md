@@ -11,7 +11,7 @@ magnetism/active-learning, then new-surrogate work).
 ## Commands
 
 ```bash
-uv run pytest                              # 66 tests, all should pass
+uv run pytest                              # 95 tests, all should pass
 uv run athanor check                   # env/key status
 uv run athanor run --iterations 1      # discovery campaign (needs Ollama up)
 uv run athanor benchmark --skip-agent  # baselines only (no LLM needed)
@@ -67,6 +67,17 @@ uv run athanor export-pages            # static recorded-campaign site -> docs/
   local models and makes the notebook the scientific record.
 - Local-model robustness: malformed tool JSON is captured as ToolCall.parse_error
   and bounced back for retry; tool-call budget terminates runaway iterations.
+- Anthropic backend: assistant turns carry `provider_content` (raw blocks,
+  thinking included) that is replayed verbatim — Claude requires it before
+  tool results; tools+system and the turn tail are prompt-cached; usage is
+  priced per call and `llm.max_cost_usd` is a hard stop. Missions pin
+  `critic.backend: ollama`, and the loop refuses a non-Claude critic model
+  on the anthropic backend (it would 404 and fail open silently).
+- Ablation arms are benchmark flags, not mission edits (`--backend/--model/
+  --effort`, `--no-surrogate`, `--no-critic`, `--baselines none`, `--tag`,
+  `--ledger/--spend-cap-usd`); each run dir records run_config.json,
+  metrics.json, agent_stats.json, usage.json. Aggregate with
+  `scripts/aggregate_ablation.py <spec.json>`.
 
 ## Phase 3 (benchmark & evaluation)
 
