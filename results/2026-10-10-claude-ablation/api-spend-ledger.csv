@@ -5,3 +5,4 @@ finished_utc,run_dir,mission,backend,model,effort,calls,input_tokens,cache_creat
 2026-10-11T01:58:59+00:00,data/benchmark/20261011-010913-seed12-sonnet-nosurr,pv-absorber-v1,anthropic,claude-sonnet-5-5,high,43,98,118438,276342,27996,0.6315,ok
 2026-10-11T02:58:01+00:00,data/benchmark/20261011-015902-seed22-sonnet-surr,pv-absorber-v1,anthropic,claude-sonnet-5-5,high,50,112,214852,465816,33112,0.9616,ok
 2026-10-11T03:41:16+00:00,data/benchmark/20261011-025804-seed13-sonnet-nosurr,pv-absorber-v1,anthropic,claude-sonnet-5-5,high,48,108,92886,430810,33803,0.6566,ok
+2026-10-11T04:20:14+00:00,data/benchmark/20261011-034118-seed23-sonnet-surr,pv-absorber-v1,anthropic,claude-sonnet-5-5,high,48,108,135622,474006,27913,0.7132,ok
