@@ -1,0 +1,25 @@
+{
+ "tool_calls": {
+  "read_notebook": 5,
+  "search_literature": 5,
+  "write_notebook": 5,
+  "propose_candidates": 20,
+  "search_known_materials": 1,
+  "evaluate_candidates": 5
+ },
+ "relaxations_per_iteration": {
+  "1": 0,
+  "2": 0,
+  "3": 1,
+  "4": 0,
+  "5": 2
+ },
+ "aborted_turns": 0,
+ "critic": {
+  "reviews": 4,
+  "candidates": 6,
+  "approved": 3,
+  "vetoed": 3,
+  "failed_open": 0
+ }
+}
