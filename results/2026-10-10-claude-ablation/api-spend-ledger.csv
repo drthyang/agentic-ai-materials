@@ -14,3 +14,4 @@ finished_utc,run_dir,mission,backend,model,effort,calls,input_tokens,cache_creat
 2026-10-11T06:40:04+00:00,data/benchmark/20261011-063221-seed32-sonnet-surr-nocritic,pv-absorber-v1,anthropic,claude-sonnet-5-5,high,50,112,113099,554364,31296,0.7068,ok
 2026-10-11T06:48:20+00:00,data/benchmark/20261011-064005-seed33-sonnet-surr-nocritic,pv-absorber-v1,anthropic,claude-sonnet-5-5,high,49,110,109076,516249,32212,0.6983,ok
 2026-10-11T07:41:25+00:00,data/benchmark/20261011-072045-seed41-qd-sonnet-nosurr,qd-emitter-v1,anthropic,claude-sonnet-5-5,high,51,114,102005,500760,36616,0.7216,ok
+2026-10-11T08:03:30+00:00,data/benchmark/20261011-074126-seed42-qd-sonnet-nosurr,qd-emitter-v1,anthropic,claude-sonnet-5-5,high,45,102,106222,466882,32062,0.6798,ok
