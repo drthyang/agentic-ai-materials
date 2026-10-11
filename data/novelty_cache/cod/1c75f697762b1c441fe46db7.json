@@ -1,0 +1,158 @@
+{
+ "url": "https://www.crystallography.net/cod/optimade/v1/structures?filter=elements+HAS+ALL+%22Ag%22%2C%22Bi%22%2C%22Cu%22%2C%22S%22+AND+nelements%3D4&page_limit=100&response_fields=chemical_formula_descriptive",
+ "response": {
+  "data": [
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Ag0.6Bi6Cu0.48S9"
+    },
+    "id": "1509002",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1509002"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1509002",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Ag0.2Bi6Cu1.08S9"
+    },
+    "id": "1509067",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1509067"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1509067",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Ag0.708Bi6.292Cu4S12"
+    },
+    "id": "9004830",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/9004830"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "9004830",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Ag0.42Bi11.58Cu7.8S22"
+    },
+    "id": "9004831",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/9004831"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "9004831",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Ag0.68Bi5.6Cu1.062S9"
+    },
+    "id": "9010667",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/9010667"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "9010667",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Ag1.05Bi7.64Cu0.56S11"
+    },
+    "id": "9015410",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/9015410"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "9015410",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   }
+  ],
+  "links": {
+   "base_url": "https://www.crystallography.net/cod/optimade/v1.1.0/"
+  },
+  "meta": {
+   "api_version": "1.1.0",
+   "data_available": 535164,
+   "data_returned": 6,
+   "implementation": {
+    "issue_tracker": {
+     "href": "https://projects.ibt.lt/repositories/projects/cod-optimade/issues"
+    },
+    "maintainer": {
+     "email": "cod-bugs@ibt.lt"
+    },
+    "name": "Crystallography Open Database",
+    "source_url": "svn+ssh://172.17.170.123/mnt/kakadu-backup/crash-recovery-2025-12-12/svn-repositories/recovered/cod/tags/v0.13.0/cgi-bin/optimade.pl@303284",
+    "version": "1-dev"
+   },
+   "last_id": "9015410",
+   "more_data_available": false,
+   "provider": {
+    "description": "Crystallography Open Database",
+    "name": "Crystallography Open Database",
+    "prefix": "cod"
+   },
+   "query": {
+    "representation": "/structures?filter=elements+HAS+ALL+%22Ag%22%2C%22Bi%22%2C%22Cu%22%2C%22S%22+AND+nelements%3D4&page_limit=100&response_fields=chemical_formula_descriptive"
+   },
+   "schema": "https://schemas.optimade.org/openapi/v1.1.0/optimade.json",
+   "time_stamp": "2026-10-11T15:06:12Z"
+  }
+ }
+}

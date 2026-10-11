@@ -1,0 +1,71 @@
+{
+ "url": "https://oqmd.org/oqmdapi/formationenergy?composition=Ag2CdGeSe4&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json",
+ "response": {
+  "links": {
+   "next": null,
+   "previous": null,
+   "base_url": {
+    "href": "https://oqmd.org/oqmdapi",
+    "meta": {
+     "_oqmd_version": "1.0"
+    }
+   }
+  },
+  "resource": {},
+  "data": [
+   {
+    "name": "CdAg2GeSe4",
+    "entry_id": 1277360,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "I-42m",
+    "natoms": 8,
+    "delta_e": -0.31465036,
+    "stability": 0.009045892499999542
+   },
+   {
+    "name": "CdAg2GeSe4",
+    "entry_id": 1734385,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "Pmn21",
+    "natoms": 16,
+    "delta_e": -0.3219143474999999,
+    "stability": 0.0017819049999996395
+   },
+   {
+    "name": "CdAg2GeSe4",
+    "entry_id": 2134181,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "I-42m",
+    "natoms": 8,
+    "delta_e": -0.3147457724999998,
+    "stability": 0.00895047999999976
+   },
+   {
+    "name": "CdAg2GeSe4",
+    "entry_id": 2137234,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "I-4",
+    "natoms": 8,
+    "delta_e": -0.32369625249999956,
+    "stability": 0.0
+   }
+  ],
+  "meta": {
+   "query": {
+    "representation": "http://oqmd.org/oqmdapi/formationenergy?composition=Ag2CdGeSe4&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json"
+   },
+   "api_version": "1.0",
+   "time_stamp": "2026-10-11 10:05:49",
+   "data_returned": 4,
+   "data_available": 4,
+   "comments": "",
+   "query_tree": "",
+   "more_data_available": false
+  },
+  "response_message": "OK"
+ }
+}

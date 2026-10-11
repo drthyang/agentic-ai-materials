@@ -6,6 +6,8 @@
 | similarity | 8 | 3.0 ± 0.7 [2.5, 3.4] | 3.0 (1.7–4.0) | 2.0 ± 0.5 (1–3) | 66.1 (56–76) |
 | bayesopt | 8 | 1.7 ± 1.6 [0.7, 2.7] | 1.2 (0.0–4.4) | 1.5 ± 1.4 (0–4) | 86.8 (80–95) |
 | agent qwen3:32b, no surrogate (July) | 3 | 32.0 ± 21.9 [16.7, 57.1] | 22.2 (16.7–57.1) | 2.7 ± 1.2 (2–4) | 9.3 (7–12) |
+| agent qwen3:32b, no surrogate (same day) | 3 | 11.1 ± 19.2 [0.0, 33.3] | 0.0 (0.0–33.3) | 0.3 ± 0.6 (0–1) | 4.7 (3–8) |
+| agent qwen3:32b, + rank_by_surrogate (same day) | 1 | 0.0 ± — — | 0.0 (0.0–0.0) | 0.0 ± — (0–0) | 5.0 (5–5) |
 | agent Sonnet 5.5, no surrogate | 5 | 18.1 ± 2.2 [16.4, 19.8] | 17.6 (15.7–21.1) | 16.4 ± 2.1 (14–19) | 90.8 (89–93) |
 | agent Sonnet 5.5, + rank_by_surrogate | 5 | 12.4 ± 2.1 [10.9, 14.2] | 11.8 (10.0–15.8) | 11.0 ± 2.5 (9–15) | 88.4 (76–96) |
 | agent Sonnet 5.5, + surrogate, no critic | 3 | 16.5 ± 3.2 [14.3, 20.2] | 14.9 (14.3–20.2) | 15.0 ± 3.5 (13–19) | 90.7 (87–94) |
@@ -20,6 +22,8 @@ Structure-robust hits per run (hits whose composition is still a hit when re-sco
 | similarity | 8 | 0.9 ± 0.4 (0–1) |
 | bayesopt | 8 | 0.2 ± 0.5 (0–1) |
 | agent qwen3:32b, no surrogate (July) | 3 | 0.3 ± 0.6 (0–1) |
+| agent qwen3:32b, no surrogate (same day) | 3 | 0.0 ± 0.0 (0–0) |
+| agent qwen3:32b, + rank_by_surrogate (same day) | 1 | 0.0 ± — (0–0) |
 | agent Sonnet 5.5, no surrogate | 5 | 4.4 ± 1.3 (2–5) |
 | agent Sonnet 5.5, + rank_by_surrogate | 5 | 3.0 ± 1.4 (1–4) |
 | agent Sonnet 5.5, + surrogate, no critic | 3 | 4.3 ± 2.1 (2–6) |
@@ -57,6 +61,10 @@ Structure-robust hits per run (hits whose composition is still a hit when re-sco
 | agent qwen3:32b, no surrogate (July) | 20260707-231335-seed0 | 7 | 4 | 57.1 | 0.090 | 1.00 | 3 | — | — | CdAg2GeSe4 MgAg2GeTe4 MgAg2SnSe4 MgAg2SnTe4 |
 | agent qwen3:32b, no surrogate (July) | 20260708-021219-seed6 | 9 | 2 | 22.2 | 0.229 | 0.56 | 3 | — | — | ZnAg2GeSe4 ZnAg2GeTe4 |
 | agent qwen3:32b, no surrogate (July) | 20260708-032352-seed7 | 12 | 2 | 16.7 | 0.090 | 0.83 | 1 | — | — | CdAg2GeSe4 MgAg2GeTe4 |
+| agent qwen3:32b, no surrogate (same day) | 20261011-134359-seed0-qwen-nosurr-oct | 3 | 1 | 33.3 | 0.121 | 0.33 | 3 | — | — | CdAg2GeSe4 |
+| agent qwen3:32b, no surrogate (same day) | 20261011-152517-seed6-qwen-nosurr-oct | 8 | 0 | 0.0 | 0.018 | 0.00 | 0 | — | — | — |
+| agent qwen3:32b, no surrogate (same day) | 20261011-174133-seed7-qwen-nosurr-oct | 3 | 0 | 0.0 | 0.018 | 0.33 | 1 | — | — | — |
+| agent qwen3:32b, + rank_by_surrogate (same day) | 20261011-184906-seed71-qwen-surr-oct | 5 | 0 | 0.0 | 0.115 | 0.00 | 5 | — | — | — |
 | agent Sonnet 5.5, no surrogate | 20261010-233515-seed11-sonnet-nosurr | 91 | 15 | 16.5 | 0.021 | 1.00 | 5 | 0.62 | 0.65 | CdAg2GeSe4 K2BaGeTe4 K2CaGeTe4 K2CaSnTe4 K2MgSnTe4 K2SrGeTe4 K2SrSnTe4 K2ZnSnTe4 MgAg2GeTe4 MgAg2SnSe4 MgAg2SnTe4 Na2CdSnTe4 SrAg2GeSe4 ZnAg2GeSe4 ZnAg2GeTe4 |
 | agent Sonnet 5.5, no surrogate | 20261011-010913-seed12-sonnet-nosurr | 90 | 19 | 21.1 | 0.017 | 1.00 | 6 | 0.60 | 0.70 | CdAg2GeSe4 K2BaGeTe4 K2BaSiTe4 K2CaGeTe4 K2CaSnTe4 K2CdSiTe4 K2MgSiTe4 K2MgSnTe4 K2SrGeTe4 K2SrSnTe4 K2ZnSnTe4 MgAg2GeTe4 MgAg2SnSe4 MgAg2SnTe4 Na2CdSnTe4 Na2MgGeTe4 SrAg2GeSe4 ZnAg2GeSe4 ZnAg2GeTe4 |
 | agent Sonnet 5.5, no surrogate | 20261011-025804-seed13-sonnet-nosurr | 91 | 16 | 17.6 | 0.017 | 0.99 | 7 | 0.61 | 0.82 | Ag3AsSe4 Ag3SbSe4 CdAg2GeSe4 Cu2NiGeS4 CuAg2AsSe4 CuAg2SbSe4 CuAsS2 KBiTe2 MgAg2GeTe4 MgAg2SnSe4 MgAg2SnTe4 NiAg2GeSe4 NiAg2SnSe4 SrAg2GeSe4 ZnAg2GeSe4 ZnAg2GeTe4 |
@@ -85,6 +93,18 @@ Structure-robust hits per run (hits whose composition is still a hit when re-sco
 | agent Sonnet 5.5, no surrogate | agent qwen3:32b, no surrogate (July) | hits | 16.40 | 2.67 | 1.00 | 0.0179 |
 | agent Sonnet 5.5, no surrogate | agent qwen3:32b, no surrogate (July) | relaxations | 90.80 | 9.33 | 1.00 | 0.0179 |
 | agent Sonnet 5.5, no surrogate | agent qwen3:32b, no surrogate (July) | robust_hits | 4.40 | 0.33 | 1.00 | 0.0179 |
+| agent Sonnet 5.5, no surrogate | agent qwen3:32b, no surrogate (same day) | hits_per_100_relaxations | 18.05 | 11.11 | 0.67 | 0.1786 |
+| agent Sonnet 5.5, no surrogate | agent qwen3:32b, no surrogate (same day) | hits | 16.40 | 0.33 | 1.00 | 0.0179 |
+| agent Sonnet 5.5, no surrogate | agent qwen3:32b, no surrogate (same day) | relaxations | 90.80 | 4.67 | 1.00 | 0.0179 |
+| agent Sonnet 5.5, no surrogate | agent qwen3:32b, no surrogate (same day) | robust_hits | 4.40 | 0.00 | 1.00 | 0.0179 |
+| agent qwen3:32b, no surrogate (July) | agent qwen3:32b, no surrogate (same day) | hits_per_100_relaxations | 32.01 | 11.11 | 0.78 | 0.1500 |
+| agent qwen3:32b, no surrogate (July) | agent qwen3:32b, no surrogate (same day) | hits | 2.67 | 0.33 | 1.00 | 0.0500 |
+| agent qwen3:32b, no surrogate (July) | agent qwen3:32b, no surrogate (same day) | relaxations | 9.33 | 4.67 | 0.89 | 0.1000 |
+| agent qwen3:32b, no surrogate (July) | agent qwen3:32b, no surrogate (same day) | robust_hits | 0.33 | 0.00 | 0.67 | 0.5000 |
+| agent qwen3:32b, no surrogate (same day) | similarity | hits_per_100_relaxations | 11.11 | 3.01 | 0.33 | 0.2727 |
+| agent qwen3:32b, no surrogate (same day) | similarity | hits | 0.33 | 2.00 | 0.02 | 1.0000 |
+| agent qwen3:32b, no surrogate (same day) | similarity | relaxations | 4.67 | 66.12 | 0.00 | 1.0000 |
+| agent qwen3:32b, no surrogate (same day) | similarity | robust_hits | 0.00 | 0.88 | 0.06 | 1.0000 |
 | agent Sonnet 5.5, no surrogate | agent Sonnet 5.5, + rank_by_surrogate | hits_per_100_relaxations | 18.05 | 12.38 | 0.96 | 0.0079 |
 | agent Sonnet 5.5, no surrogate | agent Sonnet 5.5, + rank_by_surrogate | hits | 16.40 | 11.00 | 0.94 | 0.0119 |
 | agent Sonnet 5.5, no surrogate | agent Sonnet 5.5, + rank_by_surrogate | relaxations | 90.80 | 88.40 | 0.54 | 0.3214 |
@@ -131,6 +151,8 @@ Structure-robust hits per run (hits whose composition is still a hit when re-sco
 | arm | vetoes | vetoed compositions relaxed elsewhere | of those, hits |
 |---|---|---|---|
 | agent qwen3:32b, no surrogate (July) | 7 | 7 | 0 |
+| agent qwen3:32b, no surrogate (same day) | 4 | 3 | 0 |
+| agent qwen3:32b, + rank_by_surrogate (same day) | 5 | 2 | 0 |
 | agent Sonnet 5.5, no surrogate | 24 | 22 | 2 |
 | agent Sonnet 5.5, + rank_by_surrogate | 59 | 41 | 3 |
 | agent Opus 5.5, no surrogate | 23 | 10 | 1 |

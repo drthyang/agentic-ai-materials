@@ -1,0 +1,51 @@
+{
+ "url": "https://oqmd.org/oqmdapi/formationenergy?composition=K2MgSiTe4&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json",
+ "response": {
+  "links": {
+   "next": null,
+   "previous": null,
+   "base_url": {
+    "href": "https://oqmd.org/oqmdapi",
+    "meta": {
+     "_oqmd_version": "1.0"
+    }
+   }
+  },
+  "resource": {},
+  "data": [
+   {
+    "name": "K2MgSiTe4",
+    "entry_id": 1369606,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "I-42m",
+    "natoms": 8,
+    "delta_e": -0.721637012187499,
+    "stability": 2.3408750000064593e-05
+   },
+   {
+    "name": "K2MgSiTe4",
+    "entry_id": 2110932,
+    "icsd_id": null,
+    "prototype": "TlSe",
+    "spacegroup": "I-42m",
+    "natoms": 8,
+    "delta_e": -0.721660420937499,
+    "stability": 0.0
+   }
+  ],
+  "meta": {
+   "query": {
+    "representation": "http://oqmd.org/oqmdapi/formationenergy?composition=K2MgSiTe4&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json"
+   },
+   "api_version": "1.0",
+   "time_stamp": "2026-10-11 10:11:51",
+   "data_returned": 2,
+   "data_available": 2,
+   "comments": "",
+   "query_tree": "",
+   "more_data_available": false
+  },
+  "response_message": "OK"
+ }
+}

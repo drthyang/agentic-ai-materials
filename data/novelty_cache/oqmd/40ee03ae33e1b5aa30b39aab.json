@@ -1,0 +1,71 @@
+{
+ "url": "https://oqmd.org/oqmdapi/formationenergy?composition=AsCuS2&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json",
+ "response": {
+  "links": {
+   "next": null,
+   "previous": null,
+   "base_url": {
+    "href": "https://oqmd.org/oqmdapi",
+    "meta": {
+     "_oqmd_version": "1.0"
+    }
+   }
+  },
+  "resource": {},
+  "data": [
+   {
+    "name": "CuAsS2",
+    "entry_id": 1440258,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "R3m",
+    "natoms": 4,
+    "delta_e": -0.186267358256679,
+    "stability": 0.16939911079648412
+   },
+   {
+    "name": "CuAsS2",
+    "entry_id": 1748571,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "I-42d",
+    "natoms": 8,
+    "delta_e": -0.1522192782566787,
+    "stability": 0.20344719079648443
+   },
+   {
+    "name": "CuAsS2",
+    "entry_id": 1736911,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "Pnma",
+    "natoms": 16,
+    "delta_e": -0.3081095301316781,
+    "stability": 0.04755693892148505
+   },
+   {
+    "name": "CuAsS2",
+    "entry_id": 1814183,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "P21/c",
+    "natoms": 16,
+    "delta_e": -0.2527166088816788,
+    "stability": 0.10294986017148433
+   }
+  ],
+  "meta": {
+   "query": {
+    "representation": "http://oqmd.org/oqmdapi/formationenergy?composition=AsCuS2&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json"
+   },
+   "api_version": "1.0",
+   "time_stamp": "2026-10-11 10:07:22",
+   "data_returned": 4,
+   "data_available": 4,
+   "comments": "",
+   "query_tree": "",
+   "more_data_available": false
+  },
+  "response_message": "OK"
+ }
+}

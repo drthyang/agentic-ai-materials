@@ -1,24 +1,31 @@
 # Claude ablation: frontier vs local proposer, and which parts matter
 
-*Runs 2026-10-10 18:37 to 2026-10-11 05:59 EDT on the user's Mac. API
-spend $18.05 of a hard $40 cap (restated 2026-10-11; see Spend). Every number here is surrogate-level
+*Runs 2026-10-10 18:37 to 2026-10-11 16:28 EDT on the user's Mac. API
+spend $18.05 of a hard $40 cap (restated 2026-10-11; see Spend); the
+2026-10-11 follow-up spent $0. Every number here is surrogate-level
 (CHGNet relaxation, Materials Project hull, MEGNet HSE gap), not DFT or
-experiment.*
+experiment. **Read the first section before any table:** a structure
+audit on 2026-10-11 showed that most hits depend on a defective
+prototype, and it changes which conclusions hold.*
 
 ## Read this first: most hits depend on a defective prototype (2026-10-11)
 
-The chalcopyrite and kesterite prototypes in `src/athanor/prototypes.py`
-are not the structures their docstrings name. Each is an 8-atom cell that
-holds half of the 16-atom conventional cell's atoms in the full
-c ≈ 11 Å box: every atom sits at z ∈ [−0.125, 0.25], leaving a ~7 Å empty
-gap, and the symmetry is P2 rather than I-42d or I-4. Every candidate
-built on them, by every strategy (agents and baselines alike), was
-relaxed from that start, and **all 93 distinct hits in this study are of
-those two types** (none is zinc blende, whose prototype is correct).
+**The defect.** The chalcopyrite and kesterite prototypes in
+`src/athanor/prototypes.py` are not the structures their docstrings name.
+Each is an 8-atom cell that holds half of the 16-atom conventional cell's
+atoms in the full c ≈ 11 Å box: every atom sits at z ∈ [−0.125, 0.25],
+leaving a ~7 Å empty gap, and the symmetry is P2 rather than I-42d or
+I-4. It was found while building the novelty audit, when each hit's space
+group was needed for comparison with OQMD and the prototypes came back P2.
+Every candidate built on them, by every strategy (agents and baselines
+alike, July and October), was relaxed from that start, and **all 93
+distinct hits in this study are of those two types** (none is zinc
+blende, whose prototype is a correct cell).
 
-`scripts/structure_audit.py` applied each hit's own substitution to a
-correct conventional cell built from the space group and scored it with
-the unchanged pipeline ([structure-audit.csv](structure-audit.csv)):
+**The audit.** `scripts/structure_audit.py` applies each hit's own
+substitution to a correct conventional cell built from the space group,
+starts it at a predicted volume, and scores it with the unchanged
+pipeline ([structure-audit.csv](structure-audit.csv)):
 
 | mission | found by | distinct hits | still a hit in a correct bulk cell |
 |---|---|---|---|
@@ -28,32 +35,144 @@ the unchanged pipeline ([structure-audit.csv](structure-audit.csv)):
 | QD | baselines | 23 | 9 |
 
 Every PV loss is the predicted band gap leaving the window (median shift
-0.56 eV, up to 1.6 eV); none is a stability or convergence failure. In
-the bulk cells 88 of 93 compositions sit on the hull, so in this pipeline
-the stability criterion barely discriminates these families. Counting
-only structure-robust hits per run (PV):
+0.56 eV, up to 1.6 eV); none is a stability or convergence failure. In the
+bulk cells 88 of 93 compositions sit on the hull, so in this pipeline the
+stability criterion barely discriminates these families. Which geometry
+gives the *right* gap is a question for DFT; the point is that the hit
+labels depend on a starting geometry the benchmark never intended.
 
-| arm | n | robust hits per run, mean ± SD (range) | raw hits per run |
+**Structure-robust hits per run, PV mission** (a run's hits whose
+composition is still a hit in the correct cell):
+
+| arm | n | robust hits/run: mean ± SD (range) | raw hits/run |
 |---|---|---|---|
 | random | 8 | 0.5 ± 0.8 (0–2) | 1.0 ± 0.9 |
 | similarity | 8 | 0.9 ± 0.4 (0–1) | 2.0 ± 0.5 |
 | BayesOpt | 8 | 0.2 ± 0.5 (0–1) | 1.5 ± 1.4 |
-| qwen3:32b (July) | 3 | 0.3 ± 0.6 (0–1) | 2.7 ± 1.2 |
+| qwen3:32b, no surrogate (July) | 3 | 0.3 ± 0.6 (0–1) | 2.7 ± 1.2 |
+| qwen3:32b, no surrogate (same day, 2026-10-11) | 3 | 0.0 ± 0.0 (0–0) | 0.3 ± 0.6 |
+| qwen3:32b, + rank_by_surrogate (same day) | 1 | 0 | 0 |
 | Sonnet 5.5, no surrogate | 5 | 4.4 ± 1.3 (2–5) | 16.4 ± 2.1 |
-| Sonnet 5.5, + surrogate | 5 | 3.0 ± 1.4 (1–4) | 11.0 ± 2.5 |
-| Opus 5.5 | 3 | 4.3 ± 3.2 (2–8) | 18.7 ± 5.5 |
+| Sonnet 5.5, + rank_by_surrogate | 5 | 3.0 ± 1.4 (1–4) | 11.0 ± 2.5 |
+| Sonnet 5.5, + surrogate, no critic | 3 | 4.3 ± 2.1 (2–6) | 15.0 ± 3.5 |
+| Sonnet 5.5, no surrogate, no critic | 3 | 3.3 ± 2.3 (2–6) | 16.3 ± 3.2 |
+| Opus 5.5, no surrogate | 3 | 4.3 ± 3.2 (2–8) | 18.7 ± 5.5 |
 
-What survives: Sonnet still beats qwen (p = 0.018) and similarity
-(p = 0.0008), at about a quarter of the raw magnitude. What does not: the
-complete separation of Claude runs from baseline runs (worst Claude run 1
-robust hit, best baseline run 2), the significance of the surrogate-tool
-effect (p = 0.09), and Sonnet's QD edge (p = 0.20 vs similarity). Which
-cell geometry gives the *right* gap is a question for DFT; the point is
-that the hit labels in the tables below depend on a starting geometry the
-benchmark never intended. The prototypes are left unchanged here because
-fixing them changes the protocol for every run; that is the user's call.
+Exact one-sided permutation p-values on robust hits per run:
+Sonnet > qwen same day p = 0.018 and > qwen July p = 0.018 (every Sonnet
+run above every qwen run, the floor for 5 vs 3); Sonnet > similarity
+p = 0.0008; Sonnet + surrogate > similarity p = 0.0062; Sonnet no
+surrogate > Sonnet + surrogate p = 0.091; Opus > Sonnet p = 0.54;
+similarity > BayesOpt p = 0.020; qwen July > similarity p = 0.99.
+Surrogate × critic interaction (OLS on the 2×2, n = 16, two-sided):
+raw hits p = 0.17, robust hits p = 0.20.
 
-## Headline
+**What survives.** Sonnet 5.5 finds more structure-robust hits per run
+than the local qwen3:32b proposer (both the July runs and today's) and
+than the best baseline, similarity, at about a quarter of the raw
+magnitude (4.4 robust vs 16.4 raw hits per Sonnet run).
+
+**What does not.**
+- The complete separation of Claude runs from baseline runs (worst Claude
+  run: 1 robust hit; best baseline run: 2).
+- The surrogate-tool effect (p = 0.09 on robust hits), and the reading
+  that it acts through the critic: the interaction was never significant,
+  even on raw hits (p = 0.17). The paid runs to balance the 2×2 at n = 5
+  were approved and then cancelled before starting, once the audit made
+  raw-hit precision moot.
+- Sonnet's edge on the QD mission (robust hits 2.3 ± 1.2 vs similarity
+  1.4 ± 0.9, p = 0.20).
+
+**July claims that rest on the same prototypes** (paper/draft.md claim
+table and abstract; results/2026-07-0*):
+- **C3** (prompt alignment flips 0 → 4 hits, benchmark 2): 1 of the 4
+  hits survives (MgAg₂SnSe₄). CdAg₂GeSe₄, MgAg₂GeTe₄ and MgAg₂SnTe₄ drop
+  out of the gap window. The 0 of benchmark 1 (C2) is unaffected: it came
+  from novelty, not from gaps.
+- **C4** (advantage replicates, 32 ± 18 hits/100 relaxations, complete
+  separation, p ≈ 0.006): robust hits/100 relaxations for the three runs
+  are 14.3, 0 and 0; robust hits per run 0.3 ± 0.6 vs similarity
+  0.9 ± 0.4. C4 does not survive, and today's same-day qwen runs (0.3 raw,
+  0 robust hits per run) did not reproduce even the raw July result.
+- **C5** (the found chemistry is real; "two predicted on-hull members",
+  two Mg tellurides "appear unreported"): CdAg₂GeSe₄, ZnAg₂GeSe₄,
+  MgAg₂GeTe₄ and MgAg₂SnTe₄ are all out of the window in the correct cell
+  (bulk gaps 0.03, 0.66, 0.79, 0.20 eV). The convergence of runs on the
+  Ag₂-(II)-(IV)-(VI)₄ family remains a true statement about what the agent
+  proposed, not about what the physics supports.
+- **C6** (AgGaSe₂ re-found blind in 14 relaxations): survives this check.
+  Re-scored in a correct chalcopyrite cell AgGaSe₂ has gap 1.15 eV and
+  sits on the hull, still inside the window; similarity's CuGaSe₂ (1.34 eV)
+  also survives.
+- **C7** (QD mission: agent pattern directional, MgAg₂Ge(S,Se)₄; similarity's
+  on-hull QD shortlist): the system-level claim (config-only generality)
+  is unaffected; both agent hits drop out (bulk gaps 1.58 and 0.34 eV),
+  and of similarity's three on-hull candidates only Cu₂SiSnS₄ survives.
+- The July "first screening hit" CdCuSe₂ (similarity; WALKTHROUGH.md,
+  ROADMAP.md's "CdCuSe2 dossier", results/2026-07-07-benchmark-1): bulk gap
+  0.14 eV, not a hit.
+- Abstract sentences built on these: "32 ± 18 hits per 100 relaxations
+  … complete separation, exact rank p ≈ 0.006", "two predicted on-hull
+  members … two (Mg tellurides) appear unreported", and "transferring the
+  discovered kesterite family across gap windows".
+
+The prototypes are left unchanged here: fixing them changes the protocol
+for every run, which is the user's call.
+
+## Same-day qwen3:32b rerun (2026-10-11, $0 API)
+
+The July protocol exactly (PV mission, 5 × 20 relaxations, gemma4:26b
+critic, surrogate off, the July agent seeds 0, 6, 7), run locally today
+with the Mac otherwise idle on Ollama:
+
+| run | relaxations | raw hits | robust hits | July run with this seed |
+|---|---|---|---|---|
+| seed 0 | 3 | 1 (CdAg₂GeSe₄) | 0 | 7 relaxations, 4 hits |
+| seed 6 | 8 | 0 | 0 | 9 relaxations, 2 hits |
+| seed 7 | 3 | 0 | 0 | 12 relaxations, 2 hits |
+
+The same-day qwen arm is weaker than July's (0.3 vs 2.7 raw hits per run;
+p = 0.5 for July > today on robust hits, which are near zero for both). The
+agent behaved as in July — few relaxations, iterations ending with nothing
+evaluated after filters rejected its binaries — but did not land on the
+silver-kesterite family the July runs converged on. Agent seeds name runs
+only (LLM sampling is not seeded), so this is run-to-run variance plus
+anything that changed since July (the critic model was re-pulled
+2026-10-09). One qwen3:32b + `rank_by_surrogate` run also finished
+(seed 71: 5 relaxations, 0 hits, and it never called the surrogate tool);
+the other two were stopped before starting when work was paused. The
+Sonnet-vs-qwen comparison now holds against same-day runs as well.
+
+## Novelty audit vs OQMD and COD (2026-10-11, $0)
+
+`scripts/novelty_audit.py` checked every distinct hit composition against
+OQMD's public REST API (any entry; any with an ICSD id, i.e. imported from
+an experimental ICSD structure; any in the same space group as the intended
+structure) and against the Crystallography Open Database (experimental
+structures, composition within 0.03 atomic fraction). ICSD itself is
+licensed and was not queried. Responses are cached in
+`data/novelty_cache/`; per-composition results in
+[novelty-audit.csv](novelty-audit.csv).
+
+| mission | found by | distinct hits | in OQMD | OQMD entry with ICSD id | OQMD, same space group | in COD | absent from both |
+|---|---|---|---|---|---|---|---|
+| PV | agents | 47 | 23 | 0 | 17 | 0 | 24 |
+| PV | baselines | 11 | 2 | 0 | 1 | 0 | 9 |
+| QD | agents | 14 | 12 | 0 | 6 | 0 | 2 |
+| QD | baselines | 23 | 5 | 0 | 1 | 0 | 18 |
+
+No hit matches an experimental structure in either open database; about
+half of the PV agent hits are already in OQMD as hypothetical DFT entries.
+Combining both audits, the PV agent hits that are **structure-robust and
+absent from OQMD and COD** number 10 of 47: K₂AgSbSe₄, K₂CaGeTe₄,
+K₂MnGeSe₄, K₂MnSiTe₄, K₂SrGeTe₄, K₂ZnSnTe₄, Na₂AgSbSe₄, Na₂CuSbTe₄,
+Na₂MnGeSe₄, Na₂NiGeSe₄ (baselines: 3 of 11; QD agents: 1 of 14, Ba₂InCuS₄).
+These are surrogate-level candidates for validation, nothing more: most put
+an alkali cation on a tetrahedral kesterite site, a structure such
+compounds are unlikely to adopt, and absence from OQMD and COD is not
+absence from the literature or ICSD.
+
+## Headline (raw hits, before the audit; superseded where the first section disagrees)
 
 | question | answer (PV mission, cap = 100 relaxations per run) |
 |---|---|
@@ -190,9 +309,9 @@ rename (`git diff 2ea3ea8 HEAD`), and `uv.lock` is unchanged. Not
 controlled: the runs are three months apart, and the critic model was
 re-pulled on 2026-10-09 (the July digest was not recorded). The QD seed-8
 reproduction above argues against drift in the scoring pipeline; it says
-nothing about the critic. A same-day qwen3:32b rerun was not attempted:
-qwen (20 GB) plus the critic (18 GB) beside another session's 16 GB LM
-Studio model would have pushed the shared 64 GB Mac into heavy swap.
+nothing about the critic. A same-day qwen3:32b rerun was not possible on
+2026-10-10 (another session's 16 GB LM Studio model left too little
+memory); it ran on 2026-10-11 — see "Same-day qwen3:32b rerun" above.
 
 ## Spend
 
@@ -232,7 +351,9 @@ ANTHROPIC_API_KEY=... uv run athanor benchmark --iterations 5 --seed 11 \
 
 ## Not run
 
-- qwen3:32b with `rank_by_surrogate` (the fourth cell of model × tool), and
-  a same-day qwen rerun: memory on the shared Mac (see above).
+- qwen3:32b + `rank_by_surrogate`: 1 of 3 runs (stopped when work was paused).
+- The two extra runs per no-critic Sonnet cell (approved with a $5 cap,
+  cancelled before starting; $0 spent).
+- A fix of the prototypes and a rerun of the matrix on correct cells.
 - An effort sweep for Sonnet, a Claude critic, the TCO and rediscovery
-  missions with Claude, and an ICSD/OQMD novelty audit of the new hits.
+  missions with Claude, an ICSD check (licensed), and any DFT validation.

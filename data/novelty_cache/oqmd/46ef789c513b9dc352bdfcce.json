@@ -1,0 +1,71 @@
+{
+ "url": "https://oqmd.org/oqmdapi/formationenergy?composition=BiKTe2&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json",
+ "response": {
+  "links": {
+   "next": null,
+   "previous": null,
+   "base_url": {
+    "href": "https://oqmd.org/oqmdapi",
+    "meta": {
+     "_oqmd_version": "1.0"
+    }
+   }
+  },
+  "resource": {},
+  "data": [
+   {
+    "name": "KBiTe2",
+    "entry_id": 396998,
+    "icsd_id": null,
+    "prototype": "L2_1_FullHeusler_Cu2MnAl",
+    "spacegroup": "Fm-3m",
+    "natoms": 4,
+    "delta_e": -0.324086694166664,
+    "stability": 0.303790017500001
+   },
+   {
+    "name": "KBiTe2",
+    "entry_id": 1373719,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "R-3m",
+    "natoms": 4,
+    "delta_e": -0.627876711666665,
+    "stability": 0.0
+   },
+   {
+    "name": "KBiTe2",
+    "entry_id": 1477544,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "P21/c",
+    "natoms": 16,
+    "delta_e": -0.5409039316666648,
+    "stability": 0.0869727800000002
+   },
+   {
+    "name": "KBiTe2",
+    "entry_id": 1882461,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "P-3m1",
+    "natoms": 12,
+    "delta_e": -0.6274609399999983,
+    "stability": 0.00041577166666673104
+   }
+  ],
+  "meta": {
+   "query": {
+    "representation": "http://oqmd.org/oqmdapi/formationenergy?composition=BiKTe2&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json"
+   },
+   "api_version": "1.0",
+   "time_stamp": "2026-10-11 12:33:35",
+   "data_returned": 4,
+   "data_available": 4,
+   "comments": "",
+   "query_tree": "",
+   "more_data_available": false
+  },
+  "response_message": "OK"
+ }
+}

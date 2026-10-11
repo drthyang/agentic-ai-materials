@@ -1,0 +1,41 @@
+{
+ "url": "https://oqmd.org/oqmdapi/formationenergy?composition=Ag2CuPS4&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json",
+ "response": {
+  "links": {
+   "next": null,
+   "previous": null,
+   "base_url": {
+    "href": "https://oqmd.org/oqmdapi",
+    "meta": {
+     "_oqmd_version": "1.0"
+    }
+   }
+  },
+  "resource": {},
+  "data": [
+   {
+    "name": "CuAg2PS4",
+    "entry_id": 1587582,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "Pmn21",
+    "natoms": 16,
+    "delta_e": -0.3734227581266709,
+    "stability": 0.018249161249999868
+   }
+  ],
+  "meta": {
+   "query": {
+    "representation": "http://oqmd.org/oqmdapi/formationenergy?composition=Ag2CuPS4&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json"
+   },
+   "api_version": "1.0",
+   "time_stamp": "2026-10-11 14:33:34",
+   "data_returned": 1,
+   "data_available": 1,
+   "comments": "",
+   "query_tree": "",
+   "more_data_available": false
+  },
+  "response_message": "OK"
+ }
+}

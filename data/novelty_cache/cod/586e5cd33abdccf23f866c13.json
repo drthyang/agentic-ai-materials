@@ -1,0 +1,37 @@
+{
+ "url": "https://www.crystallography.net/cod/optimade/v1/structures?filter=elements+HAS+ALL+%22Ca%22%2C%22Cu%22%2C%22Se%22+AND+nelements%3D3&page_limit=100&response_fields=chemical_formula_descriptive",
+ "response": {
+  "data": [],
+  "links": {
+   "base_url": "https://www.crystallography.net/cod/optimade/v1.1.0/"
+  },
+  "meta": {
+   "api_version": "1.1.0",
+   "data_available": 535164,
+   "data_returned": 0,
+   "implementation": {
+    "issue_tracker": {
+     "href": "https://projects.ibt.lt/repositories/projects/cod-optimade/issues"
+    },
+    "maintainer": {
+     "email": "cod-bugs@ibt.lt"
+    },
+    "name": "Crystallography Open Database",
+    "source_url": "svn+ssh://172.17.170.123/mnt/kakadu-backup/crash-recovery-2025-12-12/svn-repositories/recovered/cod/tags/v0.13.0/cgi-bin/optimade.pl@303284",
+    "version": "1-dev"
+   },
+   "last_id": null,
+   "more_data_available": false,
+   "provider": {
+    "description": "Crystallography Open Database",
+    "name": "Crystallography Open Database",
+    "prefix": "cod"
+   },
+   "query": {
+    "representation": "/structures?filter=elements+HAS+ALL+%22Ca%22%2C%22Cu%22%2C%22Se%22+AND+nelements%3D3&page_limit=100&response_fields=chemical_formula_descriptive"
+   },
+   "schema": "https://schemas.optimade.org/openapi/v1.1.0/optimade.json",
+   "time_stamp": "2026-10-11T14:50:49Z"
+  }
+ }
+}

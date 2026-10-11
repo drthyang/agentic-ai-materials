@@ -1,0 +1,278 @@
+{
+ "url": "https://www.crystallography.net/cod/optimade/v1/structures?filter=elements+HAS+ALL+%22Cu%22%2C%22S%22%2C%22Sn%22+AND+nelements%3D3&page_limit=100&response_fields=chemical_formula_descriptive",
+ "response": {
+  "data": [
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu4S6Sn"
+    },
+    "id": "1520944",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1520944"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1520944",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu2S3Sn"
+    },
+    "id": "1526187",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1526187"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1526187",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu4S4Sn"
+    },
+    "id": "1560399",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1560399"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1560399",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu4S4Sn"
+    },
+    "id": "1560400",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1560400"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1560400",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu8S12Sn3"
+    },
+    "id": "4345120",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/4345120"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "4345120",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu22S32Sn10"
+    },
+    "id": "4350818",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/4350818"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "4350818",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu2S4Sn"
+    },
+    "id": "5910172",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/5910172"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "5910172",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu2S3Sn"
+    },
+    "id": "6000741",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/6000741"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "6000741",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu2S3Sn"
+    },
+    "id": "7246217",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/7246217"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "7246217",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu5S7Sn2"
+    },
+    "id": "7246218",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/7246218"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "7246218",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu0.999S1.5Sn0.501"
+    },
+    "id": "9012224",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/9012224"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "9012224",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu4S16Sn7"
+    },
+    "id": "9012225",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/9012225"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "9012225",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   }
+  ],
+  "links": {
+   "base_url": "https://www.crystallography.net/cod/optimade/v1.1.0/"
+  },
+  "meta": {
+   "api_version": "1.1.0",
+   "data_available": 535164,
+   "data_returned": 12,
+   "implementation": {
+    "issue_tracker": {
+     "href": "https://projects.ibt.lt/repositories/projects/cod-optimade/issues"
+    },
+    "maintainer": {
+     "email": "cod-bugs@ibt.lt"
+    },
+    "name": "Crystallography Open Database",
+    "source_url": "svn+ssh://172.17.170.123/mnt/kakadu-backup/crash-recovery-2025-12-12/svn-repositories/recovered/cod/tags/v0.13.0/cgi-bin/optimade.pl@303284",
+    "version": "1-dev"
+   },
+   "last_id": "9012225",
+   "more_data_available": false,
+   "provider": {
+    "description": "Crystallography Open Database",
+    "name": "Crystallography Open Database",
+    "prefix": "cod"
+   },
+   "query": {
+    "representation": "/structures?filter=elements+HAS+ALL+%22Cu%22%2C%22S%22%2C%22Sn%22+AND+nelements%3D3&page_limit=100&response_fields=chemical_formula_descriptive"
+   },
+   "schema": "https://schemas.optimade.org/openapi/v1.1.0/optimade.json",
+   "time_stamp": "2026-10-11T15:07:34Z"
+  }
+ }
+}

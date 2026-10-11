@@ -1,0 +1,71 @@
+{
+ "url": "https://oqmd.org/oqmdapi/formationenergy?composition=Cu2GeNiS4&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json",
+ "response": {
+  "links": {
+   "next": null,
+   "previous": null,
+   "base_url": {
+    "href": "https://oqmd.org/oqmdapi",
+    "meta": {
+     "_oqmd_version": "1.0"
+    }
+   }
+  },
+  "resource": {},
+  "data": [
+   {
+    "name": "Cu2NiGeS4",
+    "entry_id": 1282209,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "I-42m",
+    "natoms": 8,
+    "delta_e": -0.458020795131678,
+    "stability": 0.03264602350322704
+   },
+   {
+    "name": "Cu2NiGeS4",
+    "entry_id": 1769417,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "Pmn21",
+    "natoms": 16,
+    "delta_e": -0.4441993313816788,
+    "stability": 0.04646748725322625
+   },
+   {
+    "name": "Cu2NiGeS4",
+    "entry_id": 2134090,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "I-42m",
+    "natoms": 8,
+    "delta_e": -0.4578301901316788,
+    "stability": 0.03283662850322622
+   },
+   {
+    "name": "Cu2NiGeS4",
+    "entry_id": 2137143,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "I-4",
+    "natoms": 8,
+    "delta_e": -0.46292433513167897,
+    "stability": 0.027742483503226056
+   }
+  ],
+  "meta": {
+   "query": {
+    "representation": "http://oqmd.org/oqmdapi/formationenergy?composition=Cu2GeNiS4&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json"
+   },
+   "api_version": "1.0",
+   "time_stamp": "2026-10-11 10:06:17",
+   "data_returned": 4,
+   "data_available": 4,
+   "comments": "",
+   "query_tree": "",
+   "more_data_available": false
+  },
+  "response_message": "OK"
+ }
+}

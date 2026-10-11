@@ -1,0 +1,61 @@
+{
+ "url": "https://oqmd.org/oqmdapi/formationenergy?composition=Cu2MgS4Sn&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json",
+ "response": {
+  "links": {
+   "next": null,
+   "previous": null,
+   "base_url": {
+    "href": "https://oqmd.org/oqmdapi",
+    "meta": {
+     "_oqmd_version": "1.0"
+    }
+   }
+  },
+  "resource": {},
+  "data": [
+   {
+    "name": "MgCu2SnS4",
+    "entry_id": 1282352,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "I-42m",
+    "natoms": 8,
+    "delta_e": -0.764100320258913,
+    "stability": 0.014394643629217496
+   },
+   {
+    "name": "MgCu2SnS4",
+    "entry_id": 2133943,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "I-42m",
+    "natoms": 8,
+    "delta_e": -0.7644572927589128,
+    "stability": 0.01403767112921761
+   },
+   {
+    "name": "MgCu2SnS4",
+    "entry_id": 2136996,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "I-4",
+    "natoms": 8,
+    "delta_e": -0.763799870258913,
+    "stability": 0.014695093629217393
+   }
+  ],
+  "meta": {
+   "query": {
+    "representation": "http://oqmd.org/oqmdapi/formationenergy?composition=Cu2MgS4Sn&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json"
+   },
+   "api_version": "1.0",
+   "time_stamp": "2026-10-11 14:50:06",
+   "data_returned": 3,
+   "data_available": 3,
+   "comments": "",
+   "query_tree": "",
+   "more_data_available": false
+  },
+  "response_message": "OK"
+ }
+}
