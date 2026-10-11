@@ -1,0 +1,34 @@
+[
+ {
+  "name": "agent (claude-opus-5-5)",
+  "proposed": 242,
+  "filtered_out": 23,
+  "scored": 100,
+  "errors": 0,
+  "hits": 19,
+  "hit_formulas": [
+   "ZnAg2GeSe4",
+   "ZnAg2GeTe4",
+   "CdAg2GeSe4",
+   "MgAg2SnSe4",
+   "MgAg2GeTe4",
+   "MgAg2SnTe4",
+   "NiAg2GeSe4",
+   "NiAg2SnSe4",
+   "Cu2NiGeS4",
+   "TiZn(AgS2)2",
+   "CuAg2SbSe4",
+   "CuAg2AsSe4",
+   "Ag3SbSe4",
+   "Ag3AsSe4",
+   "NaCu2SbSe4",
+   "KCu2SbSe4",
+   "Na2CuSbTe4",
+   "Na2AgSbTe4",
+   "K2CuSbTe4"
+  ],
+  "rediscoveries": [],
+  "hits_per_100_relaxations": 19.0,
+  "best_gap_distance_ev": 0.012
+ }
+]

@@ -1,0 +1,16 @@
+{
+ "backend": "anthropic",
+ "model": "claude-opus-5-5",
+ "effort": "high",
+ "calls": 47,
+ "input_tokens": 106,
+ "output_tokens": 44456,
+ "cache_read_input_tokens": 446441,
+ "cache_creation_input_tokens": 112100,
+ "stop_reasons": {
+  "tool_use": 41,
+  "end_turn": 6
+ },
+ "cost_usd": 1.5393,
+ "max_cost_usd": 6.0
+}
