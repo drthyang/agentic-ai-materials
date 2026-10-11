@@ -1,0 +1,318 @@
+{
+ "url": "https://www.crystallography.net/cod/optimade/v1/structures?filter=elements+HAS+ALL+%22As%22%2C%22Cu%22%2C%22S%22+AND+nelements%3D3&page_limit=100&response_fields=chemical_formula_descriptive",
+ "response": {
+  "data": [
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "AsCu3S4"
+    },
+    "id": "1011011",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1011011"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1011011",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "AsCu3S4"
+    },
+    "id": "1011039",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1011039"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1011039",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "As4Cu12S13"
+    },
+    "id": "1011248",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1011248"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1011248",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "AsCuS"
+    },
+    "id": "2217766",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/2217766"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "2217766",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "As4Cu6S9"
+    },
+    "id": "9000464",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/9000464"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "9000464",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "AsCu3S4"
+    },
+    "id": "9007517",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/9007517"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "9007517",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "AsCu3S4"
+    },
+    "id": "9008017",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/9008017"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "9008017",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "As4Cu12S13"
+    },
+    "id": "9008018",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/9008018"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "9008018",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "AsCuS"
+    },
+    "id": "9011060",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/9011060"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "9011060",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "AsCu3S4"
+    },
+    "id": "9014090",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/9014090"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "9014090",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "AsCuS"
+    },
+    "id": "9014265",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/9014265"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "9014265",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "AsCu3S4"
+    },
+    "id": "9014599",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/9014599"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "9014599",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "AsCu3S4"
+    },
+    "id": "9015642",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/9015642"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "9015642",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "As4Cu6S9"
+    },
+    "id": "9017187",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/9017187"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "9017187",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   }
+  ],
+  "links": {
+   "base_url": "https://www.crystallography.net/cod/optimade/v1.1.0/"
+  },
+  "meta": {
+   "api_version": "1.1.0",
+   "data_available": 535164,
+   "data_returned": 14,
+   "implementation": {
+    "issue_tracker": {
+     "href": "https://projects.ibt.lt/repositories/projects/cod-optimade/issues"
+    },
+    "maintainer": {
+     "email": "cod-bugs@ibt.lt"
+    },
+    "name": "Crystallography Open Database",
+    "source_url": "svn+ssh://172.17.170.123/mnt/kakadu-backup/crash-recovery-2025-12-12/svn-repositories/recovered/cod/tags/v0.13.0/cgi-bin/optimade.pl@303284",
+    "version": "1-dev"
+   },
+   "last_id": "9017187",
+   "more_data_available": false,
+   "provider": {
+    "description": "Crystallography Open Database",
+    "name": "Crystallography Open Database",
+    "prefix": "cod"
+   },
+   "query": {
+    "representation": "/structures?filter=elements+HAS+ALL+%22As%22%2C%22Cu%22%2C%22S%22+AND+nelements%3D3&page_limit=100&response_fields=chemical_formula_descriptive"
+   },
+   "schema": "https://schemas.optimade.org/openapi/v1.1.0/optimade.json",
+   "time_stamp": "2026-10-11T15:07:25Z"
+  }
+ }
+}

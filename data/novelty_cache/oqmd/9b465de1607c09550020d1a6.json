@@ -1,0 +1,51 @@
+{
+ "url": "https://oqmd.org/oqmdapi/formationenergy?composition=Ag2GeMgTe4&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json",
+ "response": {
+  "links": {
+   "next": null,
+   "previous": null,
+   "base_url": {
+    "href": "https://oqmd.org/oqmdapi",
+    "meta": {
+     "_oqmd_version": "1.0"
+    }
+   }
+  },
+  "resource": {},
+  "data": [
+   {
+    "name": "MgAg2GeTe4",
+    "entry_id": 2134302,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "I-42m",
+    "natoms": 8,
+    "delta_e": -0.27022334156249883,
+    "stability": 0.013977682499999977
+   },
+   {
+    "name": "MgAg2GeTe4",
+    "entry_id": 2137355,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "I-4",
+    "natoms": 8,
+    "delta_e": -0.28039640656249887,
+    "stability": 0.0038046174999999405
+   }
+  ],
+  "meta": {
+   "query": {
+    "representation": "http://oqmd.org/oqmdapi/formationenergy?composition=Ag2GeMgTe4&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json"
+   },
+   "api_version": "1.0",
+   "time_stamp": "2026-10-11 13:32:58",
+   "data_returned": 2,
+   "data_available": 2,
+   "comments": "",
+   "query_tree": "",
+   "more_data_available": false
+  },
+  "response_message": "OK"
+ }
+}

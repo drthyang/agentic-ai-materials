@@ -1,0 +1,51 @@
+{
+ "url": "https://oqmd.org/oqmdapi/formationenergy?composition=CdNa2SnTe4&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json",
+ "response": {
+  "links": {
+   "next": null,
+   "previous": null,
+   "base_url": {
+    "href": "https://oqmd.org/oqmdapi",
+    "meta": {
+     "_oqmd_version": "1.0"
+    }
+   }
+  },
+  "resource": {},
+  "data": [
+   {
+    "name": "Na2CdSnTe4",
+    "entry_id": 1769478,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "I-42m",
+    "natoms": 8,
+    "delta_e": -0.5593002602359771,
+    "stability": 0.030098113662007986
+   },
+   {
+    "name": "Na2CdSnTe4",
+    "entry_id": 1882545,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "C2",
+    "natoms": 8,
+    "delta_e": -0.5664809014859773,
+    "stability": 0.02291747241200781
+   }
+  ],
+  "meta": {
+   "query": {
+    "representation": "http://oqmd.org/oqmdapi/formationenergy?composition=CdNa2SnTe4&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json"
+   },
+   "api_version": "1.0",
+   "time_stamp": "2026-10-11 13:48:35",
+   "data_returned": 2,
+   "data_available": 2,
+   "comments": "",
+   "query_tree": "",
+   "more_data_available": false
+  },
+  "response_message": "OK"
+ }
+}

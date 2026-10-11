@@ -142,8 +142,8 @@ def test_usage_pricing_sonnet():
     u = UsageTotals()
     u.add(_usage(inp=1_000_000, out=1_000_000, read=1_000_000, write=1_000_000),
           "end_turn")
-    # 2 input + 10 output + 0.20 cache read + 2.50 cache write
-    assert u.cost_usd("claude-sonnet-5-5") == pytest.approx(14.70)
+    # 2 input + 10 output + 0.10 cache read (0.05x input) + 2.50 cache write
+    assert u.cost_usd("claude-sonnet-5-5") == pytest.approx(14.60)
     assert u.stop_reasons == {"end_turn": 1}
 
 

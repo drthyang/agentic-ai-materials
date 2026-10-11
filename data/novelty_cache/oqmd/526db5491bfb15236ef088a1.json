@@ -1,0 +1,51 @@
+{
+ "url": "https://oqmd.org/oqmdapi/formationenergy?composition=ClI2In&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json",
+ "response": {
+  "links": {
+   "next": null,
+   "previous": null,
+   "base_url": {
+    "href": "https://oqmd.org/oqmdapi",
+    "meta": {
+     "_oqmd_version": "1.0"
+    }
+   }
+  },
+  "resource": {},
+  "data": [
+   {
+    "name": "InI2Cl",
+    "entry_id": 1487234,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "C2/m",
+    "natoms": 8,
+    "delta_e": -0.8758784338689394,
+    "stability": 0.003601622499999957
+   },
+   {
+    "name": "InI2Cl",
+    "entry_id": 1888402,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "Amm2",
+    "natoms": 8,
+    "delta_e": -0.8423440338689392,
+    "stability": 0.03713602250000014
+   }
+  ],
+  "meta": {
+   "query": {
+    "representation": "http://oqmd.org/oqmdapi/formationenergy?composition=ClI2In&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json"
+   },
+   "api_version": "1.0",
+   "time_stamp": "2026-10-11 14:38:53",
+   "data_returned": 2,
+   "data_available": 2,
+   "comments": "",
+   "query_tree": "",
+   "more_data_available": false
+  },
+  "response_message": "OK"
+ }
+}

@@ -56,6 +56,25 @@
     52.2,
     60.6
    ]
+  },
+  "robust_hits": {
+   "n": 5,
+   "values": [
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    2.0
+   ],
+   "mean": 0.8,
+   "sd": 0.8366600265340756,
+   "median": 1.0,
+   "min": 0.0,
+   "max": 2.0,
+   "ci95": [
+    0.2,
+    1.4
+   ]
   }
  },
  "similarity": {
@@ -114,6 +133,25 @@
    "ci95": [
     43.0,
     56.0
+   ]
+  },
+  "robust_hits": {
+   "n": 5,
+   "values": [
+    2.0,
+    0.0,
+    2.0,
+    1.0,
+    2.0
+   ],
+   "mean": 1.4,
+   "sd": 0.8944271909999159,
+   "median": 2.0,
+   "min": 0.0,
+   "max": 2.0,
+   "ci95": [
+    0.6,
+    2.0
    ]
   }
  },
@@ -174,6 +212,25 @@
     65.6,
     73.6
    ]
+  },
+  "robust_hits": {
+   "n": 5,
+   "values": [
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    5.0
+   ],
+   "mean": 1.2,
+   "sd": 2.16794833886788,
+   "median": 0.0,
+   "min": 0.0,
+   "max": 5.0,
+   "ci95": [
+    0.0,
+    3.2
+   ]
   }
  },
  "agent qwen3:32b, no surrogate (July)": {
@@ -211,6 +268,18 @@
    "median": 3.0,
    "min": 3.0,
    "max": 3.0,
+   "ci95": null
+  },
+  "robust_hits": {
+   "n": 1,
+   "values": [
+    0.0
+   ],
+   "mean": 0.0,
+   "sd": null,
+   "median": 0.0,
+   "min": 0.0,
+   "max": 0.0,
    "ci95": null
   }
  },
@@ -265,6 +334,23 @@
     69.0,
     95.0
    ]
+  },
+  "robust_hits": {
+   "n": 3,
+   "values": [
+    3.0,
+    1.0,
+    3.0
+   ],
+   "mean": 2.3333333333333335,
+   "sd": 1.1547005383792515,
+   "median": 3.0,
+   "min": 1.0,
+   "max": 3.0,
+   "ci95": [
+    1.0,
+    3.0
+   ]
   }
  },
  "_comparisons": [
@@ -291,6 +377,13 @@
   },
   {
    "a": "agent Sonnet 5.5, no surrogate",
+   "b": "similarity",
+   "metric": "robust_hits",
+   "p_one_sided": 0.19642857142857142,
+   "prob_superiority": 0.7666666666666667
+  },
+  {
+   "a": "agent Sonnet 5.5, no surrogate",
    "b": "bayesopt",
    "metric": "hits_per_100_relaxations",
    "p_one_sided": 0.03571428571428571,
@@ -309,6 +402,13 @@
    "metric": "relaxations",
    "p_one_sided": 0.08928571428571429,
    "prob_superiority": 0.8333333333333334
+  },
+  {
+   "a": "agent Sonnet 5.5, no surrogate",
+   "b": "bayesopt",
+   "metric": "robust_hits",
+   "p_one_sided": 0.25,
+   "prob_superiority": 0.7666666666666667
   }
  ]
 }

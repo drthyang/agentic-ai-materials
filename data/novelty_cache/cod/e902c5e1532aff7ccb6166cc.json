@@ -1,0 +1,458 @@
+{
+ "url": "https://www.crystallography.net/cod/optimade/v1/structures?filter=elements+HAS+ALL+%22Cu%22%2C%22In%22%2C%22Se%22+AND+nelements%3D3&page_limit=100&response_fields=chemical_formula_descriptive",
+ "response": {
+  "data": [
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu0.978InSe1.988"
+    },
+    "id": "1521371",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1521371"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1521371",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu0.974InSe1.989"
+    },
+    "id": "1521373",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1521373"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1521373",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu0.79In2.04Se3.6"
+    },
+    "id": "1525943",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1525943"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1525943",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu0.78In2.05Se3.6"
+    },
+    "id": "1525945",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1525945"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1525945",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu0.61In2Se3.6"
+    },
+    "id": "1525947",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1525947"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1525947",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu0.65In1.99Se3.6"
+    },
+    "id": "1525948",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1525948"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1525948",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu0.57In1.977Se3.6"
+    },
+    "id": "1525949",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1525949"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1525949",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu0.78In2.078Se3.6"
+    },
+    "id": "1525951",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1525951"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1525951",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "CuIn1.93Se3.5"
+    },
+    "id": "1525998",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1525998"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1525998",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu0.79In2.33Se3.6"
+    },
+    "id": "1526000",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1526000"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1526000",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu0.98In0.98Se2"
+    },
+    "id": "1526097",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1526097"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1526097",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu0.961In0.961Se2"
+    },
+    "id": "1526099",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1526099"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1526099",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu0.79In0.78Se1.8"
+    },
+    "id": "1540093",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1540093"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1540093",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu12.32In18.04Se32"
+    },
+    "id": "1540094",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1540094"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1540094",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "CuInSe2"
+    },
+    "id": "1542206",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1542206"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1542206",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "CuInSe2"
+    },
+    "id": "1563481",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/1563481"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "1563481",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "Cu0.5In0.5Se"
+    },
+    "id": "4105291",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/4105291"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "4105291",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "CuInSe2"
+    },
+    "id": "4105292",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/4105292"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "4105292",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "CuInSe"
+    },
+    "id": "4105293",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/4105293"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "4105293",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "CuInSe2"
+    },
+    "id": "4105294",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/4105294"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "4105294",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   },
+   {
+    "attributes": {
+     "chemical_formula_descriptive": "CuInSe2"
+    },
+    "id": "4105347",
+    "links": {
+     "self": "https://www.crystallography.net/cod/optimade/v1.1.0/structures/4105347"
+    },
+    "relationships": {
+     "references": {
+      "data": [
+       {
+        "id": "4105347",
+        "type": "references"
+       }
+      ]
+     }
+    },
+    "type": "structures"
+   }
+  ],
+  "links": {
+   "base_url": "https://www.crystallography.net/cod/optimade/v1.1.0/"
+  },
+  "meta": {
+   "api_version": "1.1.0",
+   "data_available": 535164,
+   "data_returned": 21,
+   "implementation": {
+    "issue_tracker": {
+     "href": "https://projects.ibt.lt/repositories/projects/cod-optimade/issues"
+    },
+    "maintainer": {
+     "email": "cod-bugs@ibt.lt"
+    },
+    "name": "Crystallography Open Database",
+    "source_url": "svn+ssh://172.17.170.123/mnt/kakadu-backup/crash-recovery-2025-12-12/svn-repositories/recovered/cod/tags/v0.13.0/cgi-bin/optimade.pl@303284",
+    "version": "1-dev"
+   },
+   "last_id": "4105347",
+   "more_data_available": false,
+   "provider": {
+    "description": "Crystallography Open Database",
+    "name": "Crystallography Open Database",
+    "prefix": "cod"
+   },
+   "query": {
+    "representation": "/structures?filter=elements+HAS+ALL+%22Cu%22%2C%22In%22%2C%22Se%22+AND+nelements%3D3&page_limit=100&response_fields=chemical_formula_descriptive"
+   },
+   "schema": "https://schemas.optimade.org/openapi/v1.1.0/optimade.json",
+   "time_stamp": "2026-10-11T13:49:01Z"
+  }
+ }
+}

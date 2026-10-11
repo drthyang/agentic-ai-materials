@@ -31,14 +31,16 @@ from athanor.llm.base import LLMBackend, LLMResponse, ToolCall, ToolSpec
 log = logging.getLogger("athanor.llm")
 
 # USD per million tokens: (input, output, cache read, 5-minute cache write).
-# Sources: Anthropic's published rates for these models (cache writes are
-# 1.25x input for the 5-minute TTL used here).
+# Source: https://platform.claude.com/docs/en/about-claude/pricing (checked
+# 2026-10-11). Footnote 2 there: "Cache hits and refreshes on Claude Opus 5.5
+# and Claude Sonnet 5.5 are priced at 0.05x the base input price" (not the
+# usual 0.1x). 5-minute cache writes are 1.25x base input.
 PRICES_PER_MTOK: dict[str, tuple[float, float, float, float]] = {
-    "claude-sonnet-5-5": (2.00, 10.00, 0.20, 2.50),
+    "claude-sonnet-5-5": (2.00, 10.00, 0.10, 2.50),
     "claude-opus-5-5": (4.00, 20.00, 0.20, 5.00),
-    # price not confirmed at time of writing: costed at Sonnet rates, which
-    # can only over-estimate a Haiku-tier model
-    "claude-haiku-5-5": (2.00, 10.00, 0.20, 2.50),
+    # Haiku 5.5 is priced by prompt length; this is the >100k-token tier,
+    # the higher of the two, so the spend guard can only over-estimate
+    "claude-haiku-5-5": (0.50, 2.50, 0.05, 0.625),
 }
 # Unpriced models are costed at the most expensive known rate, so the spend
 # guard can only over-estimate.

@@ -65,6 +65,28 @@
     68.875,
     80.75
    ]
+  },
+  "robust_hits": {
+   "n": 8,
+   "values": [
+    0.0,
+    0.0,
+    1.0,
+    2.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "mean": 0.5,
+   "sd": 0.7559289460184545,
+   "median": 0.0,
+   "min": 0.0,
+   "max": 2.0,
+   "ci95": [
+    0.125,
+    1.0
+   ]
   }
  },
  "similarity": {
@@ -132,6 +154,28 @@
    "ci95": [
     61.375,
     70.875
+   ]
+  },
+  "robust_hits": {
+   "n": 8,
+   "values": [
+    0.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "mean": 0.875,
+   "sd": 0.3535533905932738,
+   "median": 1.0,
+   "min": 0.0,
+   "max": 1.0,
+   "ci95": [
+    0.625,
+    1.0
    ]
   }
  },
@@ -201,6 +245,28 @@
     83.375,
     90.125
    ]
+  },
+  "robust_hits": {
+   "n": 8,
+   "values": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    1.0,
+    0.0
+   ],
+   "mean": 0.25,
+   "sd": 0.4629100498862757,
+   "median": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "ci95": [
+    0.0,
+    0.625
+   ]
   }
  },
  "agent qwen3:32b, no surrogate (July)": {
@@ -254,6 +320,143 @@
     7.0,
     12.0
    ]
+  },
+  "robust_hits": {
+   "n": 3,
+   "values": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "mean": 0.3333333333333333,
+   "sd": 0.5773502691896257,
+   "median": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "ci95": [
+    0.0,
+    1.0
+   ]
+  }
+ },
+ "agent qwen3:32b, no surrogate (same day)": {
+  "hits_per_100_relaxations": {
+   "n": 3,
+   "values": [
+    33.33,
+    0.0,
+    0.0
+   ],
+   "mean": 11.11,
+   "sd": 19.243084472090224,
+   "median": 0.0,
+   "min": 0.0,
+   "max": 33.33,
+   "ci95": [
+    0.0,
+    33.33
+   ]
+  },
+  "hits": {
+   "n": 3,
+   "values": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "mean": 0.3333333333333333,
+   "sd": 0.5773502691896257,
+   "median": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "ci95": [
+    0.0,
+    1.0
+   ]
+  },
+  "relaxations": {
+   "n": 3,
+   "values": [
+    3.0,
+    8.0,
+    3.0
+   ],
+   "mean": 4.666666666666667,
+   "sd": 2.8867513459481287,
+   "median": 3.0,
+   "min": 3.0,
+   "max": 8.0,
+   "ci95": [
+    3.0,
+    8.0
+   ]
+  },
+  "robust_hits": {
+   "n": 3,
+   "values": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "mean": 0.0,
+   "sd": 0.0,
+   "median": 0.0,
+   "min": 0.0,
+   "max": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "agent qwen3:32b, + rank_by_surrogate (same day)": {
+  "hits_per_100_relaxations": {
+   "n": 1,
+   "values": [
+    0.0
+   ],
+   "mean": 0.0,
+   "sd": null,
+   "median": 0.0,
+   "min": 0.0,
+   "max": 0.0,
+   "ci95": null
+  },
+  "hits": {
+   "n": 1,
+   "values": [
+    0.0
+   ],
+   "mean": 0.0,
+   "sd": null,
+   "median": 0.0,
+   "min": 0.0,
+   "max": 0.0,
+   "ci95": null
+  },
+  "relaxations": {
+   "n": 1,
+   "values": [
+    5.0
+   ],
+   "mean": 5.0,
+   "sd": null,
+   "median": 5.0,
+   "min": 5.0,
+   "max": 5.0,
+   "ci95": null
+  },
+  "robust_hits": {
+   "n": 1,
+   "values": [
+    0.0
+   ],
+   "mean": 0.0,
+   "sd": null,
+   "median": 0.0,
+   "min": 0.0,
+   "max": 0.0,
+   "ci95": null
   }
  },
  "agent Sonnet 5.5, no surrogate": {
@@ -312,6 +515,25 @@
    "ci95": [
     89.6,
     92.0
+   ]
+  },
+  "robust_hits": {
+   "n": 5,
+   "values": [
+    5.0,
+    5.0,
+    2.0,
+    5.0,
+    5.0
+   ],
+   "mean": 4.4,
+   "sd": 1.3416407864998738,
+   "median": 5.0,
+   "min": 2.0,
+   "max": 5.0,
+   "ci95": [
+    3.2,
+    5.0
    ]
   }
  },
@@ -372,6 +594,25 @@
     81.6,
     94.4
    ]
+  },
+  "robust_hits": {
+   "n": 5,
+   "values": [
+    1.0,
+    4.0,
+    2.0,
+    4.0,
+    4.0
+   ],
+   "mean": 3.0,
+   "sd": 1.4142135623730951,
+   "median": 4.0,
+   "min": 1.0,
+   "max": 4.0,
+   "ci95": [
+    1.8,
+    4.0
+   ]
   }
  },
  "agent Sonnet 5.5, + surrogate, no critic": {
@@ -424,6 +665,23 @@
    "ci95": [
     87.0,
     94.0
+   ]
+  },
+  "robust_hits": {
+   "n": 3,
+   "values": [
+    6.0,
+    5.0,
+    2.0
+   ],
+   "mean": 4.333333333333333,
+   "sd": 2.0816659994661326,
+   "median": 5.0,
+   "min": 2.0,
+   "max": 6.0,
+   "ci95": [
+    2.0,
+    6.0
    ]
   }
  },
@@ -478,6 +736,23 @@
     92.0,
     95.0
    ]
+  },
+  "robust_hits": {
+   "n": 3,
+   "values": [
+    6.0,
+    2.0,
+    2.0
+   ],
+   "mean": 3.3333333333333335,
+   "sd": 2.309401076758503,
+   "median": 2.0,
+   "min": 2.0,
+   "max": 6.0,
+   "ci95": [
+    2.0,
+    6.0
+   ]
   }
  },
  "agent Opus 5.5, no surrogate": {
@@ -531,6 +806,23 @@
     98.0,
     100.0
    ]
+  },
+  "robust_hits": {
+   "n": 3,
+   "values": [
+    2.0,
+    8.0,
+    3.0
+   ],
+   "mean": 4.333333333333333,
+   "sd": 3.2145502536643185,
+   "median": 3.0,
+   "min": 2.0,
+   "max": 8.0,
+   "ci95": [
+    2.0,
+    8.0
+   ]
   }
  },
  "_comparisons": [
@@ -557,6 +849,97 @@
   },
   {
    "a": "agent Sonnet 5.5, no surrogate",
+   "b": "agent qwen3:32b, no surrogate (July)",
+   "metric": "robust_hits",
+   "p_one_sided": 0.017857142857142856,
+   "prob_superiority": 1.0
+  },
+  {
+   "a": "agent Sonnet 5.5, no surrogate",
+   "b": "agent qwen3:32b, no surrogate (same day)",
+   "metric": "hits_per_100_relaxations",
+   "p_one_sided": 0.17857142857142858,
+   "prob_superiority": 0.6666666666666666
+  },
+  {
+   "a": "agent Sonnet 5.5, no surrogate",
+   "b": "agent qwen3:32b, no surrogate (same day)",
+   "metric": "hits",
+   "p_one_sided": 0.017857142857142856,
+   "prob_superiority": 1.0
+  },
+  {
+   "a": "agent Sonnet 5.5, no surrogate",
+   "b": "agent qwen3:32b, no surrogate (same day)",
+   "metric": "relaxations",
+   "p_one_sided": 0.017857142857142856,
+   "prob_superiority": 1.0
+  },
+  {
+   "a": "agent Sonnet 5.5, no surrogate",
+   "b": "agent qwen3:32b, no surrogate (same day)",
+   "metric": "robust_hits",
+   "p_one_sided": 0.017857142857142856,
+   "prob_superiority": 1.0
+  },
+  {
+   "a": "agent qwen3:32b, no surrogate (July)",
+   "b": "agent qwen3:32b, no surrogate (same day)",
+   "metric": "hits_per_100_relaxations",
+   "p_one_sided": 0.15,
+   "prob_superiority": 0.7777777777777778
+  },
+  {
+   "a": "agent qwen3:32b, no surrogate (July)",
+   "b": "agent qwen3:32b, no surrogate (same day)",
+   "metric": "hits",
+   "p_one_sided": 0.05,
+   "prob_superiority": 1.0
+  },
+  {
+   "a": "agent qwen3:32b, no surrogate (July)",
+   "b": "agent qwen3:32b, no surrogate (same day)",
+   "metric": "relaxations",
+   "p_one_sided": 0.1,
+   "prob_superiority": 0.8888888888888888
+  },
+  {
+   "a": "agent qwen3:32b, no surrogate (July)",
+   "b": "agent qwen3:32b, no surrogate (same day)",
+   "metric": "robust_hits",
+   "p_one_sided": 0.5,
+   "prob_superiority": 0.6666666666666666
+  },
+  {
+   "a": "agent qwen3:32b, no surrogate (same day)",
+   "b": "similarity",
+   "metric": "hits_per_100_relaxations",
+   "p_one_sided": 0.2727272727272727,
+   "prob_superiority": 0.3333333333333333
+  },
+  {
+   "a": "agent qwen3:32b, no surrogate (same day)",
+   "b": "similarity",
+   "metric": "hits",
+   "p_one_sided": 1.0,
+   "prob_superiority": 0.020833333333333332
+  },
+  {
+   "a": "agent qwen3:32b, no surrogate (same day)",
+   "b": "similarity",
+   "metric": "relaxations",
+   "p_one_sided": 1.0,
+   "prob_superiority": 0.0
+  },
+  {
+   "a": "agent qwen3:32b, no surrogate (same day)",
+   "b": "similarity",
+   "metric": "robust_hits",
+   "p_one_sided": 1.0,
+   "prob_superiority": 0.0625
+  },
+  {
+   "a": "agent Sonnet 5.5, no surrogate",
    "b": "agent Sonnet 5.5, + rank_by_surrogate",
    "metric": "hits_per_100_relaxations",
    "p_one_sided": 0.007936507936507936,
@@ -575,6 +958,13 @@
    "metric": "relaxations",
    "p_one_sided": 0.32142857142857145,
    "prob_superiority": 0.54
+  },
+  {
+   "a": "agent Sonnet 5.5, no surrogate",
+   "b": "agent Sonnet 5.5, + rank_by_surrogate",
+   "metric": "robust_hits",
+   "p_one_sided": 0.09126984126984126,
+   "prob_superiority": 0.86
   },
   {
    "a": "agent Sonnet 5.5, + surrogate, no critic",
@@ -596,6 +986,13 @@
    "metric": "relaxations",
    "p_one_sided": 0.39285714285714285,
    "prob_superiority": 0.5333333333333333
+  },
+  {
+   "a": "agent Sonnet 5.5, + surrogate, no critic",
+   "b": "agent Sonnet 5.5, + rank_by_surrogate",
+   "metric": "robust_hits",
+   "p_one_sided": 0.19642857142857142,
+   "prob_superiority": 0.7666666666666667
   },
   {
    "a": "agent Sonnet 5.5, no surrogate, no critic",
@@ -620,6 +1017,13 @@
   },
   {
    "a": "agent Sonnet 5.5, no surrogate, no critic",
+   "b": "agent Sonnet 5.5, no surrogate",
+   "metric": "robust_hits",
+   "p_one_sided": 0.7678571428571429,
+   "prob_superiority": 0.4
+  },
+  {
+   "a": "agent Sonnet 5.5, no surrogate, no critic",
    "b": "agent Sonnet 5.5, + surrogate, no critic",
    "metric": "hits_per_100_relaxations",
    "p_one_sided": 0.3,
@@ -640,6 +1044,13 @@
    "prob_superiority": 0.8333333333333334
   },
   {
+   "a": "agent Sonnet 5.5, no surrogate, no critic",
+   "b": "agent Sonnet 5.5, + surrogate, no critic",
+   "metric": "robust_hits",
+   "p_one_sided": 0.8,
+   "prob_superiority": 0.3888888888888889
+  },
+  {
    "a": "agent Sonnet 5.5, no surrogate",
    "b": "similarity",
    "metric": "hits_per_100_relaxations",
@@ -657,6 +1068,13 @@
    "a": "agent Sonnet 5.5, no surrogate",
    "b": "similarity",
    "metric": "relaxations",
+   "p_one_sided": 0.000777000777000777,
+   "prob_superiority": 1.0
+  },
+  {
+   "a": "agent Sonnet 5.5, no surrogate",
+   "b": "similarity",
+   "metric": "robust_hits",
    "p_one_sided": 0.000777000777000777,
    "prob_superiority": 1.0
   },
@@ -682,6 +1100,13 @@
    "prob_superiority": 0.9875
   },
   {
+   "a": "agent Sonnet 5.5, + rank_by_surrogate",
+   "b": "similarity",
+   "metric": "robust_hits",
+   "p_one_sided": 0.006216006216006216,
+   "prob_superiority": 0.9125
+  },
+  {
    "a": "agent qwen3:32b, no surrogate (July)",
    "b": "similarity",
    "metric": "hits_per_100_relaxations",
@@ -701,6 +1126,13 @@
    "metric": "relaxations",
    "p_one_sided": 1.0,
    "prob_superiority": 0.0
+  },
+  {
+   "a": "agent qwen3:32b, no surrogate (July)",
+   "b": "similarity",
+   "metric": "robust_hits",
+   "p_one_sided": 0.9939393939393939,
+   "prob_superiority": 0.22916666666666666
   },
   {
    "a": "bayesopt",
@@ -724,6 +1156,13 @@
    "prob_superiority": 0.9140625
   },
   {
+   "a": "bayesopt",
+   "b": "random",
+   "metric": "robust_hits",
+   "p_one_sided": 0.8846153846153846,
+   "prob_superiority": 0.421875
+  },
+  {
    "a": "similarity",
    "b": "bayesopt",
    "metric": "hits_per_100_relaxations",
@@ -745,6 +1184,13 @@
    "prob_superiority": 0.0
   },
   {
+   "a": "similarity",
+   "b": "bayesopt",
+   "metric": "robust_hits",
+   "p_one_sided": 0.02027972027972028,
+   "prob_superiority": 0.8125
+  },
+  {
    "a": "agent Opus 5.5, no surrogate",
    "b": "agent Sonnet 5.5, no surrogate",
    "metric": "hits_per_100_relaxations",
@@ -764,6 +1210,13 @@
    "metric": "relaxations",
    "p_one_sided": 0.017857142857142856,
    "prob_superiority": 1.0
+  },
+  {
+   "a": "agent Opus 5.5, no surrogate",
+   "b": "agent Sonnet 5.5, no surrogate",
+   "metric": "robust_hits",
+   "p_one_sided": 0.5357142857142857,
+   "prob_superiority": 0.43333333333333335
   }
  ]
 }

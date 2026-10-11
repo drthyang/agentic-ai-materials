@@ -8,6 +8,16 @@
 | agent qwen3:32b, no surrogate (July) | 1 | 66.7 ± — — | 66.7 (66.7–66.7) | 2.0 ± — (2–2) | 3.0 (3–3) |
 | agent Sonnet 5.5, no surrogate | 3 | 11.7 ± 4.7 [6.3, 14.5] | 14.3 (6.3–14.5) | 9.0 ± 2.6 (6–11) | 80.3 (69–95) |
 
+Structure-robust hits per run (hits whose composition is still a hit when re-scored in a correct bulk cell; structure-audit.csv):
+
+| arm | n | robust hits/run: mean ± sd (min–max) |
+|---|---|---|
+| random | 5 | 0.8 ± 0.8 (0–2) |
+| similarity | 5 | 1.4 ± 0.9 (0–2) |
+| bayesopt | 5 | 1.2 ± 2.2 (0–5) |
+| agent qwen3:32b, no surrogate (July) | 1 | 0.0 ± — (0–0) |
+| agent Sonnet 5.5, no surrogate | 3 | 2.3 ± 1.2 (1–3) |
+
 ## Per-run values
 
 | arm | run | relax | hits | hits/100 | best \|Δgap\| | novel frac | critic vetoes | API $ | cache-read share | hit formulas |
@@ -28,9 +38,9 @@
 | bayesopt | 20261011-070733-seed11-qd-base | 68 | 3 | 4.4 | 0.044 | 0.63 | — | — | — | Cu2SnSeS4 PSe2Cl SrZn(CuS2)2 |
 | bayesopt | 20261011-071438-seed12-qd-base | 72 | 9 | 12.5 | 0.021 | 0.54 | — | — | — | BaCa(CuS2)2 BaMg(CuS2)2 BaZn(CuS2)2 Cu2SnGeS4 MgCu2SnS4 ZnAg2SeS4 ZnAg2TeS4 ZnGe2SeS4 ZnGe2TeS4 |
 | agent qwen3:32b, no surrogate (July) | 20260708-131929-seed8 | 3 | 2 | 66.7 | 0.507 | 1.00 | 0 | — | — | MgAg2GeS4 MgAg2GeSe4 |
-| agent Sonnet 5.5, no surrogate | 20261011-072045-seed41-qd-sonnet-nosurr | 69 | 10 | 14.5 | 0.021 | 1.00 | 10 | 0.72 | 0.83 | AlGa(AgS2)2 Cu2AgPSe4 Cu2SnGeS4 CuAg2PS4 CuAg2PSe4 MgAg2GeS4 MgAg2GeSe4 MgAg2SnS4 MgCu2SnS4 SrAg2GeS4 |
-| agent Sonnet 5.5, no surrogate | 20261011-074126-seed42-qd-sonnet-nosurr | 95 | 6 | 6.3 | 0.019 | 1.00 | 9 | 0.68 | 0.81 | Ba2InCuS4 CaZn3S4 MgAg2GeS4 MgAg2GeSe4 MgAg2SnS4 MgCu2SnS4 |
-| agent Sonnet 5.5, no surrogate | 20261011-080331-seed43-qd-sonnet-nosurr | 77 | 11 | 14.3 | 0.003 | 0.99 | 7 | 0.83 | 0.83 | AlGa(AgS2)2 BaSnO2 Cu2AgPSe4 CuAg2PS4 CuAg2PSe4 MgAg2GeS4 MgAg2GeSe4 MgAg2SnS4 MgCu2SnS4 SrAg2GeS4 SrSnS2 |
+| agent Sonnet 5.5, no surrogate | 20261011-072045-seed41-qd-sonnet-nosurr | 69 | 10 | 14.5 | 0.021 | 1.00 | 10 | 0.67 | 0.83 | AlGa(AgS2)2 Cu2AgPSe4 Cu2SnGeS4 CuAg2PS4 CuAg2PSe4 MgAg2GeS4 MgAg2GeSe4 MgAg2SnS4 MgCu2SnS4 SrAg2GeS4 |
+| agent Sonnet 5.5, no surrogate | 20261011-074126-seed42-qd-sonnet-nosurr | 95 | 6 | 6.3 | 0.019 | 1.00 | 9 | 0.63 | 0.81 | Ba2InCuS4 CaZn3S4 MgAg2GeS4 MgAg2GeSe4 MgAg2SnS4 MgCu2SnS4 |
+| agent Sonnet 5.5, no surrogate | 20261011-080331-seed43-qd-sonnet-nosurr | 77 | 11 | 14.3 | 0.003 | 0.99 | 7 | 0.77 | 0.83 | AlGa(AgS2)2 BaSnO2 Cu2AgPSe4 CuAg2PS4 CuAg2PSe4 MgAg2GeS4 MgAg2GeSe4 MgAg2SnS4 MgCu2SnS4 SrAg2GeS4 SrSnS2 |
 
 ## Comparisons (one-sided exact permutation test on the mean; P(A>B) = probability of superiority over all run pairs)
 
@@ -39,9 +49,11 @@
 | agent Sonnet 5.5, no surrogate | similarity | hits_per_100_relaxations | 11.70 | 7.69 | 0.73 | 0.0893 |
 | agent Sonnet 5.5, no surrogate | similarity | hits | 9.00 | 3.80 | 1.00 | 0.0179 |
 | agent Sonnet 5.5, no surrogate | similarity | relaxations | 80.33 | 48.80 | 1.00 | 0.0179 |
+| agent Sonnet 5.5, no surrogate | similarity | robust_hits | 2.33 | 1.40 | 0.77 | 0.1964 |
 | agent Sonnet 5.5, no surrogate | bayesopt | hits_per_100_relaxations | 11.70 | 5.39 | 0.93 | 0.0357 |
 | agent Sonnet 5.5, no surrogate | bayesopt | hits | 9.00 | 3.80 | 0.93 | 0.0357 |
 | agent Sonnet 5.5, no surrogate | bayesopt | relaxations | 80.33 | 69.40 | 0.83 | 0.0893 |
+| agent Sonnet 5.5, no surrogate | bayesopt | robust_hits | 2.33 | 1.20 | 0.77 | 0.2500 |
 
 ## Critic audit (vetoes checked against relaxations of the same composition in any other run of this study)
 

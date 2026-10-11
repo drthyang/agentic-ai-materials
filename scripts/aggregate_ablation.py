@@ -30,6 +30,7 @@ from pathlib import Path
 
 from athanor.config import MissionConfig, load_mission
 from athanor.db import CandidateDB
+from athanor.llm.anthropic_backend import price_for
 from athanor.metrics import compute_metrics
 
 METRICS = ("hits_per_100_relaxations", "hits", "relaxations")
@@ -44,6 +45,7 @@ def run_row(arm: str, run_dir: Path, db_name: str, cfg: MissionConfig) -> dict:
     db.close()
     relax = m.scored + m.errors
     row = {
+        "mission": cfg.mission.name,
         "arm": arm,
         "run": run_dir.name,
         "relaxations": relax,
@@ -61,7 +63,13 @@ def run_row(arm: str, run_dir: Path, db_name: str, cfg: MissionConfig) -> dict:
     usage_f = run_dir / "usage.json"
     if db_name == "agent.db" and usage_f.exists():
         u = json.loads(usage_f.read_text())
-        row["api_cost_usd"] = u.get("cost_usd")
+        # priced from the recorded token counts at current rates, not the
+        # cost_usd frozen into usage.json when the run was logged
+        p_in, p_out, p_read, p_write = price_for(u["model"])
+        row["api_cost_usd"] = round((
+            u.get("input_tokens", 0) * p_in + u.get("output_tokens", 0) * p_out
+            + u.get("cache_read_input_tokens", 0) * p_read
+            + u.get("cache_creation_input_tokens", 0) * p_write) / 1e6, 4)
         row["api_calls"] = u.get("calls")
         total_in = (u.get("input_tokens", 0) + u.get("cache_read_input_tokens", 0)
                     + u.get("cache_creation_input_tokens", 0))
@@ -80,6 +88,15 @@ def run_row(arm: str, run_dir: Path, db_name: str, cfg: MissionConfig) -> dict:
             "AND filter_reasons LIKE '%critic:%'").fetchone()[0]
         db.close()
     return row
+
+
+def load_structure_audit(path: Path) -> dict[tuple[str, str], bool]:
+    """(mission, reduced formula) -> still a hit in a correct bulk cell."""
+    if not path.exists():
+        return {}
+    with open(path, newline="") as f:
+        return {(r["mission"], r["formula"]): r["still_hit"] == "True"
+                for r in csv.DictReader(f)}
 
 
 def critic_audit(spec: dict, cfg: MissionConfig) -> list[str]:
@@ -187,6 +204,14 @@ def main(spec_path: str) -> None:
             rows.append(run_row(arm, Path(run), arm_spec["db"], cfg))
 
     outdir = spec_path.parent
+    robust = load_structure_audit(outdir / "structure-audit.csv")
+    metrics = METRICS
+    if robust:
+        metrics = METRICS + ("robust_hits",)
+        for r in rows:
+            fs = r["hit_formulas"].split()
+            known = [robust.get((r["mission"], f)) for f in fs]
+            r["robust_hits"] = None if None in known else sum(known)
     with open(outdir / f"{spec_path.stem}-per-run.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0]))
         w.writeheader()
@@ -207,6 +232,8 @@ def main(spec_path: str) -> None:
         rel = summarize(arm_rows, "relaxations")
         summary_json[arm] = {"hits_per_100_relaxations": h100, "hits": hits,
                              "relaxations": rel}
+        if robust:
+            summary_json[arm]["robust_hits"] = summarize(arm_rows, "robust_hits")
         ci = h100.get("ci95")
         ci_s = f"[{ci[0]:.1f}, {ci[1]:.1f}]" if ci else "—"
         lines.append(
@@ -216,6 +243,15 @@ def main(spec_path: str) -> None:
             f"({int(hits['min'])}–{int(hits['max'])}) "
             f"| {_fmt(rel['mean'], 1)} ({int(rel['min'])}–{int(rel['max'])}) |"
         )
+    if robust:
+        lines += ["", "Structure-robust hits per run (hits whose composition is still a "
+                  "hit when re-scored in a correct bulk cell; structure-audit.csv):", "",
+                  "| arm | n | robust hits/run: mean ± sd (min–max) |", "|---|---|---|"]
+        for arm, arm_rows in by_arm.items():
+            rb = summarize(arm_rows, "robust_hits")
+            if rb["n"]:
+                lines.append(f"| {arm} | {rb['n']} | {_fmt(rb['mean'], 1)} ± "
+                             f"{_fmt(rb['sd'], 1)} ({int(rb['min'])}–{int(rb['max'])}) |")
 
     lines += ["", "## Per-run values", "",
               "| arm | run | relax | hits | hits/100 | best \\|Δgap\\| | novel frac "
@@ -237,9 +273,11 @@ def main(spec_path: str) -> None:
                   "|---|---|---|---|---|---|---|"]
         summary_json["_comparisons"] = []
         for a, b in comps:
-            for metric in METRICS:
-                va = [float(r[metric]) for r in by_arm[a]]
-                vb = [float(r[metric]) for r in by_arm[b]]
+            for metric in metrics:
+                va = [float(r[metric]) for r in by_arm[a] if r.get(metric) is not None]
+                vb = [float(r[metric]) for r in by_arm[b] if r.get(metric) is not None]
+                if not va or not vb:
+                    continue
                 if math.comb(len(va) + len(vb), len(va)) > 2_000_000:
                     p = None
                 else:

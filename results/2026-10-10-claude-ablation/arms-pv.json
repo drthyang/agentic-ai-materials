@@ -48,6 +48,20 @@
     "data/benchmark/20260708-032352-seed7"
    ]
   },
+  "agent qwen3:32b, no surrogate (same day)": {
+   "db": "agent.db",
+   "runs": [
+    "data/benchmark/20261011-134359-seed0-qwen-nosurr-oct",
+    "data/benchmark/20261011-152517-seed6-qwen-nosurr-oct",
+    "data/benchmark/20261011-174133-seed7-qwen-nosurr-oct"
+   ]
+  },
+  "agent qwen3:32b, + rank_by_surrogate (same day)": {
+   "db": "agent.db",
+   "runs": [
+    "data/benchmark/20261011-184906-seed71-qwen-surr-oct"
+   ]
+  },
   "agent Sonnet 5.5, no surrogate": {
    "db": "agent.db",
    "runs": [
@@ -97,6 +111,18 @@
   [
    "agent Sonnet 5.5, no surrogate",
    "agent qwen3:32b, no surrogate (July)"
+  ],
+  [
+   "agent Sonnet 5.5, no surrogate",
+   "agent qwen3:32b, no surrogate (same day)"
+  ],
+  [
+   "agent qwen3:32b, no surrogate (July)",
+   "agent qwen3:32b, no surrogate (same day)"
+  ],
+  [
+   "agent qwen3:32b, no surrogate (same day)",
+   "similarity"
   ],
   [
    "agent Sonnet 5.5, no surrogate",

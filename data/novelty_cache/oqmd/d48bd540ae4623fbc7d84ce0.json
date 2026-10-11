@@ -1,0 +1,51 @@
+{
+ "url": "https://oqmd.org/oqmdapi/formationenergy?composition=Ag3AsSe4&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json",
+ "response": {
+  "links": {
+   "next": null,
+   "previous": null,
+   "base_url": {
+    "href": "https://oqmd.org/oqmdapi",
+    "meta": {
+     "_oqmd_version": "1.0"
+    }
+   }
+  },
+  "resource": {},
+  "data": [
+   {
+    "name": "Ag3AsSe4",
+    "entry_id": 1388465,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "Pmn21",
+    "natoms": 16,
+    "delta_e": -0.08106475031250016,
+    "stability": 0.020555459538414117
+   },
+   {
+    "name": "Ag3AsSe4",
+    "entry_id": 1736318,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "I-42m",
+    "natoms": 8,
+    "delta_e": -0.07882971843749997,
+    "stability": 0.0227904914134143
+   }
+  ],
+  "meta": {
+   "query": {
+    "representation": "http://oqmd.org/oqmdapi/formationenergy?composition=Ag3AsSe4&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json"
+   },
+   "api_version": "1.0",
+   "time_stamp": "2026-10-11 09:08:29",
+   "data_returned": 2,
+   "data_available": 2,
+   "comments": "",
+   "query_tree": "",
+   "more_data_available": false
+  },
+  "response_message": "OK"
+ }
+}

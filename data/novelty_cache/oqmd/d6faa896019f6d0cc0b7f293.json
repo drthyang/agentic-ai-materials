@@ -1,0 +1,61 @@
+{
+ "url": "https://oqmd.org/oqmdapi/formationenergy?composition=BaO2Sn&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json",
+ "response": {
+  "links": {
+   "next": null,
+   "previous": null,
+   "base_url": {
+    "href": "https://oqmd.org/oqmdapi",
+    "meta": {
+     "_oqmd_version": "1.0"
+    }
+   }
+  },
+  "resource": {},
+  "data": [
+   {
+    "name": "BaSnO2",
+    "entry_id": 1387067,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "P21/c",
+    "natoms": 16,
+    "delta_e": -2.228433175277178,
+    "stability": 0.04804880624999974
+   },
+   {
+    "name": "BaSnO2",
+    "entry_id": 1739850,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "R-3m",
+    "natoms": 4,
+    "delta_e": -1.8514322196521777,
+    "stability": 0.425049761875
+   },
+   {
+    "name": "BaSnO2",
+    "entry_id": 2154348,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "Pca21",
+    "natoms": 16,
+    "delta_e": -2.2764819815271777,
+    "stability": 0.0
+   }
+  ],
+  "meta": {
+   "query": {
+    "representation": "http://oqmd.org/oqmdapi/formationenergy?composition=BaO2Sn&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json"
+   },
+   "api_version": "1.0",
+   "time_stamp": "2026-10-11 14:22:02",
+   "data_returned": 3,
+   "data_available": 3,
+   "comments": "",
+   "query_tree": "",
+   "more_data_available": false
+  },
+  "response_message": "OK"
+ }
+}

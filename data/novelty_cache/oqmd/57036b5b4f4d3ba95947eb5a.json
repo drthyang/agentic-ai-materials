@@ -1,0 +1,61 @@
+{
+ "url": "https://oqmd.org/oqmdapi/formationenergy?composition=AgCuI2&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json",
+ "response": {
+  "links": {
+   "next": null,
+   "previous": null,
+   "base_url": {
+    "href": "https://oqmd.org/oqmdapi",
+    "meta": {
+     "_oqmd_version": "1.0"
+    }
+   }
+  },
+  "resource": {},
+  "data": [
+   {
+    "name": "CuAgI2",
+    "entry_id": 1555149,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "P3m1",
+    "natoms": 4,
+    "delta_e": -0.2883773030891583,
+    "stability": 0.027314689583333496
+   },
+   {
+    "name": "CuAgI2",
+    "entry_id": 1555847,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "P-4m2",
+    "natoms": 4,
+    "delta_e": -0.2988311730891584,
+    "stability": 0.01686081958333341
+   },
+   {
+    "name": "CuAgI2",
+    "entry_id": 1556393,
+    "icsd_id": null,
+    "prototype": null,
+    "spacegroup": "P-4m2",
+    "natoms": 4,
+    "delta_e": -0.2988311730891584,
+    "stability": 0.01686081958333341
+   }
+  ],
+  "meta": {
+   "query": {
+    "representation": "http://oqmd.org/oqmdapi/formationenergy?composition=AgCuI2&fields=name%2Centry_id%2Cicsd_id%2Cspacegroup%2Cprototype%2Cdelta_e%2Cstability%2Cnatoms&limit=100&format=json"
+   },
+   "api_version": "1.0",
+   "time_stamp": "2026-10-11 14:36:15",
+   "data_returned": 3,
+   "data_available": 3,
+   "comments": "",
+   "query_tree": "",
+   "more_data_available": false
+  },
+  "response_message": "OK"
+ }
+}
