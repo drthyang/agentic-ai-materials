@@ -1,0 +1,47 @@
+[
+ {
+  "name": "random",
+  "proposed": 0,
+  "filtered_out": 65,
+  "scored": 53,
+  "errors": 0,
+  "hits": 2,
+  "hit_formulas": [
+   "MgCu2SnS4",
+   "Cu2SnSeS4"
+  ],
+  "rediscoveries": [],
+  "hits_per_100_relaxations": 3.7735849056603774,
+  "best_gap_distance_ev": 0.044
+ },
+ {
+  "name": "similarity",
+  "proposed": 0,
+  "filtered_out": 78,
+  "scored": 40,
+  "errors": 0,
+  "hits": 2,
+  "hit_formulas": [
+   "Cu2SnGeS4",
+   "ZnSn3S4"
+  ],
+  "rediscoveries": [],
+  "hits_per_100_relaxations": 5.0,
+  "best_gap_distance_ev": 0.108
+ },
+ {
+  "name": "bayesopt",
+  "proposed": 0,
+  "filtered_out": 125,
+  "scored": 65,
+  "errors": 0,
+  "hits": 2,
+  "hit_formulas": [
+   "SrZn(CuS2)2",
+   "Cu2SnGeS4"
+  ],
+  "rediscoveries": [],
+  "hits_per_100_relaxations": 3.076923076923077,
+  "best_gap_distance_ev": 0.025
+ }
+]
