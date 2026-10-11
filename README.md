@@ -115,6 +115,30 @@ Activate one: `cp config/missions/qd-emitter.yaml config/mission.yaml`
 
 ## Results
 
+> **Correction (2026-10-11): a structure audit narrows these results.**
+> - **The defect.** The chalcopyrite and kesterite prototypes in
+>   `src/athanor/prototypes.py` are not the structures they name. Each is an 8-atom
+>   half cell in the full c ≈ 11 Å box, with a ~7 Å empty gap and P2 symmetry instead of
+>   I-42d or I-4. Every hit in this study, and in the July replication, is of those two
+>   types.
+> - **The re-scoring.** Each hit was rebuilt in a correct bulk cell and re-scored with the
+>   unchanged pipeline. On the PV mission, 14 of 47 agent hits and 4 of 11 baseline hits
+>   survive. Every loss is the predicted band gap leaving the window.
+> - **What still holds** on structure-robust hits: Claude Sonnet 5.5 finds more than the
+>   similarity baseline and the local model (about 4 per run against under 1), at about a
+>   quarter of the raw margin.
+> - **What does not hold:**
+>   - the complete separation of agent runs from baseline runs;
+>   - the `rank_by_surrogate` effect;
+>   - the QD-mission edge.
+>
+>   The claims below that depend on them are withdrawn.
+> - **Next.** Fixing the prototypes changes the protocol, so it comes with a rerun.
+>
+> All hits remain surrogate-level candidates for validation. The audit's method and full
+> tables are on the `claude/athanor-qwen-sameday` branch
+> (`results/2026-10-10-claude-ablation/analysis.md`, `scripts/structure_audit.py`).
+
 Agent vs non-LLM baselines on the PV-absorber mission (gap 1.1–1.7 eV,
 ≤ 0.05 eV/atom above hull, absent from Materials Project). Every strategy
 gets the same cap of 100 CHGNet relaxations per run (5 iterations × 20).
