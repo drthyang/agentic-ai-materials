@@ -5,7 +5,8 @@
 #   scripts/run_claude_ablation.sh <step>...  # only the named steps
 #
 # Steps: bo-pv, sonnet-ablation, nocritic, qd, opus (the first queue, run as
-# one invocation with no arguments), then nocritic-nosurr and opus3.
+# one invocation with no arguments), then nocritic-nosurr and opus3, then the
+# local same-day qwen3:32b arms qwen-nosurr and qwen-surr (no API key passed).
 #
 # Every agent run: 5 iterations x 20 relaxations (the cap the July qwen
 # runs used), the local gemma4:26b critic unless stated, Claude at
@@ -51,6 +52,28 @@ baselines() { # baselines <seed> <tag> <which> [extra args...]
   echo "$(date '+%F %T') end   $tag seed$seed exit=$rc"
 }
 
+ollama_is_free() {  # no model loaded by anyone, normal pressure, >= 45% free
+  local loaded free
+  loaded=$(curl -s localhost:11434/api/ps | grep -c '"name"')
+  free=$(memory_pressure 2>/dev/null | awk -F': ' '/free percentage/{gsub("%","",$2); print $2}')
+  [ "$loaded" -eq 0 ] && [ "$(sysctl -n kern.memorystatus_vm_pressure_level)" -eq 1 ] \
+    && [ "${free:-0}" -ge 45 ]
+}
+
+local_agent() { # local_agent <seed> <tag> [extra benchmark args...] — qwen3:32b, $0 API
+  local seed=$1 tag=$2; shift 2
+  # the Mac is shared (another session runs qwen3:32b evals): never contend
+  until ollama_is_free; do
+    echo "$(date '+%F %T') ollama busy or memory tight; re-checking in 10 min"; sleep 600
+  done
+  echo "$(date '+%F %T') start $tag seed$seed"
+  env -u ANTHROPIC_API_KEY uv run athanor benchmark --iterations 5 --seed "$seed" \
+    --baselines none --tag "$tag" --backend ollama --model qwen3:32b "$@" \
+    > "data/logs/$tag-seed$seed.log" 2>&1
+  local rc=$?
+  echo "$(date '+%F %T') end   $tag seed$seed exit=$rc"
+}
+
 step() {
   case "$1" in
     bo-pv)  # seeds 2-7 bring BO to the n=8 random/similarity already have
@@ -85,10 +108,16 @@ step() {
       done ;;
     opus3)  # third Opus run: two runs disagreed by 2x
       agent 53 opus-nosurr claude-opus-5-5 6 --no-surrogate ;;
+    # --- local, $0 API: same-day qwen3:32b arms (2026-10-11) ---
+    qwen-nosurr)  # the July protocol and July agent seeds, run again today
+      for s in 0 6 7; do local_agent "$s" qwen-nosurr-oct --no-surrogate; done ;;
+    qwen-surr)  # fourth cell of model x tool
+      for i in 1 2 3; do local_agent $((70 + i)) qwen-surr-oct; done ;;
     *) echo "unknown step $1" >&2; return 2 ;;
   esac
 }
 
 steps=("$@")
-[ ${#steps[@]} -eq 0 ] && steps=(bo-pv sonnet-ablation nocritic qd opus nocritic-nosurr opus3)
+[ ${#steps[@]} -eq 0 ] && steps=(bo-pv sonnet-ablation nocritic qd opus nocritic-nosurr opus3 \
+  qwen-nosurr qwen-surr)
 for s in "${steps[@]}"; do step "$s"; done
