@@ -135,9 +135,15 @@ Activate one: `cp config/missions/qd-emitter.yaml config/mission.yaml`
 >   The claims below that depend on them are withdrawn.
 > - **Next.** Fixing the prototypes changes the protocol, so it comes with a rerun.
 >
-> All hits remain surrogate-level candidates for validation. The audit's method and full
-> tables are on the `claude/athanor-qwen-sameday` branch
-> (`results/2026-10-10-claude-ablation/analysis.md`, `scripts/structure_audit.py`).
+> - **Novelty.** A check against OQMD and COD (`scripts/novelty_audit.py`) matched no hit to an
+>   experimental structure. 10 of the 47 PV agent hits are both structure-robust and absent from
+>   both databases.
+> - **The local model, rerun the same day,** found 0.3 raw and 0 structure-robust hits per run
+>   (n = 3), so the frontier-versus-local gap holds.
+>
+> All hits remain surrogate-level candidates for validation. The audit's method and full tables
+> are in `results/2026-10-10-claude-ablation/analysis.md`, `scripts/structure_audit.py` and
+> `structure-audit.csv`.
 
 Agent vs non-LLM baselines on the PV-absorber mission (gap 1.1–1.7 eV,
 ≤ 0.05 eV/atom above hull, absent from Materials Project). Every strategy
