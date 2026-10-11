@@ -123,3 +123,9 @@ rediscovery validation; mid term: magnetism screening and active learning;
 long term: the surrogates that quantum-materials searches actually need
 (optical, dopability, defects, topology). [PLAN.md](PLAN.md) documents the
 original build (phases 0–4, complete).
+
+## License
+
+AGPL-3.0 — see [LICENSE](LICENSE). © 2026 Tsung-Han Yang.
+
+*This project is personal work, developed and maintained in my personal capacity.*
