@@ -82,6 +82,45 @@ def run_row(arm: str, run_dir: Path, db_name: str, cfg: MissionConfig) -> dict:
     return row
 
 
+def critic_audit(spec: dict, cfg: MissionConfig) -> list[str]:
+    """Were the critic's vetoes right? A vetoed candidate is never relaxed in
+    its own run, but other runs in the study may have relaxed the same
+    composition; count how many of those outcomes were hits."""
+    from pymatgen.core import Composition
+
+    from athanor.metrics import row_flags
+
+    outcome: dict[str, bool] = {}  # reduced formula -> hit in any run
+    for arm_spec in spec["arms"].values():
+        for run in arm_spec["runs"]:
+            db = CandidateDB(Path(run) / arm_spec["db"])
+            for r in db._conn.execute("SELECT * FROM candidates WHERE status='scored'"):
+                r = dict(r)
+                red = Composition(r["formula"]).reduced_formula
+                outcome[red] = outcome.get(red, False) or row_flags(r, cfg)["hit"]
+            db.close()
+    out = ["", "## Critic audit (vetoes checked against relaxations of the same "
+           "composition in any other run of this study)", "",
+           "| arm | vetoes | vetoed compositions relaxed elsewhere | of those, hits |",
+           "|---|---|---|---|"]
+    for arm, arm_spec in spec["arms"].items():
+        if arm_spec["db"] != "agent.db":
+            continue
+        vetoes = []
+        for run in arm_spec["runs"]:
+            db = CandidateDB(Path(run) / arm_spec["db"])
+            vetoes += [Composition(f).reduced_formula for (f,) in db._conn.execute(
+                "SELECT formula FROM candidates WHERE status='filtered_out' "
+                "AND filter_reasons LIKE '%critic:%'")]
+            db.close()
+        if not vetoes:
+            continue
+        checked = [v for v in vetoes if v in outcome]
+        out.append(f"| {arm} | {len(vetoes)} | {len(checked)} "
+                   f"| {sum(outcome[v] for v in checked)} |")
+    return out
+
+
 def bootstrap_ci(values: list[float], n_boot: int = 20000, seed: int = 0,
                  level: float = 0.95) -> tuple[float, float] | None:
     if len(values) < 2:
@@ -213,6 +252,7 @@ def main(spec_path: str) -> None:
                     f"| {a} | {b} | {metric} | {statistics.fmean(va):.2f} "
                     f"| {statistics.fmean(vb):.2f} | {ps:.2f} | {_fmt(p, 4)} |")
 
+    lines += critic_audit(spec, default_cfg)
     (outdir / f"{spec_path.stem}-summary.md").write_text("\n".join(lines) + "\n")
     (outdir / f"{spec_path.stem}-summary.json").write_text(json.dumps(summary_json, indent=1))
     print("\n".join(lines))
