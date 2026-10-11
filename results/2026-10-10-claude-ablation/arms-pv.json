@@ -1,0 +1,142 @@
+{
+ "mission": "config/mission.yaml",
+ "arms": {
+  "random": {
+   "db": "random.db",
+   "runs": [
+    "data/benchmark/20260707-231335-seed0",
+    "data/benchmark/20260707-225531-seed1",
+    "data/benchmark/20260707-230040-seed2",
+    "data/benchmark/20260707-230651-seed3",
+    "data/benchmark/20260708-002610-seed4",
+    "data/benchmark/20260708-010930-seed5",
+    "data/benchmark/20260708-021219-seed6",
+    "data/benchmark/20260708-032352-seed7"
+   ]
+  },
+  "similarity": {
+   "db": "similarity.db",
+   "runs": [
+    "data/benchmark/20260707-231335-seed0",
+    "data/benchmark/20260707-225531-seed1",
+    "data/benchmark/20260707-230040-seed2",
+    "data/benchmark/20260707-230651-seed3",
+    "data/benchmark/20260708-002610-seed4",
+    "data/benchmark/20260708-010930-seed5",
+    "data/benchmark/20260708-021219-seed6",
+    "data/benchmark/20260708-032352-seed7"
+   ]
+  },
+  "bayesopt": {
+   "db": "bayesopt.db",
+   "runs": [
+    "data/benchmark/20260718-160305-seed0",
+    "data/benchmark/20260718-161211-seed1",
+    "data/benchmark/20261010-224906-seed2-bo-pv",
+    "data/benchmark/20261010-225555-seed3-bo-pv",
+    "data/benchmark/20261010-230610-seed4-bo-pv",
+    "data/benchmark/20261010-231321-seed5-bo-pv",
+    "data/benchmark/20261010-232028-seed6-bo-pv",
+    "data/benchmark/20261010-232828-seed7-bo-pv"
+   ]
+  },
+  "agent qwen3:32b, no surrogate (July)": {
+   "db": "agent.db",
+   "runs": [
+    "data/benchmark/20260707-231335-seed0",
+    "data/benchmark/20260708-021219-seed6",
+    "data/benchmark/20260708-032352-seed7"
+   ]
+  },
+  "agent Sonnet 5.5, no surrogate": {
+   "db": "agent.db",
+   "runs": [
+    "data/benchmark/20261010-233515-seed11-sonnet-nosurr",
+    "data/benchmark/20261011-010913-seed12-sonnet-nosurr",
+    "data/benchmark/20261011-025804-seed13-sonnet-nosurr",
+    "data/benchmark/20261011-042017-seed14-sonnet-nosurr",
+    "data/benchmark/20261011-054525-seed15-sonnet-nosurr"
+   ]
+  },
+  "agent Sonnet 5.5, + rank_by_surrogate": {
+   "db": "agent.db",
+   "runs": [
+    "data/benchmark/20261011-002204-seed21-sonnet-surr",
+    "data/benchmark/20261011-015902-seed22-sonnet-surr",
+    "data/benchmark/20261011-034118-seed23-sonnet-surr",
+    "data/benchmark/20261011-050701-seed24-sonnet-surr",
+    "data/benchmark/20261011-060541-seed25-sonnet-surr"
+   ]
+  },
+  "agent Sonnet 5.5, + surrogate, no critic": {
+   "db": "agent.db",
+   "runs": [
+    "data/benchmark/20261011-062436-seed31-sonnet-surr-nocritic",
+    "data/benchmark/20261011-063221-seed32-sonnet-surr-nocritic",
+    "data/benchmark/20261011-064005-seed33-sonnet-surr-nocritic"
+   ]
+  },
+  "agent Sonnet 5.5, no surrogate, no critic": {
+   "db": "agent.db",
+   "runs": [
+    "data/benchmark/20261011-091317-seed61-sonnet-nosurr-nocritic",
+    "data/benchmark/20261011-092102-seed62-sonnet-nosurr-nocritic",
+    "data/benchmark/20261011-092920-seed63-sonnet-nosurr-nocritic"
+   ]
+  },
+  "agent Opus 5.5, no surrogate": {
+   "db": "agent.db",
+   "runs": [
+    "data/benchmark/20261011-082538-seed51-opus-nosurr",
+    "data/benchmark/20261011-085326-seed52-opus-nosurr",
+    "data/benchmark/20261011-093727-seed53-opus-nosurr"
+   ]
+  }
+ },
+ "comparisons": [
+  [
+   "agent Sonnet 5.5, no surrogate",
+   "agent qwen3:32b, no surrogate (July)"
+  ],
+  [
+   "agent Sonnet 5.5, no surrogate",
+   "agent Sonnet 5.5, + rank_by_surrogate"
+  ],
+  [
+   "agent Sonnet 5.5, + surrogate, no critic",
+   "agent Sonnet 5.5, + rank_by_surrogate"
+  ],
+  [
+   "agent Sonnet 5.5, no surrogate, no critic",
+   "agent Sonnet 5.5, no surrogate"
+  ],
+  [
+   "agent Sonnet 5.5, no surrogate, no critic",
+   "agent Sonnet 5.5, + surrogate, no critic"
+  ],
+  [
+   "agent Sonnet 5.5, no surrogate",
+   "similarity"
+  ],
+  [
+   "agent Sonnet 5.5, + rank_by_surrogate",
+   "similarity"
+  ],
+  [
+   "agent qwen3:32b, no surrogate (July)",
+   "similarity"
+  ],
+  [
+   "bayesopt",
+   "random"
+  ],
+  [
+   "similarity",
+   "bayesopt"
+  ],
+  [
+   "agent Opus 5.5, no surrogate",
+   "agent Sonnet 5.5, no surrogate"
+  ]
+ ]
+}

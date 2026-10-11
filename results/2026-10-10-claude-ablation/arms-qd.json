@@ -1,0 +1,59 @@
+{
+ "mission": "config/missions/qd-emitter.yaml",
+ "arms": {
+  "random": {
+   "db": "random.db",
+   "runs": [
+    "data/benchmark/20261011-064821-seed8-qd-base",
+    "data/benchmark/20261011-065502-seed9-qd-base",
+    "data/benchmark/20261011-070033-seed10-qd-base",
+    "data/benchmark/20261011-070733-seed11-qd-base",
+    "data/benchmark/20261011-071438-seed12-qd-base"
+   ]
+  },
+  "similarity": {
+   "db": "similarity.db",
+   "runs": [
+    "data/benchmark/20261011-064821-seed8-qd-base",
+    "data/benchmark/20261011-065502-seed9-qd-base",
+    "data/benchmark/20261011-070033-seed10-qd-base",
+    "data/benchmark/20261011-070733-seed11-qd-base",
+    "data/benchmark/20261011-071438-seed12-qd-base"
+   ]
+  },
+  "bayesopt": {
+   "db": "bayesopt.db",
+   "runs": [
+    "data/benchmark/20261011-064821-seed8-qd-base",
+    "data/benchmark/20261011-065502-seed9-qd-base",
+    "data/benchmark/20261011-070033-seed10-qd-base",
+    "data/benchmark/20261011-070733-seed11-qd-base",
+    "data/benchmark/20261011-071438-seed12-qd-base"
+   ]
+  },
+  "agent qwen3:32b, no surrogate (July)": {
+   "db": "agent.db",
+   "runs": [
+    "data/benchmark/20260708-131929-seed8"
+   ]
+  },
+  "agent Sonnet 5.5, no surrogate": {
+   "db": "agent.db",
+   "runs": [
+    "data/benchmark/20261011-072045-seed41-qd-sonnet-nosurr",
+    "data/benchmark/20261011-074126-seed42-qd-sonnet-nosurr",
+    "data/benchmark/20261011-080331-seed43-qd-sonnet-nosurr"
+   ]
+  }
+ },
+ "comparisons": [
+  [
+   "agent Sonnet 5.5, no surrogate",
+   "similarity"
+  ],
+  [
+   "agent Sonnet 5.5, no surrogate",
+   "bayesopt"
+  ]
+ ]
+}
