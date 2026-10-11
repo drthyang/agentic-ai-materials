@@ -8,6 +8,16 @@
 | agent qwen3:32b, no surrogate (July) | 1 | 66.7 ± — — | 66.7 (66.7–66.7) | 2.0 ± — (2–2) | 3.0 (3–3) |
 | agent Sonnet 5.5, no surrogate | 3 | 11.7 ± 4.7 [6.3, 14.5] | 14.3 (6.3–14.5) | 9.0 ± 2.6 (6–11) | 80.3 (69–95) |
 
+Structure-robust hits per run (hits whose composition is still a hit when re-scored in a correct bulk cell; structure-audit.csv):
+
+| arm | n | robust hits/run: mean ± sd (min–max) |
+|---|---|---|
+| random | 5 | 0.8 ± 0.8 (0–2) |
+| similarity | 5 | 1.4 ± 0.9 (0–2) |
+| bayesopt | 5 | 1.2 ± 2.2 (0–5) |
+| agent qwen3:32b, no surrogate (July) | 1 | 0.0 ± — (0–0) |
+| agent Sonnet 5.5, no surrogate | 3 | 2.3 ± 1.2 (1–3) |
+
 ## Per-run values
 
 | arm | run | relax | hits | hits/100 | best \|Δgap\| | novel frac | critic vetoes | API $ | cache-read share | hit formulas |
@@ -39,9 +49,11 @@
 | agent Sonnet 5.5, no surrogate | similarity | hits_per_100_relaxations | 11.70 | 7.69 | 0.73 | 0.0893 |
 | agent Sonnet 5.5, no surrogate | similarity | hits | 9.00 | 3.80 | 1.00 | 0.0179 |
 | agent Sonnet 5.5, no surrogate | similarity | relaxations | 80.33 | 48.80 | 1.00 | 0.0179 |
+| agent Sonnet 5.5, no surrogate | similarity | robust_hits | 2.33 | 1.40 | 0.77 | 0.1964 |
 | agent Sonnet 5.5, no surrogate | bayesopt | hits_per_100_relaxations | 11.70 | 5.39 | 0.93 | 0.0357 |
 | agent Sonnet 5.5, no surrogate | bayesopt | hits | 9.00 | 3.80 | 0.93 | 0.0357 |
 | agent Sonnet 5.5, no surrogate | bayesopt | relaxations | 80.33 | 69.40 | 0.83 | 0.0893 |
+| agent Sonnet 5.5, no surrogate | bayesopt | robust_hits | 2.33 | 1.20 | 0.77 | 0.2500 |
 
 ## Critic audit (vetoes checked against relaxations of the same composition in any other run of this study)
 

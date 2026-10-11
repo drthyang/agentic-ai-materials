@@ -12,6 +12,20 @@
 | agent Sonnet 5.5, no surrogate, no critic | 3 | 17.4 ± 3.4 [14.7, 21.3] | 16.3 (14.7–21.3) | 16.3 ± 3.2 (14–20) | 93.7 (92–95) |
 | agent Opus 5.5, no surrogate | 3 | 18.8 ± 5.5 [13.3, 24.2] | 19.0 (13.3–24.2) | 18.7 ± 5.5 (13–24) | 99.0 (98–100) |
 
+Structure-robust hits per run (hits whose composition is still a hit when re-scored in a correct bulk cell; structure-audit.csv):
+
+| arm | n | robust hits/run: mean ± sd (min–max) |
+|---|---|---|
+| random | 8 | 0.5 ± 0.8 (0–2) |
+| similarity | 8 | 0.9 ± 0.4 (0–1) |
+| bayesopt | 8 | 0.2 ± 0.5 (0–1) |
+| agent qwen3:32b, no surrogate (July) | 3 | 0.3 ± 0.6 (0–1) |
+| agent Sonnet 5.5, no surrogate | 5 | 4.4 ± 1.3 (2–5) |
+| agent Sonnet 5.5, + rank_by_surrogate | 5 | 3.0 ± 1.4 (1–4) |
+| agent Sonnet 5.5, + surrogate, no critic | 3 | 4.3 ± 2.1 (2–6) |
+| agent Sonnet 5.5, no surrogate, no critic | 3 | 3.3 ± 2.3 (2–6) |
+| agent Opus 5.5, no surrogate | 3 | 4.3 ± 3.2 (2–8) |
+
 ## Per-run values
 
 | arm | run | relax | hits | hits/100 | best \|Δgap\| | novel frac | critic vetoes | API $ | cache-read share | hit formulas |
@@ -70,36 +84,47 @@
 | agent Sonnet 5.5, no surrogate | agent qwen3:32b, no surrogate (July) | hits_per_100_relaxations | 18.05 | 32.01 | 0.20 | 0.9286 |
 | agent Sonnet 5.5, no surrogate | agent qwen3:32b, no surrogate (July) | hits | 16.40 | 2.67 | 1.00 | 0.0179 |
 | agent Sonnet 5.5, no surrogate | agent qwen3:32b, no surrogate (July) | relaxations | 90.80 | 9.33 | 1.00 | 0.0179 |
+| agent Sonnet 5.5, no surrogate | agent qwen3:32b, no surrogate (July) | robust_hits | 4.40 | 0.33 | 1.00 | 0.0179 |
 | agent Sonnet 5.5, no surrogate | agent Sonnet 5.5, + rank_by_surrogate | hits_per_100_relaxations | 18.05 | 12.38 | 0.96 | 0.0079 |
 | agent Sonnet 5.5, no surrogate | agent Sonnet 5.5, + rank_by_surrogate | hits | 16.40 | 11.00 | 0.94 | 0.0119 |
 | agent Sonnet 5.5, no surrogate | agent Sonnet 5.5, + rank_by_surrogate | relaxations | 90.80 | 88.40 | 0.54 | 0.3214 |
+| agent Sonnet 5.5, no surrogate | agent Sonnet 5.5, + rank_by_surrogate | robust_hits | 4.40 | 3.00 | 0.86 | 0.0913 |
 | agent Sonnet 5.5, + surrogate, no critic | agent Sonnet 5.5, + rank_by_surrogate | hits_per_100_relaxations | 16.48 | 12.38 | 0.87 | 0.0536 |
 | agent Sonnet 5.5, + surrogate, no critic | agent Sonnet 5.5, + rank_by_surrogate | hits | 15.00 | 11.00 | 0.87 | 0.0714 |
 | agent Sonnet 5.5, + surrogate, no critic | agent Sonnet 5.5, + rank_by_surrogate | relaxations | 90.67 | 88.40 | 0.53 | 0.3929 |
+| agent Sonnet 5.5, + surrogate, no critic | agent Sonnet 5.5, + rank_by_surrogate | robust_hits | 4.33 | 3.00 | 0.77 | 0.1964 |
 | agent Sonnet 5.5, no surrogate, no critic | agent Sonnet 5.5, no surrogate | hits_per_100_relaxations | 17.44 | 18.05 | 0.40 | 0.6429 |
 | agent Sonnet 5.5, no surrogate, no critic | agent Sonnet 5.5, no surrogate | hits | 16.33 | 16.40 | 0.47 | 0.5714 |
 | agent Sonnet 5.5, no surrogate, no critic | agent Sonnet 5.5, no surrogate | relaxations | 93.67 | 90.80 | 0.93 | 0.0357 |
+| agent Sonnet 5.5, no surrogate, no critic | agent Sonnet 5.5, no surrogate | robust_hits | 3.33 | 4.40 | 0.40 | 0.7679 |
 | agent Sonnet 5.5, no surrogate, no critic | agent Sonnet 5.5, + surrogate, no critic | hits_per_100_relaxations | 17.44 | 16.48 | 0.67 | 0.3000 |
 | agent Sonnet 5.5, no surrogate, no critic | agent Sonnet 5.5, + surrogate, no critic | hits | 16.33 | 15.00 | 0.78 | 0.2500 |
 | agent Sonnet 5.5, no surrogate, no critic | agent Sonnet 5.5, + surrogate, no critic | relaxations | 93.67 | 90.67 | 0.83 | 0.1500 |
+| agent Sonnet 5.5, no surrogate, no critic | agent Sonnet 5.5, + surrogate, no critic | robust_hits | 3.33 | 4.33 | 0.39 | 0.8000 |
 | agent Sonnet 5.5, no surrogate | similarity | hits_per_100_relaxations | 18.05 | 3.01 | 1.00 | 0.0008 |
 | agent Sonnet 5.5, no surrogate | similarity | hits | 16.40 | 2.00 | 1.00 | 0.0008 |
 | agent Sonnet 5.5, no surrogate | similarity | relaxations | 90.80 | 66.12 | 1.00 | 0.0008 |
+| agent Sonnet 5.5, no surrogate | similarity | robust_hits | 4.40 | 0.88 | 1.00 | 0.0008 |
 | agent Sonnet 5.5, + rank_by_surrogate | similarity | hits_per_100_relaxations | 12.38 | 3.01 | 1.00 | 0.0008 |
 | agent Sonnet 5.5, + rank_by_surrogate | similarity | hits | 11.00 | 2.00 | 1.00 | 0.0008 |
 | agent Sonnet 5.5, + rank_by_surrogate | similarity | relaxations | 88.40 | 66.12 | 0.99 | 0.0016 |
+| agent Sonnet 5.5, + rank_by_surrogate | similarity | robust_hits | 3.00 | 0.88 | 0.91 | 0.0062 |
 | agent qwen3:32b, no surrogate (July) | similarity | hits_per_100_relaxations | 32.01 | 3.01 | 1.00 | 0.0061 |
 | agent qwen3:32b, no surrogate (July) | similarity | hits | 2.67 | 2.00 | 0.67 | 0.2242 |
 | agent qwen3:32b, no surrogate (July) | similarity | relaxations | 9.33 | 66.12 | 0.00 | 1.0000 |
+| agent qwen3:32b, no surrogate (July) | similarity | robust_hits | 0.33 | 0.88 | 0.23 | 0.9939 |
 | bayesopt | random | hits_per_100_relaxations | 1.68 | 1.38 | 0.47 | 0.3455 |
 | bayesopt | random | hits | 1.50 | 1.00 | 0.59 | 0.2734 |
 | bayesopt | random | relaxations | 86.75 | 75.12 | 0.91 | 0.0028 |
+| bayesopt | random | robust_hits | 0.25 | 0.50 | 0.42 | 0.8846 |
 | similarity | bayesopt | hits_per_100_relaxations | 3.01 | 1.68 | 0.78 | 0.0227 |
 | similarity | bayesopt | hits | 2.00 | 1.50 | 0.67 | 0.2483 |
 | similarity | bayesopt | relaxations | 66.12 | 86.75 | 0.00 | 1.0000 |
+| similarity | bayesopt | robust_hits | 0.88 | 0.25 | 0.81 | 0.0203 |
 | agent Opus 5.5, no surrogate | agent Sonnet 5.5, no surrogate | hits_per_100_relaxations | 18.84 | 18.05 | 0.53 | 0.3929 |
 | agent Opus 5.5, no surrogate | agent Sonnet 5.5, no surrogate | hits | 18.67 | 16.40 | 0.63 | 0.2679 |
 | agent Opus 5.5, no surrogate | agent Sonnet 5.5, no surrogate | relaxations | 99.00 | 90.80 | 1.00 | 0.0179 |
+| agent Opus 5.5, no surrogate | agent Sonnet 5.5, no surrogate | robust_hits | 4.33 | 4.40 | 0.43 | 0.5357 |
 
 ## Critic audit (vetoes checked against relaxations of the same composition in any other run of this study)
 
