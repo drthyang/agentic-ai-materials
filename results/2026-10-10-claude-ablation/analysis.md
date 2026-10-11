@@ -1,7 +1,7 @@
 # Claude ablation: frontier vs local proposer, and which parts matter
 
 *Runs 2026-10-10 18:37 to 2026-10-11 05:59 EDT on the user's Mac. API
-spend $18.89 of a hard $40 cap. Every number here is surrogate-level
+spend $18.05 of a hard $40 cap (restated 2026-10-11; see Spend). Every number here is surrogate-level
 (CHGNet relaxation, Materials Project hull, MEGNet HSE gap), not DFT or
 experiment.*
 
@@ -15,7 +15,7 @@ experiment.*
 | Critic | No effect without the surrogate (16.3 vs 16.4 hits per run). With the surrogate it vetoed 2.5× as often and the arm lost ~4 hits per run (p = 0.07, n=3 vs 5). |
 | BayesOpt baseline, n=2 → 8 | 1.7 ± 1.6 hits/100: indistinguishable from random (1.4 ± 1.2, p = 0.35) and below similarity (3.0 ± 0.7, p = 0.023). The July n=2 reading (zero hits, "the known-materials trap") does not survive replication. |
 | Second mission (QD emitter) | Sonnet 9.0 ± 2.6 hits per run vs similarity 3.8 ± 1.1 (n=3 vs 5, p = 0.018). Per relaxation the edge is not significant (11.7 vs 7.7 hits/100, p = 0.09), and one BayesOpt run (9 hits) beat one Sonnet run (6). The PV complete separation does **not** fully generalise. |
-| Opus 5.5 vs Sonnet 5.5 | 18.7 ± 5.5 vs 16.4 ± 2.1 hits per run (n=3 vs 5, p = 0.27): no detectable difference at about 2.6× the cost per run. |
+| Opus 5.5 vs Sonnet 5.5 | 18.7 ± 5.5 vs 16.4 ± 2.1 hits per run (n=3 vs 5, p = 0.27): no detectable difference at about 2.7× the cost per run. |
 
 ## PV mission: per-arm results
 
@@ -149,11 +149,21 @@ Studio model would have pushed the shared 64 GB Mac into heavy swap.
 ## Spend
 
 [api-spend-ledger.csv](api-spend-ledger.csv): one row per agent run, token
-counts and dollars only. 23 rows: pilot $0.12, 19 Sonnet runs $13.36
-(~$0.70 each), 3 Opus runs $5.41 (~$1.80). Prices: Sonnet 5.5 $2 / $10 /
-$0.20 cache read / $2.50 cache write per million tokens; Opus 5.5 $4 / $20
-/ $0.20 / $5.00. The per-run stop ($3 Sonnet, $6 Opus) and the $40 ledger
-cap were never reached.
+counts and dollars only. 23 rows: pilot $0.12, 19 Sonnet runs $12.52
+(~$0.66 each), 3 Opus runs $5.41 (~$1.80); **total $18.05**. Prices per
+million tokens: Sonnet 5.5 $2 input / $10 output / $0.10 cache read /
+$2.50 cache write; Opus 5.5 $4 / $20 / $0.20 / $5.00.
+
+*Restatement (2026-10-11).* The runs were logged with Sonnet 5.5 cache
+reads at $0.20 per million, giving $18.89 in total. The live
+[pricing page](https://platform.claude.com/docs/en/about-claude/pricing)
+prices cache hits on Sonnet 5.5 and Opus 5.5 at 0.05× base input (its
+footnote 2), i.e. $0.10 for Sonnet; Opus's $0.20 was already right. Every
+ledger row was re-priced from its own recorded token counts; the original
+figure is kept in the `cost_usd_as_logged` column, and the per-run costs
+in the summary tables are computed the same way. Each run's `usage.json`
+keeps the cost as logged. The per-run stop ($3 Sonnet, $6 Opus) and the
+$40 ledger cap were never reached.
 
 ## Reproduce
 

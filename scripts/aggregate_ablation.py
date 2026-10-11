@@ -30,6 +30,7 @@ from pathlib import Path
 
 from athanor.config import MissionConfig, load_mission
 from athanor.db import CandidateDB
+from athanor.llm.anthropic_backend import price_for
 from athanor.metrics import compute_metrics
 
 METRICS = ("hits_per_100_relaxations", "hits", "relaxations")
@@ -62,7 +63,13 @@ def run_row(arm: str, run_dir: Path, db_name: str, cfg: MissionConfig) -> dict:
     usage_f = run_dir / "usage.json"
     if db_name == "agent.db" and usage_f.exists():
         u = json.loads(usage_f.read_text())
-        row["api_cost_usd"] = u.get("cost_usd")
+        # priced from the recorded token counts at current rates, not the
+        # cost_usd frozen into usage.json when the run was logged
+        p_in, p_out, p_read, p_write = price_for(u["model"])
+        row["api_cost_usd"] = round((
+            u.get("input_tokens", 0) * p_in + u.get("output_tokens", 0) * p_out
+            + u.get("cache_read_input_tokens", 0) * p_read
+            + u.get("cache_creation_input_tokens", 0) * p_write) / 1e6, 4)
         row["api_calls"] = u.get("calls")
         total_in = (u.get("input_tokens", 0) + u.get("cache_read_input_tokens", 0)
                     + u.get("cache_creation_input_tokens", 0))

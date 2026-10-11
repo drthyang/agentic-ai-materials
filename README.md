@@ -145,7 +145,7 @@ matter.
   *lowered* its hits (11.0 vs 16.4 per run, n = 5 each, p = 0.012); a
   surrogate × critic 2×2 puts the loss in the combination of the two
   (critic vetoes rose 2.5×). The critic on its own changed nothing.
-  Opus 5.5 showed no detectable gain over Sonnet at ~2.6× the cost.
+  Opus 5.5 showed no detectable gain over Sonnet at ~2.7× the cost.
 - **Replicated baselines.** Bayesian optimisation at n = 8 is
   indistinguishable from random, so an earlier n = 2 reading of "zero
   hits" did not hold up.
@@ -154,7 +154,7 @@ matter.
   relaxation the gap is not significant and one BO run beat one Sonnet run.
 
 Full tables, per-run values, the critic audit and the spend ledger
-($18.89 of API credit for the whole study) are in
+($18.05 of API credit for the whole study) are in
 [results/2026-10-10-claude-ablation/analysis.md](results/2026-10-10-claude-ablation/analysis.md).
 Hits recur across runs (the agents keep re-finding the Ag₂-kesterite and
 alkali-telluride families), so per-run counts are not independent

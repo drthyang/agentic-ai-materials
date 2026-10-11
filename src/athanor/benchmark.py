@@ -33,6 +33,9 @@ LEDGER_FIELDS = [
     "finished_utc", "run_dir", "mission", "backend", "model", "effort", "calls",
     "input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens",
     "output_tokens", "cost_usd", "status",
+    # set only on rows re-priced after logging (cost_usd is then the restated
+    # value, computed from the row's own token counts)
+    "cost_usd_as_logged",
 ]
 
 # Reserved headroom under a global spend cap: one request can overshoot the
