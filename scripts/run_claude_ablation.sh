@@ -4,7 +4,8 @@
 #   scripts/run_claude_ablation.sh            # whole queue, in priority order
 #   scripts/run_claude_ablation.sh <step>...  # only the named steps
 #
-# Steps: bo-pv, sonnet-ablation, nocritic, qd, opus.
+# Steps: bo-pv, sonnet-ablation, nocritic, qd, opus (the first queue, run as
+# one invocation with no arguments), then nocritic-nosurr and opus3.
 #
 # Every agent run: 5 iterations x 20 relaxations (the cap the July qwen
 # runs used), the local gemma4:26b critic unless stated, Claude at
@@ -77,10 +78,17 @@ step() {
       done ;;
     opus)  # small capability check: Opus 5.5 in the model-ablation configuration
       for i in 1 2; do agent $((50 + i)) opus-nosurr claude-opus-5-5 6 --no-surrogate; done ;;
+    # --- follow-ups added after the first queue finished (budget allowed) ---
+    nocritic-nosurr)  # completes the Sonnet 2x2: no surrogate, critic off
+      for i in 1 2 3; do
+        agent $((60 + i)) sonnet-nosurr-nocritic claude-sonnet-5-5 3 --no-surrogate --no-critic
+      done ;;
+    opus3)  # third Opus run: two runs disagreed by 2x
+      agent 53 opus-nosurr claude-opus-5-5 6 --no-surrogate ;;
     *) echo "unknown step $1" >&2; return 2 ;;
   esac
 }
 
 steps=("$@")
-[ ${#steps[@]} -eq 0 ] && steps=(bo-pv sonnet-ablation nocritic qd opus)
+[ ${#steps[@]} -eq 0 ] && steps=(bo-pv sonnet-ablation nocritic qd opus nocritic-nosurr opus3)
 for s in "${steps[@]}"; do step "$s"; done
