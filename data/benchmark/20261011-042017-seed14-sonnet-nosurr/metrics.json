@@ -1,0 +1,33 @@
+[
+ {
+  "name": "agent (claude-sonnet-5-5)",
+  "proposed": 179,
+  "filtered_out": 27,
+  "scored": 93,
+  "errors": 0,
+  "hits": 18,
+  "hit_formulas": [
+   "CdAg2GeSe4",
+   "MgAg2GeTe4",
+   "MgAg2SnSe4",
+   "MgAg2SnTe4",
+   "ZnAg2GeSe4",
+   "ZnAg2GeTe4",
+   "Na2CdSnTe4",
+   "Na2MgGeTe4",
+   "K2ZnSnTe4",
+   "K2MgSnTe4",
+   "K2CaSnTe4",
+   "K2SrSnTe4",
+   "K2CaGeTe4",
+   "K2SrGeTe4",
+   "K2BaGeTe4",
+   "K2MgSiTe4",
+   "K2CdSiTe4",
+   "K2BaSiTe4"
+  ],
+  "rediscoveries": [],
+  "hits_per_100_relaxations": 19.35483870967742,
+  "best_gap_distance_ev": 0.012
+ }
+]

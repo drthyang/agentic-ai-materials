@@ -60,6 +60,10 @@ class Critic:
     def __init__(self, backend: LLMBackend, cfg: MissionConfig):
         self.backend = backend
         self.cfg = cfg
+        # fail-open is silent by design, so count it: an ablation must be
+        # able to show the critic actually reviewed rather than auto-approved
+        self.stats = {"reviews": 0, "candidates": 0, "approved": 0,
+                      "vetoed": 0, "failed_open": 0}
 
     def review(self, batch: list[dict], hypothesis: str) -> dict[str, Verdict]:
         """batch: [{"formula": ..., "substitution": {...}}]. Returns per-formula verdicts."""
@@ -70,14 +74,20 @@ class Critic:
             hypothesis=hypothesis,
             candidates=json.dumps(batch, indent=1),
         )
+        self.stats["reviews"] += 1
+        self.stats["candidates"] += len(formulas)
         try:
             resp = self.backend.chat(CRITIC_SYSTEM,
                                      [{"role": "user", "content": prompt}], tools=[])
             verdicts = self._parse(resp.text, formulas)
         except Exception as exc:  # fail open
             log.warning("critic unavailable (%s); approving all", exc)
+            self.stats["failed_open"] += 1
+            self.stats["approved"] += len(formulas)
             return {f: Verdict(True, "critic unavailable; auto-approved") for f in formulas}
         vetoed = [f for f, v in verdicts.items() if not v.approve]
+        self.stats["vetoed"] += len(vetoed)
+        self.stats["approved"] += len(formulas) - len(vetoed)
         log.info("critic: %d/%d approved%s", len(formulas) - len(vetoed),
                  len(formulas), f", vetoed: {vetoed}" if vetoed else "")
         return verdicts

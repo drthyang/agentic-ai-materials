@@ -1,0 +1,19 @@
+{
+ "tool_calls": {
+  "read_notebook": 5,
+  "search_literature": 5,
+  "write_notebook": 13,
+  "propose_candidates": 23,
+  "evaluate_candidates": 11,
+  "search_known_materials": 1,
+  "get_top_candidates": 2
+ },
+ "relaxations_per_iteration": {
+  "1": 20,
+  "2": 19,
+  "3": 18,
+  "4": 20,
+  "5": 15
+ },
+ "aborted_turns": 0
+}

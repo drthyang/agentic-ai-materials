@@ -44,7 +44,7 @@ llm:
 
 critic:
   enabled: true
-  backend: null
+  backend: ollama   # explicit: --backend anthropic must not move the critic too
   model: gemma4:26b
 
 evaluation:

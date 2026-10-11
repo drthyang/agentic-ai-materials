@@ -1,0 +1,16 @@
+[
+ {
+  "name": "bayesopt",
+  "proposed": 0,
+  "filtered_out": 89,
+  "scored": 89,
+  "errors": 0,
+  "hits": 1,
+  "hit_formulas": [
+   "CaCuSe2"
+  ],
+  "rediscoveries": [],
+  "hits_per_100_relaxations": 1.1235955056179776,
+  "best_gap_distance_ev": 0.014
+ }
+]

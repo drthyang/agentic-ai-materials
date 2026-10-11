@@ -1,0 +1,18 @@
+[
+ {
+  "name": "agent (claude-sonnet-5-5)",
+  "proposed": 52,
+  "filtered_out": 0,
+  "scored": 14,
+  "errors": 0,
+  "hits": 3,
+  "hit_formulas": [
+   "CdAg2GeSe4",
+   "MgAg2SnSe4",
+   "ZnAg2GeSe4"
+  ],
+  "rediscoveries": [],
+  "hits_per_100_relaxations": 21.428571428571427,
+  "best_gap_distance_ev": 0.017
+ }
+]

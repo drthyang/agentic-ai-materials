@@ -1,0 +1,93 @@
+{
+ "started_utc": "2026-10-11T06:55:02+00:00",
+ "git_commit": "bbe8ec1881efce7435a5d98a9f02a94b8f9d9a65",
+ "iterations": 5,
+ "seed": 9,
+ "baselines": [
+  "random",
+  "similarity",
+  "bayesopt"
+ ],
+ "include_agent": false,
+ "mission_config": {
+  "mission": {
+   "name": "qd-emitter-v1",
+   "description": "Find novel, thermodynamically stable (or near-stable) heavy-metal-free semiconductor compositions with band gaps in the visible range, as candidate quantum-dot display emitters. Bulk gap is the screening proxy; quantum confinement will blue-shift emission, so mid-visible bulk gaps are the sweet spot.\n"
+  },
+  "target": {
+   "band_gap_ev": [
+    1.8,
+    3.1
+   ],
+   "band_gap_ideal_ev": 2.4,
+   "e_above_hull_max_ev_per_atom": 0.05
+  },
+  "chemistry": {
+   "allowed_elements": [
+    "Zn",
+    "Mg",
+    "Ca",
+    "Sr",
+    "Ba",
+    "Cu",
+    "Ag",
+    "Al",
+    "Ga",
+    "In",
+    "Si",
+    "Ge",
+    "Sn",
+    "S",
+    "Se",
+    "Te",
+    "N",
+    "P",
+    "O",
+    "Cl",
+    "Br",
+    "I"
+   ],
+   "excluded_elements": [
+    "Cd",
+    "Hg",
+    "Pb",
+    "Tl"
+   ],
+   "max_elements_per_compound": 4,
+   "max_atoms_per_cell": 50
+  },
+  "budget": {
+   "iterations": 10,
+   "max_candidates_proposed_per_iteration": 50,
+   "max_relaxations_per_iteration": 20,
+   "relaxation_max_steps": 200,
+   "max_tool_calls_per_iteration": 24
+  },
+  "llm": {
+   "backend": "ollama",
+   "model": "qwen3:32b",
+   "base_url": "http://localhost:11434/v1",
+   "timeout_s": 600.0,
+   "effort": null,
+   "max_cost_usd": null
+  },
+  "critic": {
+   "enabled": true,
+   "backend": "ollama",
+   "model": "gemma4:26b"
+  },
+  "acquisition": {
+   "enabled": true,
+   "min_train": 6,
+   "xi": 0.01
+  },
+  "evaluation": {
+   "holdout_formulas": []
+  },
+  "paths": {
+   "db": "data/candidates.db",
+   "notebook": "data/lab_notebook.md",
+   "reports": "data/reports"
+  }
+ }
+}
