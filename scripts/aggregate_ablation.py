@@ -2,7 +2,7 @@
 
     uv run python scripts/aggregate_ablation.py results/<study>/arms.json
 
-arms.json names each arm and lists its run directories:
+The spec (e.g. arms-pv.json) names each arm and lists its run directories:
 
     {"mission": "config/mission.yaml",
      "arms": {"random": {"db": "random.db", "runs": ["data/benchmark/..."]},
@@ -11,8 +11,8 @@ arms.json names each arm and lists its run directories:
 
 Metrics are recomputed from each run's SQLite DB with the shared hit rule
 (metrics.compute_metrics), never copied from a run's own summary, so every
-arm is scored by identical code. Writes per-run and per-arm tables (CSV +
-markdown) next to arms.json. Statistics are deliberately small-sample
+arm is scored by identical code. Writes <spec>-per-run.csv and <spec>-summary.{md,json}
+next to the spec. Statistics are deliberately small-sample
 honest: per-run values are always shown, the mean comes with a bootstrap
 interval, and arm-vs-arm comparisons use an exact permutation test.
 """
@@ -148,7 +148,7 @@ def main(spec_path: str) -> None:
             rows.append(run_row(arm, Path(run), arm_spec["db"], cfg))
 
     outdir = spec_path.parent
-    with open(outdir / "per_run.csv", "w", newline="") as f:
+    with open(outdir / f"{spec_path.stem}-per-run.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0]))
         w.writeheader()
         w.writerows(rows)
@@ -213,8 +213,8 @@ def main(spec_path: str) -> None:
                     f"| {a} | {b} | {metric} | {statistics.fmean(va):.2f} "
                     f"| {statistics.fmean(vb):.2f} | {ps:.2f} | {_fmt(p, 4)} |")
 
-    (outdir / "summary.md").write_text("\n".join(lines) + "\n")
-    (outdir / "summary.json").write_text(json.dumps(summary_json, indent=1))
+    (outdir / f"{spec_path.stem}-summary.md").write_text("\n".join(lines) + "\n")
+    (outdir / f"{spec_path.stem}-summary.json").write_text(json.dumps(summary_json, indent=1))
     print("\n".join(lines))
 
 
