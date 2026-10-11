@@ -1,0 +1,16 @@
+{
+ "backend": "anthropic",
+ "model": "claude-sonnet-5-5",
+ "effort": "high",
+ "calls": 52,
+ "input_tokens": 116,
+ "output_tokens": 35719,
+ "cache_read_input_tokens": 502215,
+ "cache_creation_input_tokens": 97505,
+ "stop_reasons": {
+  "tool_use": 46,
+  "end_turn": 6
+ },
+ "cost_usd": 0.7016,
+ "max_cost_usd": 3.0
+}
