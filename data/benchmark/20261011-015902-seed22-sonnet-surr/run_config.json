@@ -1,0 +1,102 @@
+{
+ "started_utc": "2026-10-11T01:59:02+00:00",
+ "git_commit": "babfdb6573e24e2a9d6ed3f03bd0c851c76864dc",
+ "iterations": 5,
+ "seed": 22,
+ "baselines": [],
+ "include_agent": true,
+ "mission_config": {
+  "mission": {
+   "name": "pv-absorber-v1",
+   "description": "Find novel, thermodynamically stable (or near-stable) semiconductor compositions with a band gap near 1.4 eV, suitable as single-junction photovoltaic absorber candidates.\n"
+  },
+  "target": {
+   "band_gap_ev": [
+    1.1,
+    1.7
+   ],
+   "band_gap_ideal_ev": 1.4,
+   "e_above_hull_max_ev_per_atom": 0.05
+  },
+  "chemistry": {
+   "allowed_elements": [
+    "Cu",
+    "Ag",
+    "Zn",
+    "Cd",
+    "Al",
+    "Ga",
+    "In",
+    "Sn",
+    "Ge",
+    "Si",
+    "Sb",
+    "Bi",
+    "S",
+    "Se",
+    "Te",
+    "N",
+    "P",
+    "As",
+    "O",
+    "Cl",
+    "Br",
+    "I",
+    "Na",
+    "K",
+    "Ca",
+    "Sr",
+    "Ba",
+    "Mg",
+    "Ti",
+    "Zr",
+    "Fe",
+    "Mn",
+    "Ni",
+    "Co",
+    "Mo",
+    "W"
+   ],
+   "excluded_elements": [
+    "Pb",
+    "Hg",
+    "Tl"
+   ],
+   "max_elements_per_compound": 4,
+   "max_atoms_per_cell": 50
+  },
+  "budget": {
+   "iterations": 10,
+   "max_candidates_proposed_per_iteration": 50,
+   "max_relaxations_per_iteration": 20,
+   "relaxation_max_steps": 200,
+   "max_tool_calls_per_iteration": 24
+  },
+  "llm": {
+   "backend": "anthropic",
+   "model": "claude-sonnet-5-5",
+   "base_url": "http://localhost:11434/v1",
+   "timeout_s": 600.0,
+   "effort": "high",
+   "max_cost_usd": 3.0
+  },
+  "critic": {
+   "enabled": true,
+   "backend": "ollama",
+   "model": "gemma4:26b"
+  },
+  "acquisition": {
+   "enabled": true,
+   "min_train": 6,
+   "xi": 0.01
+  },
+  "evaluation": {
+   "holdout_formulas": []
+  },
+  "paths": {
+   "db": "data/candidates.db",
+   "notebook": "data/lab_notebook.md",
+   "reports": "data/reports"
+  }
+ }
+}
