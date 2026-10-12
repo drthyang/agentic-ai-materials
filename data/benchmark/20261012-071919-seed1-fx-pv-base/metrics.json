@@ -1,0 +1,42 @@
+[
+ {
+  "name": "random",
+  "proposed": 0,
+  "filtered_out": 63,
+  "scored": 60,
+  "errors": 0,
+  "hits": 0,
+  "hit_formulas": [],
+  "rediscoveries": [],
+  "hits_per_100_relaxations": 0.0,
+  "best_gap_distance_ev": 0.056
+ },
+ {
+  "name": "similarity",
+  "proposed": 0,
+  "filtered_out": 75,
+  "scored": 74,
+  "errors": 0,
+  "hits": 1,
+  "hit_formulas": [
+   "CuSnS2"
+  ],
+  "rediscoveries": [],
+  "hits_per_100_relaxations": 1.3513513513513513,
+  "best_gap_distance_ev": 0.01
+ },
+ {
+  "name": "bayesopt",
+  "proposed": 0,
+  "filtered_out": 102,
+  "scored": 83,
+  "errors": 0,
+  "hits": 1,
+  "hit_formulas": [
+   "MnZn(CuS2)2"
+  ],
+  "rediscoveries": [],
+  "hits_per_100_relaxations": 1.2048192771084338,
+  "best_gap_distance_ev": 0.082
+ }
+]
