@@ -25,7 +25,11 @@ from athanor.prototypes import PROTOTYPES, get_prototype
 
 log = logging.getLogger("athanor.benchmark")
 
-_LOCK = Path("data/benchmark/.lock")
+# One benchmark at a time by default. ATHANOR_BENCHMARK_LOCK names another
+# lock file, to run an independent lane alongside (e.g. an API-proposer arm
+# next to CPU-bound baselines). Wall-clock is then not comparable across
+# lanes; no reported metric depends on it.
+_LOCK = Path(os.environ.get("ATHANOR_BENCHMARK_LOCK", "data/benchmark/.lock"))
 
 BASELINES = {cls.name: cls for cls in (RandomBaseline, SimilarityBaseline, BayesOptBaseline)}
 
@@ -124,8 +128,11 @@ def _run_benchmark_locked(
     outdir.mkdir(parents=True, exist_ok=True)
     # stable pointer for the dashboard: athanor dashboard --latest
     latest = Path("data/benchmark/latest")
-    latest.unlink(missing_ok=True)
-    latest.symlink_to(stamp)
+    try:
+        latest.unlink(missing_ok=True)
+        latest.symlink_to(stamp)
+    except OSError:  # a concurrent lane won the race; the pointer is cosmetic
+        log.warning("could not update %s", latest)
     _write_run_config(outdir, cfg, iterations, seed, baselines, include_agent)
 
     results: list[CampaignMetrics] = []

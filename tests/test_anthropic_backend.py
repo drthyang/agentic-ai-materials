@@ -396,3 +396,16 @@ def test_old_ledger_is_migrated_to_the_new_columns(tmp_path):
     rows = list(csv.DictReader(open(ledger)))
     assert list(rows[0]) == LEDGER_FIELDS and rows[1]["role"] == "critic"
     assert ledger_total_usd(ledger) == pytest.approx(2.0)
+
+
+def test_benchmark_lock_lane_comes_from_the_environment(monkeypatch, tmp_path):
+    import importlib
+
+    import athanor.benchmark as bm
+
+    monkeypatch.setenv("ATHANOR_BENCHMARK_LOCK", str(tmp_path / ".lock-api"))
+    try:
+        assert importlib.reload(bm)._LOCK == tmp_path / ".lock-api"
+    finally:
+        monkeypatch.delenv("ATHANOR_BENCHMARK_LOCK")
+        importlib.reload(bm)
