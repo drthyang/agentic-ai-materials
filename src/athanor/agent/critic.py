@@ -72,6 +72,7 @@ class Critic:
         self.stats = {"reviews": 0, "candidates": 0, "approved": 0,
                       "vetoed": 0, "failed_open": 0, "unaddressed": 0,
                       "auto_approved": 0}
+        self.consecutive_failures = 0
 
     def review(self, batch: list[dict], hypothesis: str) -> dict[str, Verdict]:
         """batch: [{"formula": ..., "substitution": {...}}]. Returns per-formula verdicts."""
@@ -84,12 +85,14 @@ class Critic:
         )
         self.stats["reviews"] += 1
         self.stats["candidates"] += len(formulas)
+        limit = self.cfg.critic.max_consecutive_failures
         try:
             resp = self.backend.chat(CRITIC_SYSTEM,
                                      [{"role": "user", "content": prompt}], tools=[])
             verdicts, parsed = self._parse(resp.text, formulas)
         except Exception as exc:  # fail open
             log.warning("critic unavailable (%s); approving all", exc)
+            self._failed(limit, f"{type(exc).__name__}: {exc}")
             self.stats["failed_open"] += 1
             self.stats["auto_approved"] += len(formulas)
             self.stats["approved"] += len(formulas)
@@ -98,8 +101,10 @@ class Critic:
         n_auto = sum(v.addressed is False for v in verdicts.values())
         self.stats["auto_approved"] += n_auto
         if not parsed:
+            self._failed(limit, "reply had no parseable verdicts: " + repr(resp.text[:200]))
             self.stats["failed_open"] += 1
         else:
+            self.consecutive_failures = 0
             self.stats["unaddressed"] += n_auto
         vetoed = [f for f, v in verdicts.items() if not v.approve]
         self.stats["vetoed"] += len(vetoed)
@@ -107,6 +112,19 @@ class Critic:
         log.info("critic: %d/%d approved%s", len(formulas) - len(vetoed),
                  len(formulas), f", vetoed: {vetoed}" if vetoed else "")
         return verdicts
+
+    def _failed(self, limit: int, detail: str) -> None:
+        """Count a failed review; past the limit, stop the campaign before
+        this batch is relaxed (fail closed when the critic is gone)."""
+        self.consecutive_failures += 1
+        if limit and self.consecutive_failures >= limit:
+            from athanor.agent.registry import CampaignAbort
+
+            self.stats["failed_open"] += 1
+            raise CampaignAbort(
+                "critic_unavailable",
+                f"critic failed {self.consecutive_failures} reviews in a row "
+                f"(last: {detail}); stopping the campaign rather than run without it")
 
     @staticmethod
     def _parse(text: str, formulas: list[str]) -> tuple[dict[str, Verdict], bool]:

@@ -68,6 +68,26 @@ def run_campaign(
                  getattr(critic_backend, "model", "?"))
     registry = build_registry(ctx)
 
+    from athanor.agent.registry import CampaignAbort
+
+    try:
+        _run_iterations(ctx, cfg, backend, registry, iterations, stats)
+    except CampaignAbort as abort:
+        log.error("campaign stopped: %s", abort)
+        stats["aborted"] = abort.status
+        stats["abort_reason"] = str(abort)
+        if ctx.critic is not None:
+            stats["critic"] = dict(ctx.critic.stats)
+        report_path = _write_report(
+            cfg, f"# Campaign stopped early: {abort.status}\n\n{abort}\n\n"
+                 "No final report was generated; the database and notebook hold "
+                 "everything recorded before the stop.")
+        ctx.db.close()
+        return report_path
+    return _finish(ctx, cfg, backend, registry, iterations, stats)
+
+
+def _run_iterations(ctx, cfg, backend, registry, iterations, stats) -> None:
     for i in range(1, iterations + 1):
         ctx.start_iteration(i)
         log.info("=== iteration %d/%d ===", i, iterations)
@@ -83,6 +103,8 @@ def run_campaign(
                  i, db_stats, ctx.relaxations_used)
         stats["relaxations_per_iteration"][str(i)] = ctx.relaxations_used
 
+
+def _finish(ctx, cfg, backend, registry, iterations, stats) -> Path:
     # Final report: ground-truth data is injected into the prompt so the model
     # writes prose around real numbers instead of recalling (or inventing) them.
     # No tools are offered: the report must not be able to propose, relax or

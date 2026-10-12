@@ -416,3 +416,83 @@ def test_a_run_whose_critic_always_failed_open_is_flagged(cfg, monkeypatch):
     loop.run_campaign(cfg, ScriptedBackend(script), iterations=1, run_stats=stats)
     assert stats["critic"]["failed_open"] == stats["critic"]["reviews"] == 1
     assert stats["critic_all_failed_open"] is True
+
+
+# --- fail closed: a critic that keeps failing stops the campaign -------------
+
+class _CriticReplies(LLMBackend):
+    def __init__(self, replies):
+        self.replies = list(replies)
+
+    def chat(self, system, messages, tools):
+        return LLMResponse(text=self.replies.pop(0) if self.replies else "")
+
+
+def _three_batches():
+    from pymatgen.core import Composition
+
+    script = [LLMResponse(tool_calls=[_tc("propose_candidates",
+                                          substitutions={"In": ["Ga", "Al"], "Se": ["Se", "S"]},
+                                          hypothesis="h")])]
+    for i, f in enumerate(["CuGaSe2", "CuAlSe2", "CuGaS2"]):
+        f = Composition(f).reduced_formula
+        script.append(LLMResponse(tool_calls=[_tc("evaluate_candidates", formulas=[f], i=f"e{i}")]))
+    return script + [LLMResponse(text="done"), LLMResponse(text="# report")]
+
+
+def test_critic_failing_three_times_in_a_row_stops_the_campaign(cfg, monkeypatch):
+    relaxed = []
+    monkeypatch.setattr("athanor.agent.tools.relax_and_score",
+                        lambda s, max_steps=200, with_hull=True:
+                        relaxed.append(s.composition.reduced_formula) or ScoreResult(formula="X", converged=True))
+    monkeypatch.setattr("athanor.llm.make_backend", lambda llm: _CriticReplies(["no json"] * 5))
+    cfg.critic.enabled = True
+    stats: dict = {}
+    report = run_campaign(cfg, ScriptedBackend(_three_batches()), iterations=1, run_stats=stats)
+    assert stats["aborted"] == "critic_unavailable"
+    assert "3 reviews in a row" in stats["abort_reason"]
+    assert stats["critic"]["failed_open"] == 3
+    assert len(relaxed) == 2  # the batch that hit the limit was never relaxed
+    assert report.read_text().startswith("# Campaign stopped early: critic_unavailable")
+
+
+def test_a_good_review_resets_the_failure_count(cfg, monkeypatch):
+    monkeypatch.setattr("athanor.agent.tools.relax_and_score",
+                        lambda s, max_steps=200, with_hull=True: ScoreResult(formula="X", converged=True))
+    ok = json.dumps({"verdicts": [{"formula": "CuAlSe2", "approve": True, "reason": "ok"}]})
+    monkeypatch.setattr("athanor.llm.make_backend",
+                        lambda llm: _CriticReplies(["no json", ok, "no json"]))
+    cfg.critic.enabled = True
+    stats: dict = {}
+    run_campaign(cfg, ScriptedBackend(_three_batches()), iterations=1, run_stats=stats)
+    assert "aborted" not in stats and stats["critic"]["failed_open"] == 2
+
+
+def test_benchmark_records_critic_unavailable_in_the_ledger(cfg, tmp_path, monkeypatch):
+    import csv as _csv
+
+    from athanor.benchmark import run_benchmark
+    from athanor.llm.anthropic_backend import AnthropicBackend
+    from types import SimpleNamespace
+
+    monkeypatch.chdir(tmp_path)
+
+    class Proposer(AnthropicBackend):
+        def __init__(self):
+            super().__init__(model="claude-sonnet-5-5", client=SimpleNamespace())
+            self.script = _three_batches()
+
+        def chat(self, system, messages, tools):
+            return self.script.pop(0)
+
+    proposer = Proposer()
+    monkeypatch.setattr("athanor.llm.make_backend",
+                        lambda llm: proposer if llm.backend == "anthropic" else _CriticReplies(["x"] * 5))
+    monkeypatch.setattr("athanor.agent.tools.relax_and_score",
+                        lambda s, max_steps=200, with_hull=True: ScoreResult(formula="X", converged=True))
+    cfg.llm.backend, cfg.llm.model = "anthropic", "claude-sonnet-5-5"
+    cfg.critic.enabled, cfg.critic.backend = True, "ollama"
+    ledger = tmp_path / "ledger.csv"
+    run_benchmark(cfg, iterations=1, baselines=[], ledger=ledger, spend_cap_usd=20)
+    rows = list(_csv.DictReader(open(ledger)))
+    assert rows[-1]["status"] == "critic_unavailable"

@@ -177,6 +177,8 @@ def _run_benchmark_locked(
                 status = "aborted_turns"
             if run_stats.get("critic_all_failed_open"):
                 status = "critic_failed_open"
+            if run_stats.get("aborted"):
+                status = run_stats["aborted"]
         finally:
             (outdir / "agent_stats.json").write_text(json.dumps(run_stats, indent=1))
             for role, member in tracker.members:
