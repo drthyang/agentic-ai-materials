@@ -9,8 +9,9 @@ full c = 11.6 Å box — all atoms sit within z in [-0.125, 0.25], leaving a
 chalcopyrite- or kesterite-derived candidate in every strategy (agent and
 baselines alike) was relaxed from that starting geometry.
 
-This audit takes each distinct hit composition, applies the same element
-substitution to a correct 16-atom conventional cell of the same structure
+This audit takes each distinct hit route (formula, prototype, substitution:
+the same composition reached two ways is two structures), applies the same
+element substitution to a correct 16-atom conventional cell of the same structure
 type (built from the space group), starts it at a predicted volume, and
 scores it with the unchanged pipeline (`relax_and_score`: CHGNet, MP hull,
 MEGNet HSE gap, 200 steps). A hit that stays a hit is robust to the
@@ -60,10 +61,17 @@ def build(prototype: str, substitution: dict) -> Structure:
     return s
 
 
+def route_key(formula: str, prototype: str, substitution: str | dict | None) -> tuple:
+    """(formula, prototype, canonical substitution): what was actually built."""
+    sub = json.loads(substitution or "{}") if isinstance(substitution, (str, type(None))) \
+        else substitution
+    return formula, prototype, json.dumps(sub, sort_keys=True)
+
+
 def distinct_hits(spec_path: Path) -> tuple[list[dict], object]:
     spec = json.loads(spec_path.read_text())
     cfg = load_mission(spec.get("mission", "config/mission.yaml"))
-    seen: dict[str, dict] = {}
+    seen: dict[tuple, dict] = {}
     for arm, a in spec["arms"].items():
         kind = "agent" if a["db"] == "agent.db" else "baseline"
         for run in a["runs"]:
@@ -73,7 +81,10 @@ def distinct_hits(spec_path: Path) -> tuple[list[dict], object]:
                 if not row_flags(r, cfg)["hit"]:
                     continue
                 red = Composition(r["formula"]).reduced_formula
-                h = seen.setdefault(red, {**r, "formula": red, "kinds": set()})
+                # one entry per route: the same composition reached from two
+                # prototypes (or two substitutions) is two different structures
+                key = route_key(red, r["parent_prototype"], r["substitution"])
+                h = seen.setdefault(key, {**r, "formula": red, "kinds": set()})
                 h["kinds"].add(kind)
             db.close()
     return sorted(seen.values(), key=lambda h: h["formula"]), cfg
@@ -114,7 +125,7 @@ def main(specs: list[str]) -> None:
         for who in ("agent", "baseline"):
             if who in r["found_by"]:
                 groups.setdefault((r["mission"], who, r["prototype"]), []).append(r)
-    print("\n| mission | found by | prototype | distinct hits | still hits in bulk cell |")
+    print("\n| mission | found by | prototype | distinct hit routes | still hits in bulk cell |")
     print("|---|---|---|---|---|")
     for (m, who, p), rs in sorted(groups.items()):
         print(f"| {m} | {who} | {p} | {len(rs)} | {sum(r['still_hit'] for r in rs)} |")

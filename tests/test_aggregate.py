@@ -30,3 +30,27 @@ def test_auto_approvals_recovered_from_a_run_log(tmp_path, monkeypatch):
     run = tmp_path / "data/benchmark/20261011-010913-seed12-sonnet-nosurr"
     assert agg.critic_auto_approved_from_log(run) == 7
     assert agg.critic_auto_approved_from_log(tmp_path / "20260707-1212") is None
+
+
+def test_audits_key_on_the_route_not_just_the_formula(tmp_path, monkeypatch):
+    import json
+
+    import structure_audit as sa
+
+    from athanor.db import CandidateDB, CandidateRow
+
+    monkeypatch.delenv("MP_API_KEY", raising=False)
+    db = CandidateDB(tmp_path / "agent.db")
+    hit = dict(status="scored", converged=True, band_gap_ev=1.4, e_above_hull=0.0, is_novel=True)
+    db.add(CandidateRow(iteration=1, formula="AgGaSe2", parent_prototype="chalcopyrite-CuInSe2",
+                        substitution={"Cu": "Ag", "In": "Ga"}, **hit))
+    db.add(CandidateRow(iteration=2, formula="AgGaSe2", parent_prototype="zincblende-GaAs",
+                        substitution={"Ga": "Ag", "As": "Se"}, **hit))
+    db.close()
+    spec = tmp_path / "arms.json"
+    spec.write_text(json.dumps({"mission": str(Path("config/mission.yaml").resolve()),
+                                "arms": {"a": {"db": "agent.db", "runs": [str(tmp_path)]}}}))
+    hits, _ = sa.distinct_hits(spec)
+    assert len(hits) == 2 and {h["parent_prototype"] for h in hits} == {
+        "chalcopyrite-CuInSe2", "zincblende-GaAs"}
+    assert sa.route_key("X", "p", '{"b": "c", "a": "d"}') == sa.route_key("X", "p", {"a": "d", "b": "c"})
