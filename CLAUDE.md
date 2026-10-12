@@ -11,7 +11,7 @@ magnetism/active-learning, then new-surrogate work).
 ## Commands
 
 ```bash
-uv run pytest                              # 110 tests, all should pass
+uv run pytest                              # 151 tests, all should pass
 uv run athanor check                   # env/key status
 uv run athanor run --iterations 1      # discovery campaign (needs Ollama up)
 uv run athanor benchmark --skip-agent  # baselines only (no LLM needed)

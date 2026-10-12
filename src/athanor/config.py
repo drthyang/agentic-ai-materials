@@ -70,6 +70,16 @@ class CriticConfig(BaseModel):
     # or no parseable verdicts) the campaign stops rather than spend budget
     # without one.
     max_consecutive_failures: int = 3
+    # Ollama critics are called through /api/chat with this context window
+    # (the OpenAI-style endpoint loads the model's default, 262k for gemma4,
+    # which exhausted GPU memory on 2026-10-12). Fixed, not per prompt:
+    # Ollama reloads the model whenever num_ctx changes.
+    num_ctx: int = 16384
+    # a local critic replying faster than this did not read the batch
+    min_reply_seconds: float = 0.2
+    # one review of a known candidate before the campaign starts; a critic
+    # that cannot pass it stops the campaign before any budget is spent
+    preflight: bool = True
 
 
 class AcquisitionConfig(BaseModel):

@@ -60,7 +60,7 @@ def run_campaign(
             llm.backend = cfg.critic.backend or llm.backend
             llm.model = cfg.critic.model or llm.model
             _check_critic_pairing(llm.backend, llm.model)
-            critic_backend = make_backend(llm)
+            critic_backend = make_backend(llm, critic=cfg.critic)
             if spend_tracker is not None and llm.backend == "anthropic":
                 spend_tracker.attach(critic_backend, role="critic")
         ctx.critic = Critic(critic_backend, cfg)
@@ -71,6 +71,14 @@ def run_campaign(
     from athanor.agent.registry import CampaignAbort
 
     try:
+        if ctx.critic is not None and cfg.critic.preflight:
+            ok, detail = ctx.critic.preflight()
+            stats["critic_preflight"] = detail
+            log.info("critic preflight: %s", detail)
+            if not ok:
+                raise CampaignAbort("critic_unavailable",
+                                    f"critic failed its preflight review ({detail}); "
+                                    "not starting the campaign")
         _run_iterations(ctx, cfg, backend, registry, iterations, stats)
     except CampaignAbort as abort:
         log.error("campaign stopped: %s", abort)

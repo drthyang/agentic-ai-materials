@@ -349,7 +349,10 @@ def test_hybrid_local_proposer_claude_critic_is_metered_and_logged(cfg, tmp_path
     from athanor.benchmark import ledger_total_usd, run_benchmark
 
     monkeypatch.chdir(tmp_path)
-    critic = AnthropicBackend(model="claude-sonnet-5-5", client=_client([]))
+    preflight_ok = json.dumps({"verdicts": [{"formula": "CuInSe2", "approve": True,
+                                             "reason": "ok"}]})
+    critic = AnthropicBackend(model="claude-sonnet-5-5",
+                              client=_client([_text_response(preflight_ok)]))
 
     class LocalProposer(LLMBackend):
         name = "openai-compat"
@@ -357,7 +360,7 @@ def test_hybrid_local_proposer_claude_critic_is_metered_and_logged(cfg, tmp_path
         def chat(self, system, messages, tools):
             return LLMResponse(text="nothing to do")
 
-    def factory(llm):
+    def factory(llm, **kw):
         return critic if llm.backend == "anthropic" else LocalProposer()
 
     monkeypatch.setattr("athanor.llm.make_backend", factory)
@@ -369,7 +372,8 @@ def test_hybrid_local_proposer_claude_critic_is_metered_and_logged(cfg, tmp_path
     assert [(r["status"], r["role"]) for r in rows] == [("started", ""), ("ok", "critic")]
     assert (outdir / "critic_usage.json").exists()
     assert critic.tracker.cap_usd == pytest.approx(5 - 0.5)
-    assert ledger_total_usd(ledger) == 0.0
+    # the critic's one (preflight) call is on the ledger: 100 in + 50 out tokens
+    assert ledger_total_usd(ledger) == pytest.approx((100 * 2 + 50 * 10) / 1e6)
 
 
 def test_ledger_counts_a_run_killed_before_it_could_log(tmp_path):
