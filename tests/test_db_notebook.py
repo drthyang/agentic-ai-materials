@@ -1,3 +1,5 @@
+import pytest
+
 from athanor.db import CandidateDB, CandidateRow
 from athanor.notebook import LabNotebook
 
@@ -48,3 +50,37 @@ def test_notebook_rejects_bad_type(tmp_path):
     except ValueError:
         raised = True
     assert raised
+
+
+# --- elemental references: an MP failure must not become a silent FCC cell ---
+
+def test_reference_lookup_raises_when_mp_fails(monkeypatch):
+    import mp_api.client
+
+    from athanor.tools import _references
+
+    class Broken:
+        def __init__(self, *a, **k):
+            raise ConnectionError("MP down")
+
+    monkeypatch.setenv("MP_API_KEY", "x")
+    monkeypatch.setattr(mp_api.client, "MPRester", Broken)
+    with pytest.raises(ConnectionError):
+        _references._elemental_structure("S")
+
+
+def test_reference_without_key_is_labelled_fallback(monkeypatch):
+    from athanor.tools import _references
+
+    monkeypatch.delenv("MP_API_KEY", raising=False)
+    s, source = _references._elemental_structure("Se")
+    assert source == "fcc-fallback" and len(s) == 4
+
+
+def test_reference_cache_records_its_source(monkeypatch, tmp_path):
+    from athanor.tools import _references
+
+    monkeypatch.setattr(_references, "_CACHE", tmp_path / "refs.json")
+    monkeypatch.setattr(_references, "_memory", {})
+    (tmp_path / "refs.json").write_text('{"Cu": {"e": -4.08, "source": "mp-30"}}')
+    assert _references.elemental_reference_energy("Cu") == -4.08
