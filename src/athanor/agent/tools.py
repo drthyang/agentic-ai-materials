@@ -45,6 +45,7 @@ class CampaignContext:
     iteration: int = 0
     relaxations_used: int = 0
     structures: dict[str, Proposed] = field(default_factory=dict)
+    evaluated: set[str] = field(default_factory=set)
     critic: object | None = None  # athanor.agent.critic.Critic when enabled
 
     def start_iteration(self, i: int) -> None:
@@ -275,6 +276,10 @@ def build_registry(ctx: CampaignContext) -> ToolRegistry:
                 del ctx.structures[f]
 
         for formula in formulas:
+            if formula in ctx.evaluated:
+                skipped.append({"formula": formula,
+                                "reason": "already evaluated this campaign"})
+                continue
             if formula not in ctx.structures:
                 if not any(s["formula"] == formula for s in skipped):
                     skipped.append({"formula": formula,
@@ -285,7 +290,8 @@ def build_registry(ctx: CampaignContext) -> ToolRegistry:
                                 "reason": "relaxation budget for this iteration exhausted"})
                 continue
             ctx.relaxations_used += 1
-            prop = ctx.structures[formula]
+            prop = ctx.structures.pop(formula)  # one relaxation per proposal
+            ctx.evaluated.add(formula)
             s = relax_and_score(
                 prop.structure,
                 max_steps=cfg.budget.relaxation_max_steps,

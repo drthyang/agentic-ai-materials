@@ -29,12 +29,15 @@ def run_campaign(
     backend: LLMBackend,
     iterations: int | None = None,
     run_stats: dict | None = None,
+    spend_tracker=None,
 ) -> Path:
     """Run a discovery campaign; returns the path of the final report.
 
     If `run_stats` is given it is filled with per-campaign behaviour counts
     (tool calls by name, relaxations per iteration, critic verdicts) — the
     numbers an ablation needs to show a component was actually exercised.
+    ``spend_tracker`` (anthropic_backend.SpendTracker), when given, also
+    meters a Claude critic, so one cap covers proposer and critic together.
     """
     iterations = iterations or cfg.budget.iterations
     stats = run_stats if run_stats is not None else {}
@@ -56,15 +59,10 @@ def run_campaign(
             llm = cfg.llm.model_copy()
             llm.backend = cfg.critic.backend or llm.backend
             llm.model = cfg.critic.model or llm.model
-            if llm.backend == "anthropic" and not llm.model.startswith("claude"):
-                # e.g. `--backend anthropic` with critic.model: gemma4:26b and
-                # no critic.backend: every review would 404 and fail OPEN,
-                # silently turning the critic off for the whole campaign.
-                raise ValueError(
-                    f"critic model {llm.model!r} resolved to the anthropic "
-                    "backend; set critic.backend explicitly (e.g. ollama)"
-                )
+            _check_critic_pairing(llm.backend, llm.model)
             critic_backend = make_backend(llm)
+            if spend_tracker is not None and llm.backend == "anthropic":
+                spend_tracker.attach(critic_backend, role="critic")
         ctx.critic = Critic(critic_backend, cfg)
         log.info("critic enabled: %s (%s)", critic_backend.name,
                  getattr(critic_backend, "model", "?"))
@@ -87,7 +85,8 @@ def run_campaign(
 
     # Final report: ground-truth data is injected into the prompt so the model
     # writes prose around real numbers instead of recalling (or inventing) them.
-    ctx.start_iteration(iterations + 1)
+    # No tools are offered: the report must not be able to propose, relax or
+    # write anything, and no relaxation budget is reset for it.
     import json as _json
 
     scored = ctx.db.all_scored()
@@ -101,10 +100,17 @@ def run_campaign(
             candidates=_json.dumps(scored, indent=1, default=str),
             stats=_json.dumps(iter_stats),
         ),
-        max_tool_calls=6,
+        max_tool_calls=0,
+        offer_tools=False,
     )
     if ctx.critic is not None:
         stats["critic"] = dict(ctx.critic.stats)
+        cs = ctx.critic.stats
+        if cs["reviews"] and cs["failed_open"] == cs["reviews"]:
+            # every review auto-approved: the run is effectively critic-less
+            log.error("critic failed open on all %d reviews; this run had no "
+                      "working critic", cs["reviews"])
+            stats["critic_all_failed_open"] = True
     report_path = _write_report(cfg, report)
     log.info("report written to %s", report_path)
     ctx.db.close()
@@ -117,15 +123,21 @@ def _run_agent_turn(
     kickoff: str,
     max_tool_calls: int,
     stats: dict | None = None,
+    offer_tools: bool = True,
 ) -> str:
-    """One agent conversation: kickoff -> tool loop -> final plain-text reply."""
+    """One agent conversation: kickoff -> tool loop -> final plain-text reply.
+
+    With offer_tools=False the model sees no tools and the turn is a single
+    text reply; any tool call it still emits is ignored, never executed.
+    """
     messages: list[dict] = [{"role": "user", "content": kickoff}]
     calls_used = 0
     tool_counts = stats.setdefault("tool_calls", {}) if stats is not None else {}
 
     while True:
         try:
-            response = backend.chat(SYSTEM_PROMPT, messages, registry.specs)
+            response = backend.chat(SYSTEM_PROMPT, messages,
+                                    registry.specs if offer_tools else [])
         except Exception as exc:
             # A dead backend must cost one iteration, not the whole campaign
             # (hours of compute). Backend-level retries have already run.
@@ -135,7 +147,7 @@ def _run_agent_turn(
                 stats["aborted_turns"] = stats.get("aborted_turns", 0) + 1
             return f"(iteration aborted: backend error: {type(exc).__name__})"
 
-        if not response.tool_calls:
+        if not response.tool_calls or not offer_tools:
             return response.text.strip() or "(no summary provided)"
 
         assistant = {
@@ -168,6 +180,22 @@ def _run_agent_turn(
         # force-terminate the turn rather than looping forever.
         if calls_used > max_tool_calls + 5:
             return "(iteration terminated: tool-call budget exceeded)"
+
+
+def _check_critic_pairing(backend: str, model: str) -> None:
+    """Refuse critic configs that would fail open on every review.
+
+    A non-Claude model on the anthropic backend 404s; a Claude model on a
+    local OpenAI-compatible backend is not served there. Either way every
+    review would raise, the critic would fail open, and the campaign would
+    silently run without one.
+    """
+    if backend == "anthropic" and not model.startswith("claude"):
+        raise ValueError(f"critic model {model!r} resolved to the anthropic backend; "
+                         "set critic.backend explicitly (e.g. ollama)")
+    if backend in ("ollama", "openai-compat") and model.startswith("claude"):
+        raise ValueError(f"critic model {model!r} is a Claude model but critic.backend "
+                         f"is {backend!r}; set critic.backend: anthropic")
 
 
 def _write_report(cfg: MissionConfig, report: str) -> Path:

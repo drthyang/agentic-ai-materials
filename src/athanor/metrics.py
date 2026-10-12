@@ -91,7 +91,9 @@ def compute_metrics(name: str, db: CandidateDB, cfg: MissionConfig) -> CampaignM
         flags = row_flags(r, cfg)
         if flags["gap_distance"] is not None:
             gap_distances.append(flags["gap_distance"])
-        if flags["hit"]:
+        if flags["hit"] and not any(
+                Composition(r["formula"]).almost_equals(Composition(f)) for f in m.hit_formulas):
+            # a hit counts once per composition, however often it was relaxed
             m.hits += 1
             m.hit_formulas.append(r["formula"])
         if flags["rediscovery"]:
