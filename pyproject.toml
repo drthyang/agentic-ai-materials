@@ -20,6 +20,15 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# kept for pip users (`pip install -e ".[dev]"`)
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+# uv installs the dev group by default, so a fresh `uv run pytest` works
+# without `--extra dev`
+[dependency-groups]
 dev = [
     "pytest>=8.0",
     "ruff>=0.6",
