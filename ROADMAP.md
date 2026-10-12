@@ -37,8 +37,10 @@ is controlled evaluation, not more agent demos — evidence first.
   `critic.backend: anthropic`, then `--backend anthropic`: how much does
   discovery improve with model capability? (The capability-vs-outcome curve
   is the most interesting writeup angle.)
-- **CdCuSe2 dossier** — literature deep-dive + DFT validation export
-  (`athanor export`: VASP/Quantum ESPRESSO inputs for top candidates).
+- ~~**CdCuSe2 dossier**~~ — dropped 2026-10: CdCuSe2 was a hit only in the
+  defective 8-atom chalcopyrite cell (bulk gap 0.14 eV in a correct one). The
+  DFT-export idea (`athanor export`: VASP/Quantum ESPRESSO inputs) stands, for
+  the structure-robust hits of the fixed-prototype rerun.
 - **Mission gallery** *(started, see config/missions/)* — display-industry
   targets that work with today's surrogates:
   - `qd-emitter.yaml` — heavy-metal-free quantum-dot emitter candidates

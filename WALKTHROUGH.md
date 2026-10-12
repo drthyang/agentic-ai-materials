@@ -101,20 +101,28 @@ entire fictional campaign; see experiment log, benchmark 1 era.)
 
 ## 6. The experiment log (everything run so far)
 
+> **Correction 2026-10-12.** The chalcopyrite and kesterite prototypes used
+> in every run below were defective 8-atom half-cells (P2 symmetry, a ~7 Å
+> empty slab). Most hits in this log, including the silver-kesterite family
+> of benchmark 2 and the replicates and the CdCuSe₂ "first hit", are not
+> hits in a correct cell; claims built on them are marked *withdrawn*. See
+> [results/2026-10-10-claude-ablation/analysis.md](results/2026-10-10-claude-ablation/analysis.md); a rerun on fixed
+> prototypes is in `results/2026-10-12-fixed-prototypes/`.
+
 | # | when | what | result | analysis |
 |---|---|---|---|---|
 | 1 | 07-06 | build phases 0–2 (tools → agent loop), live qwen test | works; found+fixed: MP r2SCAN hull-scale bug, fabricated final report | commit history |
-| 2 | 07-07 am | **benchmark 1**: agent vs baselines | agent 0 hits — did coherent science but only in *known* space (the "known-materials trap"); similarity 1 hit (CdCuSe₂) | `results/2026-07-07-benchmark-1/` |
+| 2 | 07-07 am | **benchmark 1**: agent vs baselines | agent 0 hits — did coherent science but only in *known* space (the "known-materials trap"); similarity 1 hit (CdCuSe₂; *withdrawn 2026-10, not a hit in a correct cell*) | `results/2026-07-07-benchmark-1/` |
 | 3 | 07-07 | baseline seeds 1–3 (later 4–7) | random 1.38±1.15, similarity 3.01±0.62 hits/100relax (n=8) | `.../baseline-seed-statistics.md` |
-| 4 | 07-07 pm | **benchmark 2**: same model, prompts made novelty-binding + families | **0 → 4 hits (57/100relax)**; silver-kesterite family; CdAg₂GeSe₄ on hull | `results/2026-07-07-benchmark-2/` |
-| 5 | 07-07 | novelty audit of the 4 hits | 1 recently synthesized (validation!), 1 DFT-studied, 2 candidate-novel (Mg tellurides) | `.../novelty-audit.md` |
+| 4 | 07-07 pm | **benchmark 2**: same model, prompts made novelty-binding + families | ~~0 → 4 hits (57/100relax)~~ *withdrawn 2026-10: 1 of the 4 survives a correct cell* | `results/2026-07-07-benchmark-2/` |
+| 5 | 07-07 | novelty audit of the 4 hits | ~~1 recently synthesized, 1 DFT-studied, 2 candidate-novel (Mg tellurides)~~ *withdrawn 2026-10: 3 of the 4 leave the gap window in a correct cell* | `.../novelty-audit.md` |
 | 6 | 07-08 night | replicates attempt 1 | both died on a 300s timeout → backend hardened (retries, crash guard) | commit `2ea3ea8` |
-| 7 | 07-08 | **replicates** (2 more agent runs) | 22.2 and 16.7 hits/100relax; **all 3 runs converge on the same Ag-kesterite family**; agent 32.0±17.9 vs similarity 3.01±0.62, p≈0.006 | `results/2026-07-08-replication/` |
+| 7 | 07-08 | **replicates** (2 more agent runs) | ~~22.2 and 16.7 hits/100relax; agent 32.0±17.9 vs similarity 3.01±0.62, p≈0.006~~ *withdrawn 2026-10* (the runs did converge on one family, but its hits depend on the defective cell) | `results/2026-07-08-replication/` |
 
-**Current headline:** objective alignment (telling the agent novelty is the
-mission) mattered more than model capability — the same local model went
-from losing to a dumb baseline to beating it ~10× on hit efficiency, and the
-chemistry it found is externally corroborated.
+**Current headline (2026-10):** the July headline (objective alignment
+beat a baseline ~10×) is withdrawn; see the correction above. The October
+study (Claude vs local proposer, replicated baselines, ablations) and its
+structure audit are in `results/2026-10-10-claude-ablation/analysis.md`.
 
 ## 7. Commands
 
@@ -124,7 +132,7 @@ uv run athanor run --iterations 3      # one agent campaign
 uv run athanor dashboard               # watch live (localhost:8517); --latest for benchmarks
 uv run athanor benchmark --iterations 5 --seed N   # full comparison (~2h with agent)
 uv run athanor benchmark --skip-agent  # baselines only (~10 min)
-uv run pytest                              # 59 hermetic tests (no GPU/network)
+uv run pytest                              # 110 hermetic tests (no GPU/network)
 ```
 
 ## 8. Where things live
@@ -136,14 +144,14 @@ src/athanor/  tools/ (physics+filters+search) · agent/ (loop, critic,
                   baselines.py · metrics.py · benchmark.py · dashboard.py
 results/          committed analyses of every experiment (start here)
 notes/            strategy, positioning, reading list
-data/             gitignored: raw run DBs, caches, logs (local machine only)
+data/             benchmark/ run DBs + notebooks (committed) · lit/novelty caches · MP cache and logs (local only)
 PLAN.md           original build design (complete)  ·  ROADMAP.md  what's next
 ```
 
 ## 9. Open items
 
-- Manual ICSD/OQMD check of MgAg₂GeTe₄ / MgAg₂SnTe₄ (the two possible
-  genuine discoveries) — needs database access only a human has.
+- ~~Manual ICSD/OQMD check of MgAg₂GeTe₄ / MgAg₂SnTe₄~~ — moot: both leave
+  the gap window in a correct cell (2026-10 structure audit).
 - SMACT falsely rejects InP (fix running in a separate session).
-- Claude-backend capability run (needs ANTHROPIC_API_KEY).
+- ~~Claude-backend capability run~~ — done 2026-10 (`results/2026-10-10-claude-ablation/`).
 - Preprint draft — all core claims now have support.

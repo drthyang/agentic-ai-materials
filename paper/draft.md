@@ -3,6 +3,15 @@
 *Working draft. Markdown now, convert to LaTeX at submission. Every claim
 links to a results/ artifact — keep it that way.*
 
+> **Status 2026-10-12: claims C3, C4, C5 and C7 (agent level) are withdrawn,
+> with the abstract sentences struck through below.** They rest on
+> chalcopyrite and kesterite prototypes that were defective 8-atom
+> half-cells; most of their hits are not hits in a correct cell
+> ([results/2026-10-10-claude-ablation/analysis.md](../results/2026-10-10-claude-ablation/analysis.md)). A rerun on corrected
+> cells is in progress (`results/2026-10-12-fixed-prototypes/`) and the
+> draft will be rebuilt from it. C1, C2, C6 and C8 are unaffected; C6's
+> AgGaSe₂ was re-checked in a correct cell and is still a hit.
+
 **Title options** (pick at submission):
 1. Objective alignment, not model capability, unlocks LLM-agent materials
    discovery on a laptop *(the finding)*
@@ -29,19 +38,19 @@ photovoltaic-absorber mission.
 The naive agent performed coherent, literature-grounded science yet scored
 zero: it searched exclusively in known chemical space (the "known-materials
 trap"). A single prompt-level change making novelty an explicit, binding
-objective — with no model or budget change — raised hit efficiency from 0 to
+objective — with no model or budget change — ~~raised hit efficiency from 0 to
 32 ± 18 hits per 100 relaxations across three replicates, versus 3.0 ± 0.6
 for the strongest baseline (complete separation, exact rank p ≈ 0.006). All
 replicates independently converged on the Ag₂(II)(IV)(VI)₄ kesterite family;
 two predicted on-hull members correspond to a recently synthesized compound
 and an independently DFT-studied photovoltaic candidate, and two (Mg
-tellurides) appear unreported. In a hold-out test with three known
+tellurides) appear unreported.~~ *[withdrawn 2026-10]* In a hold-out test with three known
 photovoltaic absorbers masked from all database tools, the agent re-derived
 AgGaSe₂ through its own hypothesis chain in 14 relaxations — five times
 fewer than the enumeration baseline needed to re-find one. A second mission
-(heavy-metal-free quantum-dot emitters) ran with zero code changes,
+(heavy-metal-free quantum-dot emitters) ran with zero code changes~~,
 transferring the discovered kesterite family across gap windows via anion
-substitution. Our results suggest that for LLM discovery agents,
+substitution~~ *[withdrawn 2026-10]*. Our results suggest that for LLM discovery agents,
 objective specification is a stronger lever than model scale, and that
 controlled baselines — absent from most agentic-discovery reports — are
 essential to measuring either.
@@ -54,11 +63,11 @@ essential to measuring either.
 |---|---|---|---|
 | C1 | A fully local LLM agent can run closed-loop, physics-grounded discovery | system + campaigns | repo; WALKTHROUGH.md |
 | C2 | Un-aligned, it does real science but zero discovery (known-materials trap) | benchmark 1 autopsy: all 10 candidates known; coherent notebook | results/2026-07-07-benchmark-1/ |
-| C3 | Objective alignment alone flips the outcome | benchmark 2: same model/seed/budget, prompts only, 0→4 hits | results/2026-07-07-benchmark-2/ |
-| C4 | The advantage replicates and separates from baselines | 3 runs: 57.1/22.2/16.7 vs similarity 3.01±0.62 (n=8), p≈0.006 | results/2026-07-08-replication/ |
-| C5 | The found chemistry is real | CdAg₂GeSe₄ synthesized externally; MgAg₂SnSe₄ DFT literature; convergent family across runs | novelty-audit.md |
+| C3 | **[withdrawn 2026-10: prototype defect]** Objective alignment alone flips the outcome | benchmark 2: same model/seed/budget, prompts only, 0→4 hits | results/2026-07-07-benchmark-2/ |
+| C4 | **[withdrawn 2026-10: prototype defect]** The advantage replicates and separates from baselines | 3 runs: 57.1/22.2/16.7 vs similarity 3.01±0.62 (n=8), p≈0.006 | results/2026-07-08-replication/ |
+| C5 | **[withdrawn 2026-10: prototype defect]** The found chemistry is real | CdAg₂GeSe₄ synthesized externally; MgAg₂SnSe₄ DFT literature; convergent family across runs | novelty-audit.md |
 | C6 | The loop re-finds hidden known materials | agent re-found AgGaSe₂ blind (it3, 14 relax); similarity re-found CuGaSe₂ (79 relax); random 0/3 | results/2026-07-08-rediscovery/ |
-| C7 | The architecture generalizes across missions via config | QD mission ran unchanged; agent pattern directional (2 hits/3 evals, small-n caveat); similarity produced 3 on-hull QD candidates | results/2026-07-08-qd-emitter/ |
+| C7 | The architecture generalizes across missions via config *(system level stands; agent-level QD hits withdrawn 2026-10)* | QD mission ran unchanged; agent pattern directional (2 hits/3 evals, small-n caveat); similarity produced 3 on-hull QD candidates | results/2026-07-08-qd-emitter/ |
 | C8 | Honest failure catalog | fabricated reports (fixed by grounding), critic chemistry errors (fixed by model diversity), SMACT InP false negative, budget timidity | analyses passim |
 
 ## Section outline
@@ -110,8 +119,8 @@ essential to measuring either.
 
 - [x] Fold in rediscovery result (C6) — done, see §4.5 source material in results/2026-07-08-rediscovery/
 - [x] Fold in QD-emitter result (C7) — done, results/2026-07-08-qd-emitter/
-- [ ] User: ICSD/OQMD check on MgAg₂GeTe₄, MgAg₂SnTe₄ → upgrades or kills
-      the "unreported" language in the abstract
+- [x] ~~User: ICSD/OQMD check on MgAg₂GeTe₄, MgAg₂SnTe₄~~ — moot: both fall out of the
+      gap window in a correct cell (2026-10 structure audit)
 - [ ] Decide: Claude capability run in v1 or follow-up?
 - [ ] Fig. 2/3 generation script (paper/figures.py) from run DBs
 - [ ] Methods details: CHGNet/MEGNet versions, MP thermo-type pinning,
