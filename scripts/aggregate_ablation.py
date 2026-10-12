@@ -14,7 +14,7 @@ Metrics are recomputed from each run's SQLite DB with the shared hit rule
 arm is scored by identical code. Writes <spec>-per-run.csv and <spec>-summary.{md,json}
 next to the spec. Statistics are deliberately small-sample
 honest: per-run values are always shown, the mean comes with a bootstrap
-interval, and arm-vs-arm comparisons use an exact permutation test.
+interval, and arm-vs-arm comparisons use an exact two-sided permutation test.
 """
 
 from __future__ import annotations
@@ -24,6 +24,7 @@ import itertools
 import json
 import math
 import random
+import re
 import statistics
 import sys
 from pathlib import Path
@@ -54,6 +55,7 @@ def run_row(arm: str, run_dir: Path, db_name: str, cfg: MissionConfig) -> dict:
         "best_gap_distance_ev": m.best_gap_distance_ev,
         "novel_fraction_evaluated": round(novel / relax, 3) if relax else None,
         "critic_vetoes": None,
+        "critic_auto_approved": None,
         "hit_formulas": " ".join(sorted(m.hit_formulas)),
         "api_cost_usd": None,
         "api_calls": None,
@@ -81,6 +83,9 @@ def run_row(arm: str, run_dir: Path, db_name: str, cfg: MissionConfig) -> dict:
         row["tool_calls"] = json.dumps(st.get("tool_calls", {}), sort_keys=True)
         if "critic" in st:
             row["critic_vetoes"] = st["critic"].get("vetoed")
+            row["critic_auto_approved"] = st["critic"].get("auto_approved")
+    if db_name == "agent.db" and row["critic_auto_approved"] is None:
+        row["critic_auto_approved"] = critic_auto_approved_from_log(run_dir)
     if row["critic_vetoes"] is None and db_name == "agent.db":
         db = CandidateDB(run_dir / db_name)
         row["critic_vetoes"] = db._conn.execute(
@@ -88,6 +93,31 @@ def run_row(arm: str, run_dir: Path, db_name: str, cfg: MissionConfig) -> dict:
             "AND filter_reasons LIKE '%critic:%'").fetchone()[0]
         db.close()
     return row
+
+
+def critic_auto_approved_from_log(run_dir: Path) -> int | None:
+    """Candidates the critic waved through unreviewed, for runs recorded before
+    the critic counted them: each 'critic reply ... approving all' or 'critic
+    unavailable' warning in the run's own log is followed by the batch's
+    'critic: n/n approved' line. Returns None when the run has no own log
+    (the July runs share combined logs). Candidates the critic merely failed
+    to name were not logged before 2026-10 and cannot be recovered."""
+    m = re.match(r".*-seed(\d+)-(.+)$", run_dir.name)
+    if not m:
+        return None
+    log_path = Path("data/logs") / f"{m.group(2)}-seed{m.group(1)}.log"
+    if not log_path.exists():
+        return None
+    total, pending = 0, False
+    for line in log_path.read_text(errors="replace").splitlines():
+        if "athanor.critic" not in line:
+            continue
+        if "approving all" in line:
+            pending = True
+        elif pending and (hit := re.search(r"critic: (\d+)/(\d+) approved", line)):
+            total += int(hit.group(2))
+            pending = False
+    return total
 
 
 def load_structure_audit(path: Path) -> dict[tuple[str, str], bool]:
@@ -151,8 +181,14 @@ def bootstrap_ci(values: list[float], n_boot: int = 20000, seed: int = 0,
     return lo, hi
 
 
-def permutation_p(a: list[float], b: list[float]) -> float:
-    """Exact one-sided p-value for mean(a) > mean(b) under exchangeability."""
+def permutation_p(a: list[float], b: list[float], two_sided: bool = True) -> float:
+    """Exact permutation p-value for a difference in means.
+
+    Two-sided by default (|mean(a) - mean(b)| at least as large as observed):
+    which arm should win is not fixed before the data are seen, so a one-sided
+    test would overstate the evidence. two_sided=False gives the one-sided
+    p for mean(a) > mean(b), for a direction that was pre-registered.
+    """
     pooled = a + b
     observed = statistics.fmean(a) - statistics.fmean(b)
     n, count, total = len(a), 0, 0
@@ -160,8 +196,9 @@ def permutation_p(a: list[float], b: list[float]) -> float:
         chosen = set(idx)
         xa = [pooled[i] for i in idx]
         xb = [pooled[i] for i in range(len(pooled)) if i not in chosen]
+        d = statistics.fmean(xa) - statistics.fmean(xb)
         total += 1
-        if statistics.fmean(xa) - statistics.fmean(xb) >= observed - 1e-12:
+        if (abs(d) >= abs(observed) - 1e-12) if two_sided else (d >= observed - 1e-12):
             count += 1
     return count / total
 
@@ -255,21 +292,21 @@ def main(spec_path: str) -> None:
 
     lines += ["", "## Per-run values", "",
               "| arm | run | relax | hits | hits/100 | best \\|Δgap\\| | novel frac "
-              "| critic vetoes | API $ | cache-read share | hit formulas |",
-              "|---|---|---|---|---|---|---|---|---|---|---|"]
+              "| critic vetoes | critic auto-approved | API $ | cache-read share | hit formulas |",
+              "|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in rows:
         lines.append(
             f"| {r['arm']} | {r['run']} | {r['relaxations']} | {r['hits']} "
             f"| {_fmt(r['hits_per_100_relaxations'], 1)} | {_fmt(r['best_gap_distance_ev'], 3)} "
             f"| {_fmt(r['novel_fraction_evaluated'])} | {_fmt(r['critic_vetoes'])} "
-            f"| {_fmt(r['api_cost_usd'])} | {_fmt(r['cache_read_share'])} "
+            f"| {_fmt(r['critic_auto_approved'])} | {_fmt(r['api_cost_usd'])} | {_fmt(r['cache_read_share'])} "
             f"| {r['hit_formulas'] or '—'} |")
 
     comps = spec.get("comparisons", [])
     if comps:
-        lines += ["", "## Comparisons (one-sided exact permutation test on the mean; "
-                  "P(A>B) = probability of superiority over all run pairs)", "",
-                  "| A | B | metric | mean A | mean B | P(A>B) | p (A > B) |",
+        lines += ["", "## Comparisons (exact permutation test on the difference in means, "
+                  "two-sided; P(A>B) = probability of superiority over all run pairs)", "",
+                  "| A | B | metric | mean A | mean B | P(A>B) | p (two-sided) |",
                   "|---|---|---|---|---|---|---|"]
         summary_json["_comparisons"] = []
         for a, b in comps:
@@ -284,7 +321,7 @@ def main(spec_path: str) -> None:
                     p = permutation_p(va, vb)
                 ps = prob_superiority(va, vb)
                 summary_json["_comparisons"].append(
-                    {"a": a, "b": b, "metric": metric, "p_one_sided": p,
+                    {"a": a, "b": b, "metric": metric, "p_two_sided": p,
                      "prob_superiority": ps})
                 lines.append(
                     f"| {a} | {b} | {metric} | {statistics.fmean(va):.2f} "
