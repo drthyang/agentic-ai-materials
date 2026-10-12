@@ -115,7 +115,14 @@ Activate one: `cp config/missions/qd-emitter.yaml config/mission.yaml`
 
 ## Results
 
-> **Correction (2026-10-11): a structure audit narrows these results.**
+> **Correction (2026-10-11, extended 2026-10-12): two scoring defects; the results below are
+> being redone.** (1) The chalcopyrite and kesterite prototypes were defective (below).
+> (2) The convex hull was built from Materials Project's *uncorrected* energies while CHGNet
+> predicts on the MP2020-corrected scale, so oxides, chalcogenides and halides looked
+> 0.1–0.35 eV/atom more stable than they are and the "near-stable" test barely filtered
+> anything. Both are fixed; every recorded run is being re-scored and the benchmark rerun
+> locally (no API) — see `results/2026-10-12-fixed-prototypes/` when it lands.
+>
 > - **The defect.** The chalcopyrite and kesterite prototypes in
 >   `src/athanor/prototypes.py` are not the structures they name. Each is an 8-atom
 >   half cell in the full c ≈ 11 Å box, with a ~7 Å empty gap and P2 symmetry instead of
@@ -169,12 +176,16 @@ matter.
   (not significant) because it used under a tenth of its budget. The qwen
   runs are from July 2026; the write-up lists what that does and does not
   control.
-- **Agent vs baselines.** All 19 Claude runs on this mission, in every
-  configuration tried, beat all 24 baseline runs on both metrics.
-- **Which parts matter.** Giving the agent the BO acquisition function
+- ~~**Agent vs baselines.** All 19 Claude runs on this mission, in every
+  configuration tried, beat all 24 baseline runs on both metrics.~~
+  *Withdrawn: does not survive the structure audit.*
+- **Which parts matter.** ~~Giving the agent the BO acquisition function
   *lowered* its hits (11.0 vs 16.4 per run, n = 5 each, p = 0.012); a
   surrogate × critic 2×2 puts the loss in the combination of the two
-  (critic vetoes rose 2.5×). The critic on its own changed nothing.
+  (critic vetoes rose 2.5×).~~ *Withdrawn: not significant on
+  structure-robust hits (two-sided p = 0.18), and the surrogate × critic
+  interaction was never significant (p = 0.17 even on raw hits).* The
+  critic on its own changed nothing.
   Opus 5.5 showed no detectable gain over Sonnet at ~2.7× the cost.
 - **Replicated baselines.** Bayesian optimisation at n = 8 is
   indistinguishable from random, so an earlier n = 2 reading of "zero
@@ -190,8 +201,10 @@ Hits recur across runs (the agents keep re-finding the Ag₂-kesterite and
 alkali-telluride families), so per-run counts are not independent
 discoveries, and "absent from Materials Project" is not "new to science".
 
-All predictions carry surrogate error bars (CHGNet ~0.05 eV/atom on hull
-distances; MEGNet gaps worse). Outputs are *candidates for validation*, never
+All predictions carry surrogate error bars: CHGNet hull distances are
+uncertain by several tens of meV/atom even on the corrected scale (zinc-blende
+GaAs, InAs and AlAs come out 0.07–0.13 eV/atom above the hull), and MEGNet gaps
+by several tenths of an eV. Outputs are *candidates for validation*, never
 "discoveries".
 
 ## Layout

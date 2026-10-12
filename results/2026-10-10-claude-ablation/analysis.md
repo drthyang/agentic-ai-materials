@@ -35,9 +35,13 @@ pipeline ([structure-audit.csv](structure-audit.csv)):
 | QD | baselines | 23 | 9 |
 
 Every PV loss is the predicted band gap leaving the window (median shift
-0.56 eV, up to 1.6 eV); none is a stability or convergence failure. In the
-bulk cells 88 of 93 compositions sit on the hull, so in this pipeline the
-stability criterion barely discriminates these families. Which geometry
+0.66 eV over the 40 losses, up to 1.6 eV); none is a stability or
+convergence failure. In the bulk cells 88 of 93 compositions sit on the
+hull — explained on 2026-10-12: the hull was built from Materials Project's
+uncorrected energies while CHGNet predicts on the MP2020-corrected scale
+(fixed in edc49f9), so the stability criterion barely filtered anything in
+any arm. Every recorded row is re-scored with both fixes in
+[rescore-rows.csv](rescore-rows.csv) (see "Re-score with both fixes"). Which geometry
 gives the *right* gap is a question for DFT; the point is that the hit
 labels depend on a starting geometry the benchmark never intended.
 
@@ -281,9 +285,12 @@ MP lookups have not drifted since July. Details: [arms-qd-summary.md](arms-qd-su
 - **Hit:** converged + gap in window + hull ≤ 0.05 eV/atom + not a
   Materials Project composition (`metrics.row_flags`). MP-novel is not new
   to science (the July audit found Ag₂ZnGeSe₄ likely known and CdAg₂GeSe₄
-  recently synthesised); none of the new hits has been audited against
-  ICSD/OQMD. CHGNet hull errors (~0.05 eV/atom) are the size of the hull
-  window itself.
+  recently synthesised); the October hits were checked against OQMD and
+  COD (see the novelty audit above) but not ICSD, which is licensed. The
+  hull distances in this write-up's raw tables were computed on the wrong
+  energy scale (see the first section); even on the corrected scale CHGNet
+  hull distances carry errors of several tens of meV/atom, the size of the
+  0.05 eV/atom window itself.
 - **Proposers:** `claude-sonnet-5-5` and `claude-opus-5-5`, adaptive
   thinking at `effort=high` (Sonnet's API default, set explicitly; no
   effort sweep), prompt caching on tools + system and on the growing turn
@@ -296,8 +303,9 @@ MP lookups have not drifted since July. Details: [arms-qd-summary.md](arms-qd-su
 - **Runs** are independent samples; the "seed" names agent runs and seeds
   only the baselines, which are deterministic per seed.
 - **Code:** every October run directory records its `git_commit` in
-  `run_config.json`; `src/` and `config/` are identical across all of them
-  (132fc4b onward; later commits are data and scripts only).
+  `run_config.json`. From 132fc4b on, the only `src/` change during the
+  runs was 18d0b95 (API prices and a ledger column), which touches spend
+  accounting, not agent behaviour or scoring; `config/` did not change.
 
 ### What is and isn't matched in the model ablation
 
