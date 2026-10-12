@@ -37,6 +37,9 @@ LEDGER_FIELDS = [
     # set only on rows re-priced after logging (cost_usd is then the restated
     # value, computed from the row's own token counts)
     "cost_usd_as_logged",
+    # which backend the row meters: proposer or critic (blank on rows logged
+    # before critics were metered, which were all proposers)
+    "role",
 ]
 
 # Reserved headroom under a global spend cap: one request can overshoot the
@@ -106,7 +109,7 @@ def _run_benchmark_locked(
 ) -> Path:
     iterations = iterations or cfg.budget.iterations
     remaining = None
-    if include_agent and spend_cap_usd is not None and cfg.llm.backend == "anthropic":
+    if include_agent and spend_cap_usd is not None and uses_api(cfg):
         spent = ledger_total_usd(ledger) if ledger else 0.0
         remaining = spend_cap_usd - spent - _CAP_MARGIN_USD
         if remaining <= 0:
@@ -145,23 +148,33 @@ def _run_benchmark_locked(
         agent_cfg.paths.reports = outdir
         log.info("--- running agent campaign (%d iterations, %s/%s) ---",
                  iterations, cfg.llm.backend, cfg.llm.model)
+        from athanor.llm.anthropic_backend import SpendTracker
+
         backend = make_backend(cfg.llm)
+        tracker = SpendTracker(cap_usd=remaining, usage_dir=outdir)
+        if cfg.llm.backend == "anthropic":
+            tracker.attach(backend, role="proposer")
         if remaining is not None:
-            cap = getattr(backend, "max_cost_usd", None)
-            backend.max_cost_usd = remaining if cap is None else min(cap, remaining)
-            log.info("agent spend cap for this run: $%.2f", backend.max_cost_usd)
-        if hasattr(backend, "usage_path"):
-            backend.usage_path = outdir / "usage.json"
+            log.info("API spend cap for this run (proposer + critic): $%.2f", remaining)
+        if ledger and uses_api(cfg):
+            # a run killed with SIGKILL never reaches the final ledger row;
+            # this marker lets ledger_total_usd find its usage files instead
+            append_ledger(ledger, outdir, cfg.mission.name, {}, "started")
         run_stats: dict = {}
         status = "error"
         try:
-            run_campaign(agent_cfg, backend, iterations=iterations, run_stats=run_stats)
-            status = "ok" if not run_stats.get("aborted_turns") else "aborted_turns"
+            run_campaign(agent_cfg, backend, iterations=iterations, run_stats=run_stats,
+                         spend_tracker=tracker)
+            status = "ok"
+            if run_stats.get("aborted_turns"):
+                status = "aborted_turns"
+            if run_stats.get("critic_all_failed_open"):
+                status = "critic_failed_open"
         finally:
             (outdir / "agent_stats.json").write_text(json.dumps(run_stats, indent=1))
-            if hasattr(backend, "usage_summary"):
-                usage = backend.usage_summary()
-                (outdir / "usage.json").write_text(json.dumps(usage, indent=1))
+            for role, member in tracker.members:
+                usage = {**member.usage_summary(), "role": role}
+                member.usage_path.write_text(json.dumps(usage, indent=1))
                 if ledger:
                     append_ledger(ledger, outdir, cfg.mission.name, usage, status)
         db = CandidateDB(agent_cfg.paths.db)
@@ -218,11 +231,30 @@ def _write_run_config(outdir: Path, cfg: MissionConfig, iterations: int, seed: i
     (outdir / "run_config.json").write_text(json.dumps(snapshot, indent=1))
 
 
+def uses_api(cfg: MissionConfig) -> bool:
+    """Does this campaign call a paid API, as proposer or as critic?"""
+    critic_backend = cfg.critic.backend or cfg.llm.backend
+    return cfg.llm.backend == "anthropic" or (cfg.critic.enabled and critic_backend == "anthropic")
+
+
 def ledger_total_usd(path: Path | None) -> float:
+    """Total spend on the ledger, including runs that were killed before they
+    could log: a 'started' row without a later row for the same run dir is
+    costed from the usage files that run flushed after every API call."""
     if path is None or not Path(path).exists():
         return 0.0
     with open(path, newline="") as f:
-        return sum(float(r["cost_usd"] or 0) for r in csv.DictReader(f))
+        rows = list(csv.DictReader(f))
+    total = sum(float(r.get("cost_usd") or 0) for r in rows)
+    finished = {r["run_dir"] for r in rows if r.get("status") != "started"}
+    for r in rows:
+        if r.get("status") == "started" and r["run_dir"] not in finished:
+            for usage_file in sorted(Path(r["run_dir"]).glob("*usage.json")):
+                try:
+                    total += float(json.loads(usage_file.read_text()).get("cost_usd") or 0)
+                except (OSError, ValueError):
+                    pass
+    return total
 
 
 def append_ledger(path: Path, run_dir: Path, mission: str, usage: dict,
@@ -230,6 +262,15 @@ def append_ledger(path: Path, run_dir: Path, mission: str, usage: dict,
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     new = not path.exists()
+    if not new:
+        with open(path, newline="") as f:
+            reader = csv.DictReader(f)
+            header, old_rows = reader.fieldnames or [], list(reader)
+        if header != LEDGER_FIELDS:  # migrate a ledger written with fewer columns
+            with open(path, "w", newline="") as f:
+                w = csv.DictWriter(f, fieldnames=LEDGER_FIELDS)
+                w.writeheader()
+                w.writerows([{k: r.get(k) for k in LEDGER_FIELDS} for r in old_rows])
     row = {
         "finished_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "run_dir": str(run_dir),

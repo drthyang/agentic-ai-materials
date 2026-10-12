@@ -147,8 +147,20 @@ def test_usage_pricing_sonnet():
     assert u.stop_reasons == {"end_turn": 1}
 
 
-def test_unknown_model_priced_at_highest_known_rate():
-    assert price_for("claude-mystery-9") == price_for("claude-opus-5-5")
+def test_unknown_model_priced_at_the_componentwise_maximum():
+    from athanor.llm.anthropic_backend import PRICES_PER_MTOK
+
+    fallback = price_for("claude-mystery-9")
+    for i in range(4):
+        assert fallback[i] == max(p[i] for p in PRICES_PER_MTOK.values())
+    # no known model is under-costed by the fallback (the old tuple max picked
+    # Opus 5.5's $4/$20 and under-costed Opus 5 and Fable)
+    assert fallback >= price_for("claude-fable-5") and fallback[1] >= 50
+
+
+def test_unpriced_model_refused_under_a_cap():
+    with pytest.raises(ValueError, match="no price"):
+        AnthropicBackend(model="claude-mystery-9", max_cost_usd=1.0, client=_client([]))
 
 
 def test_spend_cap_stops_before_the_next_request(tmp_path):
@@ -302,7 +314,85 @@ def test_agent_only_benchmark_writes_artifacts(cfg, tmp_path, monkeypatch):
     assert snap["prototype_cells"]["kesterite-Cu2ZnSnS4"] == 16
     assert json.loads((outdir / "usage.json").read_text())["calls"] == 2
     assert json.loads((outdir / "agent_stats.json").read_text())["aborted_turns"] == 0
-    assert be.max_cost_usd == pytest.approx(40 - 0.5)
-    assert len(list(csv.DictReader(open(ledger)))) == 1
+    assert be.tracker.cap_usd == pytest.approx(40 - 0.5)
+    rows = list(csv.DictReader(open(ledger)))
+    assert [r["status"] for r in rows] == ["started", "ok"]
+    assert rows[1]["role"] == "proposer"
     metrics = json.loads((outdir / "metrics.json").read_text())
     assert metrics[0]["name"].startswith("agent")
+
+
+# --------------------------------------------------------------------------
+# one tracker for proposer and critic; killed runs still count
+# --------------------------------------------------------------------------
+
+def test_tracker_caps_proposer_and_critic_together():
+    from athanor.llm.anthropic_backend import SpendTracker
+
+    pricey = _usage(inp=0, out=60_000)  # $0.60 each on Sonnet 5.5
+    proposer = AnthropicBackend(model="claude-sonnet-5-5",
+                                client=_client([_text_response("a", pricey)]))
+    critic = AnthropicBackend(model="claude-sonnet-5-5",
+                              client=_client([_text_response("b", pricey),
+                                              _text_response("c", pricey)]))
+    t = SpendTracker(cap_usd=1.0)
+    t.attach(proposer, "proposer")
+    t.attach(critic, "critic")
+    proposer.chat("S", [{"role": "user", "content": "x"}], TOOLS)
+    critic.chat("S", [{"role": "user", "content": "x"}], [])
+    assert t.spent_usd == pytest.approx(1.2)
+    with pytest.raises(SpendCapExceeded):  # either member is stopped
+        critic.chat("S", [{"role": "user", "content": "y"}], [])
+
+
+def test_hybrid_local_proposer_claude_critic_is_metered_and_logged(cfg, tmp_path, monkeypatch):
+    from athanor.benchmark import ledger_total_usd, run_benchmark
+
+    monkeypatch.chdir(tmp_path)
+    critic = AnthropicBackend(model="claude-sonnet-5-5", client=_client([]))
+
+    class LocalProposer(LLMBackend):
+        name = "openai-compat"
+
+        def chat(self, system, messages, tools):
+            return LLMResponse(text="nothing to do")
+
+    def factory(llm):
+        return critic if llm.backend == "anthropic" else LocalProposer()
+
+    monkeypatch.setattr("athanor.llm.make_backend", factory)
+    cfg.llm.backend, cfg.llm.model = "ollama", "qwen3:32b"
+    cfg.critic.enabled, cfg.critic.backend, cfg.critic.model = True, "anthropic", "claude-sonnet-5-5"
+    ledger = tmp_path / "ledger.csv"
+    outdir = run_benchmark(cfg, iterations=1, baselines=[], ledger=ledger, spend_cap_usd=5)
+    rows = list(csv.DictReader(open(ledger)))
+    assert [(r["status"], r["role"]) for r in rows] == [("started", ""), ("ok", "critic")]
+    assert (outdir / "critic_usage.json").exists()
+    assert critic.tracker.cap_usd == pytest.approx(5 - 0.5)
+    assert ledger_total_usd(ledger) == 0.0
+
+
+def test_ledger_counts_a_run_killed_before_it_could_log(tmp_path):
+    from athanor.benchmark import append_ledger, ledger_total_usd
+
+    ledger = tmp_path / "ledger.csv"
+    killed = tmp_path / "run-killed"
+    killed.mkdir()
+    (killed / "usage.json").write_text(json.dumps({"cost_usd": 0.8}))
+    (killed / "critic_usage.json").write_text(json.dumps({"cost_usd": 0.1}))
+    append_ledger(ledger, killed, "pv", {}, "started")
+    done = tmp_path / "run-done"
+    append_ledger(ledger, done, "pv", {}, "started")
+    append_ledger(ledger, done, "pv", {"cost_usd": 0.5, "role": "proposer"}, "ok")
+    assert ledger_total_usd(ledger) == pytest.approx(0.5 + 0.8 + 0.1)
+
+
+def test_old_ledger_is_migrated_to_the_new_columns(tmp_path):
+    from athanor.benchmark import LEDGER_FIELDS, append_ledger, ledger_total_usd
+
+    ledger = tmp_path / "ledger.csv"
+    ledger.write_text("finished_utc,run_dir,mission,cost_usd,status\n2026,r1,pv,1.5,ok\n")
+    append_ledger(ledger, tmp_path / "r2", "pv", {"cost_usd": 0.5, "role": "critic"}, "ok")
+    rows = list(csv.DictReader(open(ledger)))
+    assert list(rows[0]) == LEDGER_FIELDS and rows[1]["role"] == "critic"
+    assert ledger_total_usd(ledger) == pytest.approx(2.0)

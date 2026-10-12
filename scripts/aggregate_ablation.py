@@ -37,7 +37,8 @@ from athanor.metrics import compute_metrics
 METRICS = ("hits_per_100_relaxations", "hits", "relaxations")
 
 
-def run_row(arm: str, run_dir: Path, db_name: str, cfg: MissionConfig) -> dict:
+def run_row(arm: str, run_dir: Path, db_name: str, cfg: MissionConfig,
+            ledger_status: dict | None = None) -> dict:
     db = CandidateDB(run_dir / db_name)
     m = compute_metrics(arm, db, cfg)
     novel = db._conn.execute(
@@ -61,18 +62,25 @@ def run_row(arm: str, run_dir: Path, db_name: str, cfg: MissionConfig) -> dict:
         "api_calls": None,
         "cache_read_share": None,
         "tool_calls": None,
+        "ledger_status": ledger_status.get(run_dir.name) if ledger_status else None,
     }
     usage_f = run_dir / "usage.json"
+    if db_name == "agent.db":
+        # proposer and (if it used the API) critic, priced from the recorded
+        # token counts at current rates, not the cost_usd frozen at logging
+        cost = calls = None
+        for f in sorted(run_dir.glob("*usage.json")):
+            u = json.loads(f.read_text())
+            p_in, p_out, p_read, p_write = price_for(u["model"])
+            cost = (cost or 0) + (
+                u.get("input_tokens", 0) * p_in + u.get("output_tokens", 0) * p_out
+                + u.get("cache_read_input_tokens", 0) * p_read
+                + u.get("cache_creation_input_tokens", 0) * p_write) / 1e6
+            calls = (calls or 0) + (u.get("calls") or 0)
+        row["api_cost_usd"] = None if cost is None else round(cost, 4)
+        row["api_calls"] = calls
     if db_name == "agent.db" and usage_f.exists():
         u = json.loads(usage_f.read_text())
-        # priced from the recorded token counts at current rates, not the
-        # cost_usd frozen into usage.json when the run was logged
-        p_in, p_out, p_read, p_write = price_for(u["model"])
-        row["api_cost_usd"] = round((
-            u.get("input_tokens", 0) * p_in + u.get("output_tokens", 0) * p_out
-            + u.get("cache_read_input_tokens", 0) * p_read
-            + u.get("cache_creation_input_tokens", 0) * p_write) / 1e6, 4)
-        row["api_calls"] = u.get("calls")
         total_in = (u.get("input_tokens", 0) + u.get("cache_read_input_tokens", 0)
                     + u.get("cache_creation_input_tokens", 0))
         if total_in:
@@ -93,6 +101,21 @@ def run_row(arm: str, run_dir: Path, db_name: str, cfg: MissionConfig) -> dict:
             "AND filter_reasons LIKE '%critic:%'").fetchone()[0]
         db.close()
     return row
+
+
+def load_ledger_status(study_dir: Path) -> dict[str, str]:
+    """run directory name -> final ledger status (ok, aborted_turns,
+    critic_failed_open, error; 'started' alone means the run was killed)."""
+    path = study_dir / "api-spend-ledger.csv"
+    if not path.exists():
+        return {}
+    out: dict[str, str] = {}
+    with open(path, newline="") as f:
+        for r in csv.DictReader(f):
+            name = Path(r["run_dir"]).name
+            if r.get("status") != "started" or name not in out:
+                out[name] = r.get("status")
+    return out
 
 
 def critic_auto_approved_from_log(run_dir: Path) -> int | None:
@@ -238,7 +261,8 @@ def main(spec_path: str) -> None:
     for arm, arm_spec in spec["arms"].items():
         cfg = load_mission(arm_spec["mission"]) if "mission" in arm_spec else default_cfg
         for run in arm_spec["runs"]:
-            rows.append(run_row(arm, Path(run), arm_spec["db"], cfg))
+            rows.append(run_row(arm, Path(run), arm_spec["db"], cfg,
+                                load_ledger_status(spec_path.parent)))
 
     outdir = spec_path.parent
     robust = load_structure_audit(outdir / "structure-audit.csv")
@@ -292,14 +316,14 @@ def main(spec_path: str) -> None:
 
     lines += ["", "## Per-run values", "",
               "| arm | run | relax | hits | hits/100 | best \\|Δgap\\| | novel frac "
-              "| critic vetoes | critic auto-approved | API $ | cache-read share | hit formulas |",
+              "| critic vetoes | critic auto-approved | API $ | ledger status | hit formulas |",
               "|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in rows:
         lines.append(
             f"| {r['arm']} | {r['run']} | {r['relaxations']} | {r['hits']} "
             f"| {_fmt(r['hits_per_100_relaxations'], 1)} | {_fmt(r['best_gap_distance_ev'], 3)} "
             f"| {_fmt(r['novel_fraction_evaluated'])} | {_fmt(r['critic_vetoes'])} "
-            f"| {_fmt(r['critic_auto_approved'])} | {_fmt(r['api_cost_usd'])} | {_fmt(r['cache_read_share'])} "
+            f"| {_fmt(r['critic_auto_approved'])} | {_fmt(r['api_cost_usd'])} | {r['ledger_status'] or '—'} "
             f"| {r['hit_formulas'] or '—'} |")
 
     comps = spec.get("comparisons", [])

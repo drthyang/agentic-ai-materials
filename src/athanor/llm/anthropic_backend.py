@@ -33,18 +33,27 @@ log = logging.getLogger("athanor.llm")
 # USD per million tokens: (input, output, cache read, 5-minute cache write).
 # Source: https://platform.claude.com/docs/en/about-claude/pricing (checked
 # 2026-10-11). Footnote 2 there: "Cache hits and refreshes on Claude Opus 5.5
-# and Claude Sonnet 5.5 are priced at 0.05x the base input price" (not the
-# usual 0.1x). 5-minute cache writes are 1.25x base input.
+# and Claude Sonnet 5.5 are priced at 0.05x the base input price" (Fable 5.1:
+# 0.025x; the rest 0.1x). 5-minute cache writes are 1.25x base input.
 PRICES_PER_MTOK: dict[str, tuple[float, float, float, float]] = {
-    "claude-sonnet-5-5": (2.00, 10.00, 0.10, 2.50),
+    "claude-fable-5-1": (10.00, 50.00, 0.25, 12.50),
+    "claude-fable-5": (10.00, 50.00, 1.00, 12.50),
     "claude-opus-5-5": (4.00, 20.00, 0.20, 5.00),
+    "claude-opus-5": (5.00, 25.00, 0.50, 6.25),
+    "claude-opus-4-8": (5.00, 25.00, 0.50, 6.25),
+    "claude-opus-4-7": (5.00, 25.00, 0.50, 6.25),
+    "claude-opus-4-6": (5.00, 25.00, 0.50, 6.25),
+    "claude-sonnet-5-5": (2.00, 10.00, 0.10, 2.50),
+    "claude-sonnet-5": (2.00, 10.00, 0.20, 2.50),
+    "claude-sonnet-4-6": (3.00, 15.00, 0.30, 3.75),
     # Haiku 5.5 is priced by prompt length; this is the >100k-token tier,
     # the higher of the two, so the spend guard can only over-estimate
     "claude-haiku-5-5": (0.50, 2.50, 0.05, 0.625),
 }
-# Unpriced models are costed at the most expensive known rate, so the spend
-# guard can only over-estimate.
-_FALLBACK_PRICE = max(PRICES_PER_MTOK.values())
+# For an unpriced model without a spend cap, cost every component at the
+# highest rate on record (a component-wise maximum, so no single rate is
+# under-counted). With a cap set, unpriced models are refused outright.
+_FALLBACK_PRICE = tuple(max(p[i] for p in PRICES_PER_MTOK.values()) for i in range(4))
 
 
 class SpendCapExceeded(RuntimeError):
@@ -84,8 +93,42 @@ class UsageTotals:
 def price_for(model: str) -> tuple[float, float, float, float]:
     if model in PRICES_PER_MTOK:
         return PRICES_PER_MTOK[model]
-    log.warning("no price on record for %s; costing at the highest known rate", model)
+    log.warning("no price on record for %s; costing at the highest known rates", model)
     return _FALLBACK_PRICE
+
+
+class SpendTracker:
+    """One budget for every Claude backend in a campaign (proposer and critic).
+
+    Each attached backend checks the shared total before every request, so
+    a hybrid local-proposer + Claude-critic run is capped like any other,
+    and flushes its own usage file (``usage.json`` for the proposer,
+    ``<role>_usage.json`` otherwise) after every call.
+    """
+
+    def __init__(self, cap_usd: float | None = None, usage_dir: Path | None = None):
+        self.cap_usd = cap_usd
+        self.usage_dir = usage_dir
+        self.members: list[tuple[str, AnthropicBackend]] = []
+
+    def attach(self, backend: "AnthropicBackend", role: str) -> None:
+        if self.cap_usd is not None and backend.model not in PRICES_PER_MTOK:
+            raise ValueError(f"no price on record for {backend.model!r}; refusing to run "
+                             "it under a spend cap (add it to PRICES_PER_MTOK)")
+        backend.tracker = self
+        if self.usage_dir is not None:
+            name = "usage.json" if role == "proposer" else f"{role}_usage.json"
+            backend.usage_path = Path(self.usage_dir) / name
+        self.members.append((role, backend))
+
+    @property
+    def spent_usd(self) -> float:
+        return sum(b.cost_usd for _, b in self.members)
+
+    def check(self) -> None:
+        if self.cap_usd is not None and self.spent_usd >= self.cap_usd:
+            raise SpendCapExceeded(
+                f"campaign spent ${self.spent_usd:.2f} of the ${self.cap_usd:.2f} cap")
 
 
 class AnthropicBackend(LLMBackend):
@@ -102,7 +145,11 @@ class AnthropicBackend(LLMBackend):
         self.model = model
         self.max_tokens = max_tokens
         self.effort = effort
+        if max_cost_usd is not None and model not in PRICES_PER_MTOK:
+            raise ValueError(f"no price on record for {model!r}; refusing to run it "
+                             "under a spend cap (add it to PRICES_PER_MTOK)")
         self.max_cost_usd = max_cost_usd
+        self.tracker: SpendTracker | None = None
         self.usage = UsageTotals()
         # when set, usage is flushed here after every call so a killed run
         # still leaves an exact spend record
@@ -134,6 +181,8 @@ class AnthropicBackend(LLMBackend):
             raise SpendCapExceeded(
                 f"spent ${self.cost_usd:.2f} of the ${self.max_cost_usd:.2f} cap"
             )
+        if self.tracker is not None:
+            self.tracker.check()
         kwargs: dict = {
             "model": self.model,
             "max_tokens": self.max_tokens,
