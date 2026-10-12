@@ -54,3 +54,27 @@ def test_audits_key_on_the_route_not_just_the_formula(tmp_path, monkeypatch):
     assert len(hits) == 2 and {h["parent_prototype"] for h in hits} == {
         "chalcopyrite-CuInSe2", "zincblende-GaAs"}
     assert sa.route_key("X", "p", '{"b": "c", "a": "d"}') == sa.route_key("X", "p", {"a": "d", "b": "c"})
+
+
+def test_rescored_hits_count_distinct_compositions_under_each_fix():
+    from athanor.config import load_mission
+
+    cfg = load_mission("config/mission.yaml")
+    common = {"status": "scored", "is_novel": "1", "converged": "1", "cellfix_error": "",
+              "cellfix_converged": "True"}
+    rows = [
+        # hit on the old hull, off the window once the cell is fixed
+        {**common, "formula": "A2B", "band_gap_ev": "1.4", "hull_corrected_same_cell": "0.01",
+         "cellfix_band_gap_ev": "0.3", "cellfix_e_above_hull": "0.0"},
+        # unstable on the corrected hull in its own cell, a hit in the correct cell
+        {**common, "formula": "CD", "band_gap_ev": "1.4", "hull_corrected_same_cell": "0.2",
+         "cellfix_band_gap_ev": "1.5", "cellfix_e_above_hull": "0.02"},
+        # the same composition twice counts once
+        {**common, "formula": "CD", "band_gap_ev": "1.4", "hull_corrected_same_cell": "0.2",
+         "cellfix_band_gap_ev": "1.5", "cellfix_e_above_hull": "0.02"},
+        # known to Materials Project: never a hit
+        {**common, "formula": "EF", "is_novel": "0", "band_gap_ev": "1.4",
+         "hull_corrected_same_cell": "0.0", "cellfix_band_gap_ev": "1.4",
+         "cellfix_e_above_hull": "0.0"},
+    ]
+    assert agg.rescored_hits(rows, cfg) == (1, 1)

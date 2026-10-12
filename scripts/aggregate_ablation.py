@@ -143,6 +143,47 @@ def critic_auto_approved_from_log(run_dir: Path) -> int | None:
     return total
 
 
+def load_rescore(path: Path) -> dict[tuple[str, str], list[dict]]:
+    """(arm, run dir name) -> that run's rows from rescore_runs.py."""
+    if not path.exists():
+        return {}
+    out: dict[tuple[str, str], list[dict]] = {}
+    with open(path, newline="") as f:
+        for r in csv.DictReader(f):
+            out.setdefault((r["arm"], r["run"]), []).append(r)
+    return out
+
+
+def _num(x):
+    return None if x in (None, "", "None") else float(x)
+
+
+def rescored_hits(rows: list[dict], cfg: MissionConfig) -> tuple[int | None, int | None]:
+    """Distinct hit compositions in one run under (a) the corrected hull on
+    the run's own cells, (b) correct cells and the corrected hull."""
+    if not rows:
+        return None, None
+    from athanor.metrics import row_flags
+
+    novel = {"1": 1, "0": 0}
+    hull_fix, fixed = set(), set()
+    for r in rows:
+        base = {"formula": r["formula"], "is_novel": novel.get(r["is_novel"])}
+        if r["status"] == "scored" and r["hull_corrected_same_cell"] not in ("", None):
+            a = {**base, "status": "scored", "converged": r["converged"] in ("1", "True"),
+                 "band_gap_ev": _num(r["band_gap_ev"]),
+                 "e_above_hull": _num(r["hull_corrected_same_cell"])}
+            if row_flags(a, cfg)["hit"]:
+                hull_fix.add(r["formula"])
+        if not r["cellfix_error"]:
+            b = {**base, "status": "scored", "converged": r["cellfix_converged"] == "True",
+                 "band_gap_ev": _num(r["cellfix_band_gap_ev"]),
+                 "e_above_hull": _num(r["cellfix_e_above_hull"])}
+            if row_flags(b, cfg)["hit"]:
+                fixed.add(r["formula"])
+    return len(hull_fix), len(fixed)
+
+
 def load_structure_audit(path: Path) -> dict[tuple[str, str], bool]:
     """(mission, reduced formula) -> still a hit in a correct bulk cell."""
     if not path.exists():
@@ -258,8 +299,10 @@ def main(spec_path: str) -> None:
     spec = json.loads(spec_path.read_text())
     default_cfg = load_mission(spec.get("mission", "config/mission.yaml"))
     rows: list[dict] = []
+    cfgs: dict = {}
     for arm, arm_spec in spec["arms"].items():
         cfg = load_mission(arm_spec["mission"]) if "mission" in arm_spec else default_cfg
+        cfgs[arm] = cfg
         for run in arm_spec["runs"]:
             rows.append(run_row(arm, Path(run), arm_spec["db"], cfg,
                                 load_ledger_status(spec_path.parent)))
@@ -273,6 +316,12 @@ def main(spec_path: str) -> None:
             fs = r["hit_formulas"].split()
             known = [robust.get((r["mission"], f)) for f in fs]
             r["robust_hits"] = None if None in known else sum(known)
+    rescored = load_rescore(outdir / "rescore-rows.csv")
+    if rescored:
+        metrics = metrics + ("hits_hullfix", "hits_fixed")
+        for r in rows:
+            r["hits_hullfix"], r["hits_fixed"] = rescored_hits(
+                rescored.get((r["arm"], r["run"]), []), cfgs[r["arm"]])
     with open(outdir / f"{spec_path.stem}-per-run.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0]))
         w.writeheader()
@@ -304,6 +353,21 @@ def main(spec_path: str) -> None:
             f"({int(hits['min'])}–{int(hits['max'])}) "
             f"| {_fmt(rel['mean'], 1)} ({int(rel['min'])}–{int(rel['max'])}) |"
         )
+    if rescored:
+        lines += ["", "Re-scored with both 2026-10 fixes (rescore-rows.csv; distinct "
+                  "compositions per run): *hull fix* = the run's own cells on the "
+                  "corrected hull; *both fixes* = every evaluated candidate rebuilt "
+                  "in a correct cell and scored on the corrected hull.", "",
+                  "| arm | n | raw hits/run | hull fix only | both fixes: mean ± sd (min–max) |",
+                  "|---|---|---|---|---|"]
+        for arm, arm_rows in by_arm.items():
+            raw, hf, fx = (summarize(arm_rows, k) for k in ("hits", "hits_hullfix", "hits_fixed"))
+            summary_json[arm]["hits_hullfix"], summary_json[arm]["hits_fixed"] = hf, fx
+            if fx["n"]:
+                lines.append(
+                    f"| {arm} | {fx['n']} | {_fmt(raw['mean'], 1)} | {_fmt(hf['mean'], 1)} "
+                    f"± {_fmt(hf['sd'], 1)} | {_fmt(fx['mean'], 1)} ± {_fmt(fx['sd'], 1)} "
+                    f"({int(fx['min'])}–{int(fx['max'])}) |")
     if robust:
         lines += ["", "Structure-robust hits per run (hits whose composition is still a "
                   "hit when re-scored in a correct bulk cell; structure-audit.csv):", "",
