@@ -8,3 +8,5 @@ finished_utc,run_dir,mission,backend,model,effort,calls,input_tokens,cache_creat
 2026-10-12T07:47:52+00:00,data/benchmark/20261012-074752-seed14-fx-sonnet-nosurr,pv-absorber-v1,,,,,,,,,,started,,
 2026-10-12T07:55:17+00:00,data/benchmark/20261012-074752-seed14-fx-sonnet-nosurr,pv-absorber-v1,anthropic,claude-sonnet-5-5,high,40,92,86652,294636,28424,0.5305,critic_failed_open,,proposer
 2026-10-12T07:55:19+00:00,data/benchmark/20261012-075519-seed15-fx-sonnet-nosurr,pv-absorber-v1,,,,,,,,,,started,,
+2026-10-12T08:05:03+00:00,data/benchmark/20261012-075519-seed15-fx-sonnet-nosurr,pv-absorber-v1,anthropic,claude-sonnet-5-5,high,48,108,93694,423663,33454,0.6114,critic_failed_open,,proposer
+2026-10-12T08:05:05+00:00,data/benchmark/20261012-080505-seed21-fx-sonnet-surr,pv-absorber-v1,,,,,,,,,,started,,
