@@ -101,13 +101,16 @@ entire fictional campaign; see experiment log, benchmark 1 era.)
 
 ## 6. The experiment log (everything run so far)
 
-> **Correction 2026-10-12.** The chalcopyrite and kesterite prototypes used
-> in every run below were defective 8-atom half-cells (P2 symmetry, a ~7 Å
-> empty slab). Most hits in this log, including the silver-kesterite family
-> of benchmark 2 and the replicates and the CdCuSe₂ "first hit", are not
-> hits in a correct cell; claims built on them are marked *withdrawn*. See
-> [results/2026-10-10-claude-ablation/analysis.md](results/2026-10-10-claude-ablation/analysis.md); a rerun on fixed
-> prototypes is in `results/2026-10-12-fixed-prototypes/`.
+> **Correction 2026-10-12.** Every run below used two defective pieces
+> of scoring: chalcopyrite and kesterite prototypes that were 8-atom
+> half-cells (P2 symmetry, a ~7 Å empty slab), and a convex hull built from
+> Materials Project's uncorrected energies while CHGNet predicts on the
+> MP2020-corrected scale. Most hits in this log, including the
+> silver-kesterite family of benchmark 2, the replicates and the CdCuSe₂
+> "first hit", are not hits with correct scoring; claims built on them are
+> marked *withdrawn*. Both defects are fixed; see the audit
+> ([results/2026-10-10-claude-ablation/analysis.md](results/2026-10-10-claude-ablation/analysis.md))
+> and the rerun ([results/2026-10-12-fixed-prototypes/analysis.md](results/2026-10-12-fixed-prototypes/analysis.md)).
 
 | # | when | what | result | analysis |
 |---|---|---|---|---|
@@ -119,10 +122,17 @@ entire fictional campaign; see experiment log, benchmark 1 era.)
 | 6 | 07-08 night | replicates attempt 1 | both died on a 300s timeout → backend hardened (retries, crash guard) | commit `2ea3ea8` |
 | 7 | 07-08 | **replicates** (2 more agent runs) | ~~22.2 and 16.7 hits/100relax; agent 32.0±17.9 vs similarity 3.01±0.62, p≈0.006~~ *withdrawn 2026-10* (the runs did converge on one family, but its hits depend on the defective cell) | `results/2026-07-08-replication/` |
 
-**Current headline (2026-10):** the July headline (objective alignment
-beat a baseline ~10×) is withdrawn; see the correction above. The October
-study (Claude vs local proposer, replicated baselines, ablations) and its
-structure audit are in `results/2026-10-10-claude-ablation/analysis.md`.
+| 8 | 10-10/11 | **Claude ablation**: Sonnet/Opus vs qwen3:32b, BO at n=8, surrogate × critic 2×2, QD mission | raw Sonnet 16.4 hits/run vs similarity 2.0 — later shown to rest on the defects | `results/2026-10-10-claude-ablation/` |
+| 9 | 10-11 | **structure audit** (half-cell prototypes found), OQMD/COD novelty audit, same-day qwen rerun | 14 of 47 PV agent hits survive a correct cell; qwen same-day 0.3 hits/run | same |
+| 10 | 10-12 | **hull-scale bug** found and fixed; every recorded run re-scored with both fixes | Sonnet 7.4 vs similarity 0.9 hits/run (old choices, correct scoring) | same, `rescore-rows.csv` |
+| 11 | 10-12 | **rerun on both fixes** (local + $5.89 API) | Sonnet 5.4 ± 1.5 vs similarity 0.9 ± 0.4 (p = 0.0008) and qwen 0.3 ± 0.6 (p = 0.018); BO tool no effect; critic failed open in the Sonnet runs | `results/2026-10-12-fixed-prototypes/` |
+
+**Current headline (2026-10-12):** with both scoring defects fixed, a
+frontier proposer (Claude Sonnet 5.5) finds more surrogate-level
+candidates per run than the non-LLM baselines and than the local
+qwen3:32b, which still spends under a tenth of its budget. The July
+headline (objective alignment beat a baseline ~10×) is withdrawn. Details
+and caveats, including the failed critic: [results/2026-10-12-fixed-prototypes/analysis.md](results/2026-10-12-fixed-prototypes/analysis.md).
 
 ## 7. Commands
 

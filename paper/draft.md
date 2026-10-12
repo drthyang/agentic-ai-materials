@@ -7,9 +7,14 @@ links to a results/ artifact — keep it that way.*
 > with the abstract sentences struck through below.** They rest on
 > chalcopyrite and kesterite prototypes that were defective 8-atom
 > half-cells; most of their hits are not hits in a correct cell
-> ([results/2026-10-10-claude-ablation/analysis.md](../results/2026-10-10-claude-ablation/analysis.md)). A rerun on corrected
-> cells is in progress (`results/2026-10-12-fixed-prototypes/`) and the
-> draft will be rebuilt from it. C1, C2, C6 and C8 are unaffected; C6's
+> ([results/2026-10-10-claude-ablation/analysis.md](../results/2026-10-10-claude-ablation/analysis.md)). A second defect,
+> a convex hull on the wrong energy scale, was found and fixed the same
+> week. The rerun with both fixed
+> ([results/2026-10-12-fixed-prototypes/analysis.md](../results/2026-10-12-fixed-prototypes/analysis.md))
+> supports a different headline: a frontier proposer beats the baselines
+> and the local model (Sonnet 5.5 5.4 ± 1.5 hits/run vs similarity
+> 0.9 ± 0.4, p = 0.0008; vs qwen3:32b 0.3 ± 0.6, p = 0.018); the draft must
+> be rebuilt around it. C1, C2, C6 and C8 are unaffected; C6's
 > AgGaSe₂ was re-checked in a correct cell and is still a hit.
 
 **Title options** (pick at submission):
