@@ -1,0 +1,16 @@
+[
+ {
+  "name": "agent (qwen3:32b)",
+  "proposed": 18,
+  "filtered_out": 6,
+  "scored": 6,
+  "errors": 0,
+  "hits": 1,
+  "hit_formulas": [
+   "GaCu2SbS4"
+  ],
+  "rediscoveries": [],
+  "hits_per_100_relaxations": 16.666666666666668,
+  "best_gap_distance_ev": 0.01
+ }
+]
