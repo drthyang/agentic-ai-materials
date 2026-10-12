@@ -52,6 +52,10 @@ Candidates to review (formula, substitution applied to prototype):
 Return your verdicts JSON now."""
 
 
+class CriticReplyError(RuntimeError):
+    """A reply that arrived but cannot be a review (empty, instant, no verdicts)."""
+
+
 @dataclass
 class Verdict:
     approve: bool
@@ -89,7 +93,13 @@ class Critic:
         try:
             resp = self.backend.chat(CRITIC_SYSTEM,
                                      [{"role": "user", "content": prompt}], tools=[])
+            problem = self._reply_problem(resp.text)
+            if problem:
+                raise CriticReplyError(problem)
             verdicts, parsed = self._parse(resp.text, formulas)
+            if parsed and all(v.addressed is False for v in verdicts.values()):
+                raise CriticReplyError("reply named none of the candidates: "
+                                       + repr(resp.text[:200]))
         except Exception as exc:  # fail open
             log.warning("critic unavailable (%s); approving all", exc)
             self._failed(limit, f"{type(exc).__name__}: {exc}")
@@ -112,6 +122,41 @@ class Critic:
         log.info("critic: %d/%d approved%s", len(formulas) - len(vetoed),
                  len(formulas), f", vetoed: {vetoed}" if vetoed else "")
         return verdicts
+
+    def _reply_problem(self, text: str) -> str | None:
+        """Why a reply cannot be a real review, or None if it might be."""
+        latency = getattr(self.backend, "last_latency_s", None)
+        floor = getattr(self.backend, "min_reply_seconds", 0.0) or 0.0
+        if latency is not None and latency < floor:
+            return (f"reply in {latency * 1000:.0f} ms, faster than a review can be "
+                    f"written ({floor * 1000:.0f} ms floor); the model runner is likely broken")
+        if not text.strip():
+            return "empty reply"
+        return None
+
+    def preflight(self) -> tuple[bool, str]:
+        """Review one known candidate before the campaign spends anything.
+        Returns (ok, detail); does not touch the campaign's critic stats."""
+        batch = [{"formula": "CuInSe2", "substitution": {}}]
+        prompt = CRITIC_PROMPT.format(
+            gap_window=list(self.cfg.target.band_gap_ev),
+            hull_max=self.cfg.target.e_above_hull_max_ev_per_atom,
+            hypothesis="preflight check: the parent chalcopyrite itself",
+            candidates=json.dumps(batch, indent=1),
+        )
+        try:
+            resp = self.backend.chat(CRITIC_SYSTEM,
+                                     [{"role": "user", "content": prompt}], tools=[])
+        except Exception as exc:
+            return False, f"{type(exc).__name__}: {exc}"
+        problem = self._reply_problem(resp.text)
+        if problem:
+            return False, problem
+        verdicts, parsed = self._parse(resp.text, ["CuInSe2"])
+        if not parsed or verdicts["CuInSe2"].addressed is False:
+            return False, "no verdict for the preflight candidate: " + repr(resp.text[:200])
+        latency = getattr(self.backend, "last_latency_s", None)
+        return True, "ok" + (f" ({latency:.1f} s)" if latency is not None else "")
 
     def _failed(self, limit: int, detail: str) -> None:
         """Count a failed review; past the limit, stop the campaign before

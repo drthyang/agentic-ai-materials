@@ -402,10 +402,11 @@ def test_a_run_whose_critic_always_failed_open_is_flagged(cfg, monkeypatch):
         def chat(self, system, messages, tools):
             raise ConnectionError("critic down")
 
-    monkeypatch.setattr("athanor.llm.make_backend", lambda llm: Down())
+    monkeypatch.setattr("athanor.llm.make_backend", lambda llm, **kw: Down())
     monkeypatch.setattr("athanor.agent.tools.relax_and_score",
                         lambda s, max_steps=200, with_hull=True: ScoreResult(formula="X", converged=True))
     cfg.critic.enabled = True
+    cfg.critic.preflight = False  # exercise the end-of-run flag, not the preflight
     script = [
         LLMResponse(tool_calls=[_tc("propose_candidates", substitutions={"In": ["Ga"]}, hypothesis="h")]),
         LLMResponse(tool_calls=[_tc("evaluate_candidates", formulas=["GaCuSe2"], i="c2")]),
@@ -419,6 +420,9 @@ def test_a_run_whose_critic_always_failed_open_is_flagged(cfg, monkeypatch):
 
 
 # --- fail closed: a critic that keeps failing stops the campaign -------------
+
+PREFLIGHT_OK = json.dumps({"verdicts": [{"formula": "CuInSe2", "approve": True, "reason": "ok"}]})
+
 
 class _CriticReplies(LLMBackend):
     def __init__(self, replies):
@@ -445,7 +449,8 @@ def test_critic_failing_three_times_in_a_row_stops_the_campaign(cfg, monkeypatch
     monkeypatch.setattr("athanor.agent.tools.relax_and_score",
                         lambda s, max_steps=200, with_hull=True:
                         relaxed.append(s.composition.reduced_formula) or ScoreResult(formula="X", converged=True))
-    monkeypatch.setattr("athanor.llm.make_backend", lambda llm: _CriticReplies(["no json"] * 5))
+    monkeypatch.setattr("athanor.llm.make_backend",
+                        lambda llm, **kw: _CriticReplies([PREFLIGHT_OK] + ["no json"] * 5))
     cfg.critic.enabled = True
     stats: dict = {}
     report = run_campaign(cfg, ScriptedBackend(_three_batches()), iterations=1, run_stats=stats)
@@ -461,7 +466,7 @@ def test_a_good_review_resets_the_failure_count(cfg, monkeypatch):
                         lambda s, max_steps=200, with_hull=True: ScoreResult(formula="X", converged=True))
     ok = json.dumps({"verdicts": [{"formula": "CuAlSe2", "approve": True, "reason": "ok"}]})
     monkeypatch.setattr("athanor.llm.make_backend",
-                        lambda llm: _CriticReplies(["no json", ok, "no json"]))
+                        lambda llm, **kw: _CriticReplies([PREFLIGHT_OK, "no json", ok, "no json"]))
     cfg.critic.enabled = True
     stats: dict = {}
     run_campaign(cfg, ScriptedBackend(_three_batches()), iterations=1, run_stats=stats)
@@ -487,7 +492,8 @@ def test_benchmark_records_critic_unavailable_in_the_ledger(cfg, tmp_path, monke
 
     proposer = Proposer()
     monkeypatch.setattr("athanor.llm.make_backend",
-                        lambda llm: proposer if llm.backend == "anthropic" else _CriticReplies(["x"] * 5))
+                        lambda llm, **kw: proposer if llm.backend == "anthropic"
+                        else _CriticReplies(["x"] * 5))
     monkeypatch.setattr("athanor.agent.tools.relax_and_score",
                         lambda s, max_steps=200, with_hull=True: ScoreResult(formula="X", converged=True))
     cfg.llm.backend, cfg.llm.model = "anthropic", "claude-sonnet-5-5"
@@ -496,3 +502,56 @@ def test_benchmark_records_critic_unavailable_in_the_ledger(cfg, tmp_path, monke
     run_benchmark(cfg, iterations=1, baselines=[], ledger=ledger, spend_cap_usd=20)
     rows = list(_csv.DictReader(open(ledger)))
     assert rows[-1]["status"] == "critic_unavailable"
+
+
+# --- critic transport and reply checks (2026-10-12 gemma4 failure) -----------
+
+def test_preflight_failure_stops_the_campaign_before_any_work(cfg, monkeypatch):
+    relaxed = []
+    monkeypatch.setattr("athanor.agent.tools.relax_and_score",
+                        lambda s, max_steps=200, with_hull=True: relaxed.append(1) or ScoreResult(formula="X", converged=True))
+    monkeypatch.setattr("athanor.llm.make_backend", lambda llm, **kw: _CriticReplies([""]))
+    cfg.critic.enabled = True
+    backend = ScriptedBackend(_three_batches())
+    stats: dict = {}
+    run_campaign(cfg, backend, iterations=1, run_stats=stats)
+    assert stats["aborted"] == "critic_unavailable" and "empty reply" in stats["critic_preflight"]
+    assert backend.seen == [] and relaxed == []  # the proposer was never even called
+
+
+class _TimedReplies(_CriticReplies):
+    min_reply_seconds = 0.2
+
+    def __init__(self, replies, latency):
+        super().__init__(replies)
+        self.last_latency_s = latency
+
+
+def test_instant_or_empty_or_verdictless_replies_count_as_failures(cfg):
+    from athanor.agent.critic import Critic
+
+    batch = [{"formula": "CuInSe2", "substitution": {}}]
+    good = json.dumps({"verdicts": [{"formula": "CuInSe2", "approve": False, "reason": "r"}]})
+    cfg.critic.max_consecutive_failures = 0  # count only, never stop
+    for backend in (_TimedReplies([good], latency=0.03),      # too fast to be a review
+                    _TimedReplies(["   "], latency=5.0),       # empty
+                    _TimedReplies(['{"verdicts": [{"formula": "ZnS", "approve": false}]}'],
+                                  latency=5.0)):               # names none of the batch
+        c = Critic(backend, cfg)
+        v = c.review(batch, "h")
+        assert v["CuInSe2"].approve and not v["CuInSe2"].addressed
+        assert c.stats["failed_open"] == 1 and c.consecutive_failures == 1
+    ok = Critic(_TimedReplies([good], latency=5.0), cfg)
+    assert ok.review(batch, "h")["CuInSe2"].approve is False and ok.stats["failed_open"] == 0
+
+
+def test_factory_builds_a_native_ollama_critic(cfg):
+    from athanor.llm import make_backend
+    from athanor.llm.ollama_native import OllamaNativeBackend
+    from athanor.llm.openai_compat import OpenAICompatBackend
+
+    llm = cfg.llm.model_copy()
+    llm.backend, llm.model = "ollama", "gemma4:26b"
+    critic = make_backend(llm, critic=cfg.critic)
+    assert isinstance(critic, OllamaNativeBackend) and critic.num_ctx == cfg.critic.num_ctx
+    assert isinstance(make_backend(llm), OpenAICompatBackend)  # proposers unchanged
