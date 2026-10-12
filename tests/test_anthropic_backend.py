@@ -226,11 +226,13 @@ def test_critic_counts_fail_open_reviews(cfg):
     broken = Critic(Broken(), cfg)
     broken.review(batch, "h")
     assert broken.stats["failed_open"] == 1 and broken.stats["approved"] == 2
+    assert broken.stats["auto_approved"] == 2
 
     vet = Critic(Vetoer(), cfg)
     vet.review(batch, "h")
     assert vet.stats == {"reviews": 1, "candidates": 2, "approved": 1,
-                         "vetoed": 1, "failed_open": 0}
+                         "vetoed": 1, "failed_open": 0, "unaddressed": 1,
+                         "auto_approved": 1}
 
 
 # --------------------------------------------------------------------------
