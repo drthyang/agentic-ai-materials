@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # The exact commands behind results/2026-10-12-fixed-prototypes/: the
-# benchmark rerun on the corrected 16-atom chalcopyrite and kesterite
-# prototypes (commit 2aa21eb). Local only, $0 of API credit.
+# benchmark rerun with both scoring defects fixed — correct 16-atom
+# chalcopyrite and kesterite prototypes (2aa21eb) and the convex hull on
+# CHGNet's MP2020-corrected energy scale (edc49f9). Local only, $0 of API
+# credit. Two runs started before the hull fix were discarded.
 #
 #   scripts/run_fixed_prototypes.sh            # whole queue, in priority order
 #   scripts/run_fixed_prototypes.sh <step>...  # only the named steps
