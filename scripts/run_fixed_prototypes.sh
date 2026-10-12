@@ -6,7 +6,8 @@
 #   scripts/run_fixed_prototypes.sh            # whole queue, in priority order
 #   scripts/run_fixed_prototypes.sh <step>...  # only the named steps
 #
-# Steps: pv-base, qwen, qd-base. Re-running is safe: a run whose directory
+# Steps: qwen, pv-base, qd-base (in that order: the large local models run
+# first, so the shared Mac's memory is freed early). Re-running is safe: a run whose directory
 # already holds metrics.json is skipped.
 #
 # The Claude arms of the October study are NOT rerun here. They were queued
@@ -69,5 +70,5 @@ step() {
 }
 
 steps=("$@")
-[ ${#steps[@]} -eq 0 ] && steps=(pv-base qwen qd-base)
+[ ${#steps[@]} -eq 0 ] && steps=(qwen pv-base qd-base)
 for s in "${steps[@]}"; do step "$s"; done
