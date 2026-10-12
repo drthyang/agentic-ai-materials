@@ -1,0 +1,49 @@
+{
+ "mission": "config/missions/qd-emitter.yaml",
+ "arms": {
+  "random": {
+   "db": "random.db",
+   "runs": [
+    "data/benchmark/20261012-082009-seed8-fx-qd-base",
+    "data/benchmark/20261012-082233-seed9-fx-qd-base",
+    "data/benchmark/20261012-082650-seed10-fx-qd-base",
+    "data/benchmark/20261012-083337-seed11-fx-qd-base",
+    "data/benchmark/20261012-084108-seed12-fx-qd-base"
+   ]
+  },
+  "similarity": {
+   "db": "similarity.db",
+   "runs": [
+    "data/benchmark/20261012-082009-seed8-fx-qd-base",
+    "data/benchmark/20261012-082233-seed9-fx-qd-base",
+    "data/benchmark/20261012-082650-seed10-fx-qd-base",
+    "data/benchmark/20261012-083337-seed11-fx-qd-base",
+    "data/benchmark/20261012-084108-seed12-fx-qd-base"
+   ]
+  },
+  "bayesopt": {
+   "db": "bayesopt.db",
+   "runs": [
+    "data/benchmark/20261012-082009-seed8-fx-qd-base",
+    "data/benchmark/20261012-082233-seed9-fx-qd-base",
+    "data/benchmark/20261012-082650-seed10-fx-qd-base",
+    "data/benchmark/20261012-083337-seed11-fx-qd-base",
+    "data/benchmark/20261012-084108-seed12-fx-qd-base"
+   ]
+  }
+ },
+ "comparisons": [
+  [
+   "similarity",
+   "bayesopt"
+  ],
+  [
+   "similarity",
+   "random"
+  ],
+  [
+   "bayesopt",
+   "random"
+  ]
+ ]
+}

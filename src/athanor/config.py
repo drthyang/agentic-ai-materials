@@ -65,6 +65,11 @@ class CriticConfig(BaseModel):
     enabled: bool = True
     backend: str | None = None
     model: str | None = None
+    # A flaky critic may fail open now and then; one that keeps failing is
+    # not a critic. After this many consecutive failed reviews (unreachable,
+    # or no parseable verdicts) the campaign stops rather than spend budget
+    # without one.
+    max_consecutive_failures: int = 3
 
 
 class AcquisitionConfig(BaseModel):

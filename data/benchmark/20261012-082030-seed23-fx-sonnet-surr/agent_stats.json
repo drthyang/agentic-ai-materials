@@ -1,0 +1,29 @@
+{
+ "tool_calls": {
+  "read_notebook": 5,
+  "search_literature": 2,
+  "write_notebook": 14,
+  "propose_candidates": 11,
+  "rank_by_surrogate": 5,
+  "evaluate_candidates": 5,
+  "get_top_candidates": 2
+ },
+ "relaxations_per_iteration": {
+  "1": 20,
+  "2": 20,
+  "3": 20,
+  "4": 20,
+  "5": 20
+ },
+ "aborted_turns": 0,
+ "critic": {
+  "reviews": 5,
+  "candidates": 100,
+  "approved": 100,
+  "vetoed": 0,
+  "failed_open": 5,
+  "unaddressed": 0,
+  "auto_approved": 100
+ },
+ "critic_all_failed_open": true
+}

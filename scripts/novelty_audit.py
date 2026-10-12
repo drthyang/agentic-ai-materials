@@ -110,13 +110,19 @@ def cod_lookup(comp: Composition) -> list[dict]:
     return hits
 
 
+def route_key(formula, prototype, substitution):
+    from structure_audit import route_key as _rk
+
+    return _rk(formula, prototype, substitution)
+
+
 def built_spacegroup(prototype: str, substitution: dict) -> str | None:
     """Space group of the intended structure type: the substitution applied
     to a correct bulk cell of the prototype. (The repo's own 8-atom
     chalcopyrite/kesterite cells have P2 symmetry and a vacuum gap — see
     structure_audit.py — so their symmetry would match nothing meaningful.)"""
     try:
-        from structure_audit import build
+        from structure_audit import build  # noqa: F811
 
         return SpacegroupAnalyzer(build(prototype, substitution),
                                   symprec=0.1).get_space_group_symbol()
@@ -124,10 +130,10 @@ def built_spacegroup(prototype: str, substitution: dict) -> str | None:
         return None
 
 
-def collect_hits(spec_path: Path) -> dict[str, dict]:
+def collect_hits(spec_path: Path) -> dict[tuple, dict]:
     spec = json.loads(spec_path.read_text())
     cfg = load_mission(spec.get("mission", "config/mission.yaml"))
-    out: dict[str, dict] = {}
+    out: dict[tuple, dict] = {}
     for arm, a in spec["arms"].items():
         kind = "agent" if a["db"] == "agent.db" else "baseline"
         for run in a["runs"]:
@@ -137,7 +143,10 @@ def collect_hits(spec_path: Path) -> dict[str, dict]:
                 if not row_flags(r, cfg)["hit"]:
                     continue
                 red = Composition(r["formula"]).reduced_formula
-                h = out.setdefault(red, {
+                # one entry per route (formula, prototype, substitution): the
+                # space-group check depends on which structure was built
+                key = route_key(red, r["parent_prototype"], r["substitution"])
+                h = out.setdefault(key, {
                     "formula": red, "mission": cfg.mission.name, "kinds": set(),
                     "arms": set(), "runs": 0, "gap_ev": r["band_gap_ev"],
                     "e_above_hull": r["e_above_hull"], "prototype": r["parent_prototype"],
@@ -186,8 +195,15 @@ def summarize(rows: list[dict]) -> str:
     lines = ["| mission | found by | distinct hits | in OQMD (any entry) "
              "| in OQMD with ICSD id | same space group in OQMD | in COD "
              "| absent from OQMD and COD |", "|---|---|---|---|---|---|---|---|"]
-    groups: dict[tuple, list] = {}
+    # one line per composition: database membership is a property of the
+    # composition; the space-group match counts if any route matched
+    by_comp: dict[tuple, dict] = {}
     for r in rows:
+        c = by_comp.setdefault((r["mission"], r["formula"]), {**r})
+        c["found_by"] = "+".join(sorted(set(c["found_by"].split("+")) | set(r["found_by"].split("+"))))
+        c["oqmd_same_spacegroup"] = max(c["oqmd_same_spacegroup"], r["oqmd_same_spacegroup"])
+    groups: dict[tuple, list] = {}
+    for r in by_comp.values():
         for who in ("agent", "baseline"):
             if who in r["found_by"]:
                 groups.setdefault((r["mission"], who), []).append(r)

@@ -1,0 +1,244 @@
+{
+ "random": {
+  "hits_per_100_relaxations": {
+   "n": 5,
+   "values": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.89
+   ],
+   "mean": 0.378,
+   "sd": 0.8452336954949204,
+   "median": 0.0,
+   "min": 0.0,
+   "max": 1.89,
+   "ci95": [
+    0.0,
+    1.134
+   ]
+  },
+  "hits": {
+   "n": 5,
+   "values": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "mean": 0.2,
+   "sd": 0.4472135954999579,
+   "median": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "ci95": [
+    0.0,
+    0.6
+   ]
+  },
+  "relaxations": {
+   "n": 5,
+   "values": [
+    51.0,
+    53.0,
+    61.0,
+    63.0,
+    53.0
+   ],
+   "mean": 56.2,
+   "sd": 5.403702434442518,
+   "median": 53.0,
+   "min": 51.0,
+   "max": 63.0,
+   "ci95": [
+    52.2,
+    60.6
+   ]
+  }
+ },
+ "similarity": {
+  "hits_per_100_relaxations": {
+   "n": 5,
+   "values": [
+    1.61,
+    0.0,
+    2.13,
+    2.0,
+    2.22
+   ],
+   "mean": 1.592,
+   "sd": 0.9199293451129821,
+   "median": 2.0,
+   "min": 0.0,
+   "max": 2.22,
+   "ci95": [
+    0.766,
+    2.1399999999999997
+   ]
+  },
+  "hits": {
+   "n": 5,
+   "values": [
+    1.0,
+    0.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "mean": 0.8,
+   "sd": 0.4472135954999579,
+   "median": 1.0,
+   "min": 0.0,
+   "max": 1.0,
+   "ci95": [
+    0.4,
+    1.0
+   ]
+  },
+  "relaxations": {
+   "n": 5,
+   "values": [
+    62.0,
+    40.0,
+    47.0,
+    50.0,
+    45.0
+   ],
+   "mean": 48.8,
+   "sd": 8.228000972289685,
+   "median": 47.0,
+   "min": 40.0,
+   "max": 62.0,
+   "ci95": [
+    43.0,
+    56.0
+   ]
+  }
+ },
+ "bayesopt": {
+  "hits_per_100_relaxations": {
+   "n": 5,
+   "values": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.39
+   ],
+   "mean": 0.27799999999999997,
+   "sd": 0.6216268977449415,
+   "median": 0.0,
+   "min": 0.0,
+   "max": 1.39,
+   "ci95": [
+    0.0,
+    0.834
+   ]
+  },
+  "hits": {
+   "n": 5,
+   "values": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "mean": 0.2,
+   "sd": 0.4472135954999579,
+   "median": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "ci95": [
+    0.0,
+    0.6
+   ]
+  },
+  "relaxations": {
+   "n": 5,
+   "values": [
+    65.0,
+    65.0,
+    77.0,
+    68.0,
+    72.0
+   ],
+   "mean": 69.4,
+   "sd": 5.128352561983234,
+   "median": 68.0,
+   "min": 65.0,
+   "max": 77.0,
+   "ci95": [
+    65.6,
+    73.6
+   ]
+  }
+ },
+ "_comparisons": [
+  {
+   "a": "similarity",
+   "b": "bayesopt",
+   "metric": "hits_per_100_relaxations",
+   "p_two_sided": 0.047619047619047616,
+   "prob_superiority": 0.88
+  },
+  {
+   "a": "similarity",
+   "b": "bayesopt",
+   "metric": "hits",
+   "p_two_sided": 0.20634920634920634,
+   "prob_superiority": 0.8
+  },
+  {
+   "a": "similarity",
+   "b": "bayesopt",
+   "metric": "relaxations",
+   "p_two_sided": 0.007936507936507936,
+   "prob_superiority": 0.0
+  },
+  {
+   "a": "similarity",
+   "b": "random",
+   "metric": "hits_per_100_relaxations",
+   "p_two_sided": 0.0873015873015873,
+   "prob_superiority": 0.84
+  },
+  {
+   "a": "similarity",
+   "b": "random",
+   "metric": "hits",
+   "p_two_sided": 0.20634920634920634,
+   "prob_superiority": 0.8
+  },
+  {
+   "a": "similarity",
+   "b": "random",
+   "metric": "relaxations",
+   "p_two_sided": 0.1349206349206349,
+   "prob_superiority": 0.16
+  },
+  {
+   "a": "bayesopt",
+   "b": "random",
+   "metric": "hits_per_100_relaxations",
+   "p_two_sided": 1.0,
+   "prob_superiority": 0.48
+  },
+  {
+   "a": "bayesopt",
+   "b": "random",
+   "metric": "hits",
+   "p_two_sided": 1.0,
+   "prob_superiority": 0.5
+  },
+  {
+   "a": "bayesopt",
+   "b": "random",
+   "metric": "relaxations",
+   "p_two_sided": 0.007936507936507936,
+   "prob_superiority": 1.0
+  }
+ ]
+}

@@ -434,3 +434,38 @@ def test_export_pages_writes_static_site(cfg, tmp_path):
     bench = json.loads((out / "data" / "benchmark.json").read_text())
     assert bench["available"] and bench["rows"][0]["strategy"] == "agent"
     assert all(p.exists() for p in written)
+
+
+# --- 2026-10 review: silent auto-approvals must be counted --------------------
+
+class _Reply(LLMBackend):
+    def __init__(self, text):
+        self.text = text
+
+    def chat(self, system, messages, tools):
+        return LLMResponse(text=self.text)
+
+
+def test_unparseable_reply_counts_as_fail_open(cfg):
+    c = Critic(_Reply('{"verdicts": [ {"formula": "CuInSe2", '), cfg)
+    v = c.review([{"formula": "CuInSe2", "substitution": {}}], "h")
+    assert v["CuInSe2"].approve and not v["CuInSe2"].addressed
+    assert c.stats["failed_open"] == 1 and c.stats["unaddressed"] == 0
+    assert c.stats["auto_approved"] == 1
+
+
+def test_verdict_matched_by_composition_not_string(cfg):
+    reply = json.dumps({"verdicts": [{"formula": "Ag2CdGeSe4", "approve": False,
+                                      "reason": "size mismatch"}]})
+    c = Critic(_Reply(reply), cfg)
+    v = c.review([{"formula": "CdAg2GeSe4", "substitution": {}}], "h")
+    assert v["CdAg2GeSe4"].approve is False
+    assert c.stats["vetoed"] == 1 and c.stats["unaddressed"] == 0
+
+
+def test_unnamed_candidates_count_as_unaddressed(cfg):
+    reply = json.dumps({"verdicts": [{"formula": "CuInSe2", "approve": True, "reason": "ok"}]})
+    c = Critic(_Reply(reply), cfg)
+    c.review([{"formula": "CuInSe2", "substitution": {}},
+              {"formula": "AgInSe2", "substitution": {}}], "h")
+    assert c.stats["unaddressed"] == 1 and c.stats["failed_open"] == 0

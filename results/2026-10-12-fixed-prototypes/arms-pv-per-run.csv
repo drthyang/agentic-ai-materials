@@ -1,0 +1,38 @@
+mission,arm,run,relaxations,hits,hits_per_100_relaxations,best_gap_distance_ev,novel_fraction_evaluated,critic_vetoes,critic_auto_approved,hit_formulas,api_cost_usd,api_calls,cache_read_share,tool_calls,ledger_status
+pv-absorber-v1,random,20261012-071557-seed0-fx-pv-base,80,0,0.0,0.003,0.6,,,,,,,,
+pv-absorber-v1,random,20261012-071919-seed1-fx-pv-base,60,0,0.0,0.056,0.567,,,,,,,,
+pv-absorber-v1,random,20261012-072357-seed2-fx-pv-base,81,0,0.0,0.01,0.58,,,,,,,,
+pv-absorber-v1,random,20261012-073355-seed3-fx-pv-base,76,3,3.95,0.064,0.671,,,Cu2AgAsS4 CuSnS2 MnCd(CuS2)2,,,,,
+pv-absorber-v1,random,20261012-074144-seed4-fx-pv-base,62,2,3.23,0.01,0.645,,,CuSnS2 MnZn(CuS2)2,,,,,
+pv-absorber-v1,random,20261012-074955-seed5-fx-pv-base,79,0,0.0,0.031,0.658,,,,,,,,
+pv-absorber-v1,random,20261012-080002-seed6-fx-pv-base,87,0,0.0,0.043,0.655,,,,,,,,
+pv-absorber-v1,random,20261012-081157-seed7-fx-pv-base,76,0,0.0,0.01,0.605,,,,,,,,
+pv-absorber-v1,similarity,20261012-071557-seed0-fx-pv-base,58,0,0.0,0.01,0.569,,,,,,,,
+pv-absorber-v1,similarity,20261012-071919-seed1-fx-pv-base,74,1,1.35,0.01,0.486,,,CuSnS2,,,,,
+pv-absorber-v1,similarity,20261012-072357-seed2-fx-pv-base,69,1,1.45,0.01,0.565,,,CuSnS2,,,,,
+pv-absorber-v1,similarity,20261012-073355-seed3-fx-pv-base,71,1,1.41,0.01,0.465,,,CuSnS2,,,,,
+pv-absorber-v1,similarity,20261012-074144-seed4-fx-pv-base,56,1,1.79,0.01,0.5,,,CuSnS2,,,,,
+pv-absorber-v1,similarity,20261012-074955-seed5-fx-pv-base,61,1,1.64,0.01,0.508,,,CuSnS2,,,,,
+pv-absorber-v1,similarity,20261012-080002-seed6-fx-pv-base,64,1,1.56,0.01,0.562,,,CuSnS2,,,,,
+pv-absorber-v1,similarity,20261012-081157-seed7-fx-pv-base,76,1,1.32,0.01,0.539,,,CuSnS2,,,,,
+pv-absorber-v1,bayesopt,20261012-071557-seed0-fx-pv-base,80,0,0.0,0.095,0.588,,,,,,,,
+pv-absorber-v1,bayesopt,20261012-071919-seed1-fx-pv-base,83,1,1.2,0.082,0.675,,,MnZn(CuS2)2,,,,,
+pv-absorber-v1,bayesopt,20261012-072357-seed2-fx-pv-base,90,0,0.0,0.056,0.644,,,,,,,,
+pv-absorber-v1,bayesopt,20261012-073355-seed3-fx-pv-base,89,0,0.0,0.144,0.73,,,,,,,,
+pv-absorber-v1,bayesopt,20261012-074144-seed4-fx-pv-base,91,1,1.1,0.01,0.505,,,CuSnS2,,,,,
+pv-absorber-v1,bayesopt,20261012-074955-seed5-fx-pv-base,84,1,1.19,0.051,0.631,,,MnZn(CuS2)2,,,,,
+pv-absorber-v1,bayesopt,20261012-080002-seed6-fx-pv-base,95,2,2.11,0.032,0.779,,,Cu2AgAsS4 MnGa(CuS2)2,,,,,
+pv-absorber-v1,bayesopt,20261012-081157-seed7-fx-pv-base,82,0,0.0,0.01,0.61,,,,,,,,
+pv-absorber-v1,"agent qwen3:32b, no surrogate",20261012-033313-seed0-fx-qwen-nosurr,7,0,0.0,0.208,0.286,1,3,,,,,"{""evaluate_candidates"": 4, ""propose_candidates"": 6, ""read_notebook"": 5, ""search_literature"": 5, ""write_notebook"": 5}",
+pv-absorber-v1,"agent qwen3:32b, no surrogate",20261012-045504-seed6-fx-qwen-nosurr,6,1,16.67,0.01,0.167,4,0,GaCu2SbS4,,,,"{""evaluate_candidates"": 2, ""propose_candidates"": 13, ""read_notebook"": 5, ""search_literature"": 5, ""write_notebook"": 7}",
+pv-absorber-v1,"agent qwen3:32b, no surrogate",20261012-061403-seed7-fx-qwen-nosurr,4,0,0.0,0.53,1.0,2,0,,,,,"{""evaluate_candidates"": 3, ""propose_candidates"": 10, ""read_notebook"": 5, ""search_literature"": 4, ""write_notebook"": 5}",
+pv-absorber-v1,"agent Sonnet 5.5, no surrogate (critic failed open)",20261012-072454-seed11-fx-sonnet-nosurr,96,3,3.12,0.046,0.99,0,96,MgAg2SnSe4 MgSi(AgTe2)2 SiNi(AgSe2)2,0.634,52,0.834,"{""evaluate_candidates"": 13, ""get_top_candidates"": 4, ""propose_candidates"": 20, ""read_notebook"": 5, ""search_literature"": 5, ""write_notebook"": 15}",critic_failed_open
+pv-absorber-v1,"agent Sonnet 5.5, no surrogate (critic failed open)",20261012-073400-seed12-fx-sonnet-nosurr,98,6,6.12,0.008,1.0,0,98,BaSi(AgSe2)2 MgAg2SnSe4 MgSi(AgTe2)2 SiNi(AgSe2)2 SrAg2SnS4 SrSi(AgSe2)2,0.5062,39,0.787,"{""evaluate_candidates"": 11, ""get_top_candidates"": 2, ""propose_candidates"": 12, ""read_notebook"": 5, ""search_literature"": 1, ""write_notebook"": 14}",critic_failed_open
+pv-absorber-v1,"agent Sonnet 5.5, no surrogate (critic failed open)",20261012-074011-seed13-fx-sonnet-nosurr,92,7,7.61,0.023,0.989,0,92,Ag3SbSe4 BaSi(AgSe2)2 Cu2AgAsS4 CuAg2AsS4 MgAg2SnSe4 SrAg2SnS4 SrSi(AgSe2)2,0.5527,44,0.791,"{""evaluate_candidates"": 8, ""get_top_candidates"": 2, ""propose_candidates"": 20, ""read_notebook"": 5, ""search_literature"": 3, ""write_notebook"": 15}",critic_failed_open
+pv-absorber-v1,"agent Sonnet 5.5, no surrogate (critic failed open)",20261012-074752-seed14-fx-sonnet-nosurr,96,5,5.21,0.023,1.0,0,96,BaSi(AgSe2)2 MgAg2SnSe4 MgSi(AgTe2)2 SrAg2SnS4 SrSi(AgSe2)2,0.5305,40,0.773,"{""evaluate_candidates"": 11, ""get_top_candidates"": 2, ""propose_candidates"": 16, ""read_notebook"": 5, ""search_literature"": 3, ""write_notebook"": 14}",critic_failed_open
+pv-absorber-v1,"agent Sonnet 5.5, no surrogate (critic failed open)",20261012-075519-seed15-fx-sonnet-nosurr,98,6,6.12,0.025,1.0,0,98,K2ZnSnTe4 K2ZrCdTe4 MgAg2SnSe4 MgSi(AgTe2)2 Na2CdSnTe4 Na2ZnGeTe4,0.6114,48,0.819,"{""evaluate_candidates"": 11, ""get_top_candidates"": 3, ""propose_candidates"": 17, ""read_notebook"": 5, ""search_literature"": 6, ""write_notebook"": 15}",critic_failed_open
+pv-absorber-v1,"agent Sonnet 5.5, + rank_by_surrogate (critic failed open)",20261012-080505-seed21-fx-sonnet-surr,98,5,5.1,0.008,1.0,0,98,BaSi(AgSe2)2 MgAg2SnSe4 MgSi(AgTe2)2 SrAg2SnS4 SrSi(AgSe2)2,0.637,48,0.806,"{""evaluate_candidates"": 11, ""get_top_candidates"": 2, ""propose_candidates"": 15, ""rank_by_surrogate"": 5, ""read_notebook"": 5, ""search_known_materials"": 1, ""search_literature"": 2, ""write_notebook"": 11}",critic_failed_open
+pv-absorber-v1,"agent Sonnet 5.5, + rank_by_surrogate (critic failed open)",20261012-081314-seed22-fx-sonnet-surr,99,12,12.12,0.024,1.0,0,99,Ag3SbSe4 BaSi(AgSe2)2 Cu2AgAsS4 CuAg2AsS4 CuAg2PSe4 KAg2AsSe4 MgAg2SnSe4 NaAg2AsS4 NaAg2AsSe4 NaCu2SbS4 SrAg2SnS4 SrSi(AgSe2)2,0.6178,52,0.817,"{""evaluate_candidates"": 9, ""get_top_candidates"": 2, ""propose_candidates"": 20, ""rank_by_surrogate"": 4, ""read_notebook"": 5, ""search_literature"": 4, ""write_notebook"": 13}",critic_failed_open
+pv-absorber-v1,"agent Sonnet 5.5, + rank_by_surrogate (critic failed open)",20261012-082030-seed23-fx-sonnet-surr,100,4,4.0,0.008,0.99,0,100,BaSi(AgSe2)2 MgAg2SnSe4 SrAg2SnS4 SrSi(AgSe2)2,0.5836,37,0.753,"{""evaluate_candidates"": 5, ""get_top_candidates"": 2, ""propose_candidates"": 11, ""rank_by_surrogate"": 5, ""read_notebook"": 5, ""search_literature"": 2, ""write_notebook"": 14}",critic_failed_open
+pv-absorber-v1,"agent Sonnet 5.5, + rank_by_surrogate (critic failed open)",20261012-082636-seed24-fx-sonnet-surr,97,5,5.15,0.023,0.99,0,97,BaSi(AgSe2)2 MgAg2SnSe4 MgSi(AgTe2)2 SrAg2SnS4 SrSi(AgSe2)2,0.6128,49,0.827,"{""evaluate_candidates"": 9, ""get_top_candidates"": 3, ""propose_candidates"": 17, ""rank_by_surrogate"": 6, ""read_notebook"": 5, ""search_literature"": 2, ""write_notebook"": 9}",critic_failed_open
+pv-absorber-v1,"agent Sonnet 5.5, + rank_by_surrogate (critic failed open)",20261012-083420-seed25-fx-sonnet-surr,88,5,5.68,0.008,1.0,0,88,BaSi(AgSe2)2 MgAg2SnSe4 MgSi(AgTe2)2 SrAg2SnS4 SrSi(AgSe2)2,0.602,50,0.826,"{""evaluate_candidates"": 11, ""get_top_candidates"": 2, ""propose_candidates"": 19, ""rank_by_surrogate"": 3, ""read_notebook"": 5, ""search_literature"": 3, ""write_notebook"": 14}",critic_failed_open

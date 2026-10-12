@@ -19,10 +19,15 @@ Agreed priority order (2026-07-18): (1) capability-vs-alignment matrix,
 ladder with uncertainty, (5) magnetism mission. Rationale: the field's gap
 is controlled evaluation, not more agent demos — evidence first.
 
-- **Headline benchmark** *(in progress)* — agent (qwen3:32b) vs random vs
-  similarity under the same relaxation cap; gemma4:26b as critic. Repeat with 3+ seeds for
-  error bars; audit critic vetoes against outcomes (were vetoed candidates
-  actually bad?).
+- **Headline benchmark** *(done 2026-10-12 on fixed scoring;
+  results/2026-10-12-fixed-prototypes/)* — next: rerun the Sonnet arm with a
+  working critic (the gemma4 critic failed open in all ten Sonnet runs), and
+  the critic-veto audit against outcomes on the new data.
+- **Scoring validation** *(new, 2026-10)* — the prototype and hull-scale
+  defects went unnoticed for three months. Keep the structure and hull
+  regression tests green, and add a second interatomic potential to check
+  which hits depend on CHGNet (zinc-blende GaAs already sits 0.13 eV/atom
+  above the hull).
 - **Bayesian-optimization baseline** *(built 2026-07-18, baselines.py;
   acquisition tool 2026-08-01)* — GP + expected improvement over composition
   features, same budget/filters/scorer as every other strategy. The control a
@@ -33,12 +38,12 @@ is controlled evaluation, not more agent demos — evidence first.
 - **Rediscovery validation** — populate `evaluation.holdout_formulas` with
   known PV absorbers (CuGaSe2, AgGaSe2, CuInS2), measure rediscovery rate.
   This is the credibility experiment.
-- **Hybrid-critic and Claude-agent runs** — same benchmark with
-  `critic.backend: anthropic`, then `--backend anthropic`: how much does
-  discovery improve with model capability? (The capability-vs-outcome curve
-  is the most interesting writeup angle.)
-- **CdCuSe2 dossier** — literature deep-dive + DFT validation export
-  (`athanor export`: VASP/Quantum ESPRESSO inputs for top candidates).
+- **Claude-agent runs** *(done 2026-10; API benchmarking now only on
+  approval)* — a hybrid local-proposer + Claude-critic arm is still open.
+- ~~**CdCuSe2 dossier**~~ — dropped 2026-10: CdCuSe2 was a hit only in the
+  defective 8-atom chalcopyrite cell (bulk gap 0.14 eV in a correct one). The
+  DFT-export idea (`athanor export`: VASP/Quantum ESPRESSO inputs) stands, for
+  the structure-robust hits of the fixed-prototype rerun.
 - **Mission gallery** *(started, see config/missions/)* — display-industry
   targets that work with today's surrogates:
   - `qd-emitter.yaml` — heavy-metal-free quantum-dot emitter candidates

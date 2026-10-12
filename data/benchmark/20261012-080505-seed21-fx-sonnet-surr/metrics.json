@@ -1,0 +1,20 @@
+[
+ {
+  "name": "agent (claude-sonnet-5-5)",
+  "proposed": 256,
+  "filtered_out": 60,
+  "scored": 98,
+  "errors": 0,
+  "hits": 5,
+  "hit_formulas": [
+   "SrSi(AgSe2)2",
+   "BaSi(AgSe2)2",
+   "SrAg2SnS4",
+   "MgAg2SnSe4",
+   "MgSi(AgTe2)2"
+  ],
+  "rediscoveries": [],
+  "hits_per_100_relaxations": 5.1020408163265305,
+  "best_gap_distance_ev": 0.008
+ }
+]

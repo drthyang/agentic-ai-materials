@@ -48,9 +48,22 @@ class ToolRegistry:
 
         try:
             result = fn(**call.arguments)
+        except CampaignAbort:  # deliberate stops propagate to the loop
+            raise
         except Exception as exc:  # tool bugs/bad values must not kill the campaign
             return _err(f"{type(exc).__name__}: {exc}")
         return json.dumps(result, default=str)
+
+
+class CampaignAbort(Exception):
+    """Raised by a tool to stop the whole campaign on purpose (not a tool bug).
+
+    ``status`` is recorded as the run's outcome (e.g. critic_unavailable).
+    """
+
+    def __init__(self, status: str, message: str):
+        super().__init__(message)
+        self.status = status
 
 
 def _err(message: str) -> str:
