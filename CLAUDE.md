@@ -11,7 +11,7 @@ magnetism/active-learning, then new-surrogate work).
 ## Commands
 
 ```bash
-uv run pytest                              # 95 tests, all should pass
+uv run pytest                              # 110 tests, all should pass
 uv run athanor check                   # env/key status
 uv run athanor run --iterations 1      # discovery campaign (needs Ollama up)
 uv run athanor benchmark --skip-agent  # baselines only (no LLM needed)
@@ -105,6 +105,13 @@ uv run athanor export-pages            # static recorded-campaign site -> docs/
   `budget.max_relaxations_per_iteration` from mission.yaml in any agent loop.
 - Scoring must never crash a campaign: `relax_and_score` returns a
   `ScoreResult` with `.error` set instead of raising.
+- Prototypes are conventional cells built from their space groups
+  (chalcopyrite I-42d and kesterite I-4 at 16 atoms, zinc blende F-43m at
+  8). Before 2026-10-12 the first two were 8-atom P2 half-cells with a ~7 Å
+  empty slab and most benchmark hits depended on it;
+  `tests/test_prototypes.py` pins space group, stoichiometry, tetrahedral
+  coordination and the absence of vacuum. Runs record `prototype_cells` in
+  run_config.json.
 - pymatgen's `reduced_formula` ordering is canonical-but-surprising
   (e.g. "GaCuSe2"); compare `Composition` objects, not strings.
 

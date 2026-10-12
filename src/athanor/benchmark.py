@@ -21,6 +21,7 @@ from athanor.baselines import BayesOptBaseline, RandomBaseline, SimilarityBaseli
 from athanor.config import MissionConfig
 from athanor.db import CandidateDB
 from athanor.metrics import CampaignMetrics, comparison_table, compute_metrics
+from athanor.prototypes import PROTOTYPES, get_prototype
 
 log = logging.getLogger("athanor.benchmark")
 
@@ -210,6 +211,9 @@ def _write_run_config(outdir: Path, cfg: MissionConfig, iterations: int, seed: i
         "baselines": baselines,
         "include_agent": include_agent,
         "mission_config": cfg.model_dump(mode="json"),
+        # which prototype cells this run built on (8-atom half-cells before
+        # the 2026-10-12 fix, 16-atom conventional cells after)
+        "prototype_cells": {name: len(get_prototype(name)) for name in PROTOTYPES},
     }
     (outdir / "run_config.json").write_text(json.dumps(snapshot, indent=1))
 

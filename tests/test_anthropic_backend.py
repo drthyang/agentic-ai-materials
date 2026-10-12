@@ -297,6 +297,7 @@ def test_agent_only_benchmark_writes_artifacts(cfg, tmp_path, monkeypatch):
     assert outdir.name.endswith("-seed0-arm")
     snap = json.loads((outdir / "run_config.json").read_text())
     assert snap["baselines"] == [] and snap["mission_config"]["llm"]["backend"] == "anthropic"
+    assert snap["prototype_cells"]["kesterite-Cu2ZnSnS4"] == 16
     assert json.loads((outdir / "usage.json").read_text())["calls"] == 2
     assert json.loads((outdir / "agent_stats.json").read_text())["aborted_turns"] == 0
     assert be.max_cost_usd == pytest.approx(40 - 0.5)

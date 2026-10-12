@@ -2,7 +2,7 @@
 
     uv run python scripts/structure_audit.py results/<study>/arms-pv.json [...]
 
-Why: the built-in chalcopyrite and kesterite prototypes in prototypes.py are
+Why: until the 2026-10-12 fix, the chalcopyrite and kesterite prototypes were
 8-atom cells that hold half of the 16-atom conventional cell's atoms in the
 full c = 11.6 Å box — all atoms sit within z in [-0.125, 0.25], leaving a
 ~7 Å empty gap — and their symmetry is P2, not I-42d / I-4. Every
@@ -27,7 +27,7 @@ import json
 import sys
 from pathlib import Path
 
-from pymatgen.core import Composition, Lattice, Structure
+from pymatgen.core import Composition, Structure
 
 from athanor.config import load_mission
 from athanor.db import CandidateDB
@@ -37,17 +37,14 @@ from athanor.tools.scoring import relax_and_score
 
 
 def bulk_cell(prototype: str) -> Structure:
-    """Correct conventional cells for the repo's prototype names."""
-    if prototype == "chalcopyrite-CuInSe2":  # I-42d, Cu 4a, In 4b, Se 8d
-        return Structure.from_spacegroup(
-            "I-42d", Lattice.tetragonal(5.78, 11.62), ["Cu", "In", "Se"],
-            [[0, 0, 0], [0, 0, 0.5], [0.23, 0.25, 0.125]])
-    if prototype == "kesterite-Cu2ZnSnS4":  # I-4, Cu 2a+2c, Zn 2d, Sn 2b, S 8g
-        return Structure.from_spacegroup(
-            "I-4", Lattice.tetragonal(5.43, 10.86), ["Cu", "Cu", "Zn", "Sn", "S"],
-            [[0, 0, 0], [0, 0.5, 0.25], [0, 0.5, 0.75], [0, 0, 0.5],
-             [0.756, 0.757, 0.872]])
-    return get_prototype(prototype).copy()  # zinc blende: already a correct cell
+    """Correct conventional cell for a prototype name.
+
+    Since the 2026-10-12 fix these are exactly the cells in prototypes.py
+    (site for site), so auditing runs made after the fix re-scores the same
+    structure from a different starting volume; for runs made before it,
+    this is the correct cell the defective 8-atom prototype should have been.
+    """
+    return get_prototype(prototype).copy()
 
 
 def build(prototype: str, substitution: dict) -> Structure:
