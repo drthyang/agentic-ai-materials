@@ -8,3 +8,4 @@ data/elemental_refs*.json
 data/mp_cache/
 .env
 data/benchmark/.lock*
+data/novelty_cache/

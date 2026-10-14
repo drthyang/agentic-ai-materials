@@ -17,7 +17,14 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-from athanor.baselines import BayesOptBaseline, RandomBaseline, SimilarityBaseline
+from athanor.baselines import (
+    BayesOptBaseline,
+    NoveltyBayesOptBaseline,
+    NoveltyRandomBaseline,
+    NoveltySimilarityBaseline,
+    RandomBaseline,
+    SimilarityBaseline,
+)
 from athanor.config import MissionConfig
 from athanor.db import CandidateDB
 from athanor.metrics import CampaignMetrics, comparison_table, compute_metrics
@@ -31,7 +38,12 @@ log = logging.getLogger("athanor.benchmark")
 # lanes; no reported metric depends on it.
 _LOCK = Path(os.environ.get("ATHANOR_BENCHMARK_LOCK", "data/benchmark/.lock"))
 
-BASELINES = {cls.name: cls for cls in (RandomBaseline, SimilarityBaseline, BayesOptBaseline)}
+BASELINES = {cls.name: cls for cls in (
+    RandomBaseline, SimilarityBaseline, BayesOptBaseline,
+    NoveltyRandomBaseline, NoveltySimilarityBaseline, NoveltyBayesOptBaseline)}
+# run when --baselines is not given: the original three, so past commands
+# reproduce; the -novel variants run only when named
+DEFAULT_BASELINES = ("random", "similarity", "bayesopt")
 
 # Columns of the API spend ledger (no secrets: token counts and prices only).
 LEDGER_FIELDS = [
@@ -92,7 +104,7 @@ def run_benchmark(
     ledger / spend_cap_usd: append the agent's API spend to a CSV ledger, and
     refuse to start (or stop mid-run) once the ledger total reaches the cap.
     """
-    names = list(BASELINES) if baselines is None else list(baselines)
+    names = list(DEFAULT_BASELINES) if baselines is None else list(baselines)
     unknown = [n for n in names if n not in BASELINES]
     if unknown:
         raise ValueError(f"unknown baselines {unknown}; choose from {sorted(BASELINES)}")

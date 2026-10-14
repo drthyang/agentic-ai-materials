@@ -1,0 +1,127 @@
+{
+ "mission": "config/mission.yaml",
+ "arms": {
+  "random": {
+   "db": "random.db",
+   "runs": [
+    "data/benchmark/20261012-071557-seed0-fx-pv-base",
+    "data/benchmark/20261012-071919-seed1-fx-pv-base",
+    "data/benchmark/20261012-072357-seed2-fx-pv-base",
+    "data/benchmark/20261012-073355-seed3-fx-pv-base",
+    "data/benchmark/20261012-074144-seed4-fx-pv-base",
+    "data/benchmark/20261012-074955-seed5-fx-pv-base",
+    "data/benchmark/20261012-080002-seed6-fx-pv-base",
+    "data/benchmark/20261012-081157-seed7-fx-pv-base"
+   ]
+  },
+  "similarity": {
+   "db": "similarity.db",
+   "runs": [
+    "data/benchmark/20261012-071557-seed0-fx-pv-base",
+    "data/benchmark/20261012-071919-seed1-fx-pv-base",
+    "data/benchmark/20261012-072357-seed2-fx-pv-base",
+    "data/benchmark/20261012-073355-seed3-fx-pv-base",
+    "data/benchmark/20261012-074144-seed4-fx-pv-base",
+    "data/benchmark/20261012-074955-seed5-fx-pv-base",
+    "data/benchmark/20261012-080002-seed6-fx-pv-base",
+    "data/benchmark/20261012-081157-seed7-fx-pv-base"
+   ]
+  },
+  "bayesopt": {
+   "db": "bayesopt.db",
+   "runs": [
+    "data/benchmark/20261012-071557-seed0-fx-pv-base",
+    "data/benchmark/20261012-071919-seed1-fx-pv-base",
+    "data/benchmark/20261012-072357-seed2-fx-pv-base",
+    "data/benchmark/20261012-073355-seed3-fx-pv-base",
+    "data/benchmark/20261012-074144-seed4-fx-pv-base",
+    "data/benchmark/20261012-074955-seed5-fx-pv-base",
+    "data/benchmark/20261012-080002-seed6-fx-pv-base",
+    "data/benchmark/20261012-081157-seed7-fx-pv-base"
+   ]
+  },
+  "random-novel": {
+   "db": "random-novel.db",
+   "runs": [
+    "data/benchmark/20261013-172547-seed0-fx-pv-novel",
+    "data/benchmark/20261013-173502-seed1-fx-pv-novel",
+    "data/benchmark/20261013-174416-seed2-fx-pv-novel",
+    "data/benchmark/20261013-175300-seed3-fx-pv-novel",
+    "data/benchmark/20261013-180048-seed4-fx-pv-novel",
+    "data/benchmark/20261013-180729-seed5-fx-pv-novel",
+    "data/benchmark/20261013-181410-seed6-fx-pv-novel",
+    "data/benchmark/20261013-182110-seed7-fx-pv-novel"
+   ]
+  },
+  "similarity-novel": {
+   "db": "similarity-novel.db",
+   "runs": [
+    "data/benchmark/20261013-172547-seed0-fx-pv-novel",
+    "data/benchmark/20261013-173502-seed1-fx-pv-novel",
+    "data/benchmark/20261013-174416-seed2-fx-pv-novel",
+    "data/benchmark/20261013-175300-seed3-fx-pv-novel",
+    "data/benchmark/20261013-180048-seed4-fx-pv-novel",
+    "data/benchmark/20261013-180729-seed5-fx-pv-novel",
+    "data/benchmark/20261013-181410-seed6-fx-pv-novel",
+    "data/benchmark/20261013-182110-seed7-fx-pv-novel"
+   ]
+  },
+  "bayesopt-novel": {
+   "db": "bayesopt-novel.db",
+   "runs": [
+    "data/benchmark/20261013-172547-seed0-fx-pv-novel",
+    "data/benchmark/20261013-173502-seed1-fx-pv-novel",
+    "data/benchmark/20261013-174416-seed2-fx-pv-novel",
+    "data/benchmark/20261013-175300-seed3-fx-pv-novel",
+    "data/benchmark/20261013-180048-seed4-fx-pv-novel",
+    "data/benchmark/20261013-180729-seed5-fx-pv-novel",
+    "data/benchmark/20261013-181410-seed6-fx-pv-novel",
+    "data/benchmark/20261013-182110-seed7-fx-pv-novel"
+   ]
+  },
+  "agent Sonnet 5.5 (critic failed open)": {
+   "db": "agent.db",
+   "runs": [
+    "data/benchmark/20261012-072454-seed11-fx-sonnet-nosurr",
+    "data/benchmark/20261012-073400-seed12-fx-sonnet-nosurr",
+    "data/benchmark/20261012-074011-seed13-fx-sonnet-nosurr",
+    "data/benchmark/20261012-074752-seed14-fx-sonnet-nosurr",
+    "data/benchmark/20261012-075519-seed15-fx-sonnet-nosurr"
+   ]
+  }
+ },
+ "comparisons": [
+  [
+   "agent Sonnet 5.5 (critic failed open)",
+   "random-novel"
+  ],
+  [
+   "agent Sonnet 5.5 (critic failed open)",
+   "similarity-novel"
+  ],
+  [
+   "agent Sonnet 5.5 (critic failed open)",
+   "bayesopt-novel"
+  ],
+  [
+   "random-novel",
+   "random"
+  ],
+  [
+   "similarity-novel",
+   "similarity"
+  ],
+  [
+   "bayesopt-novel",
+   "bayesopt"
+  ],
+  [
+   "similarity-novel",
+   "random-novel"
+  ],
+  [
+   "bayesopt-novel",
+   "random-novel"
+  ]
+ ]
+}

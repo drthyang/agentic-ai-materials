@@ -12,6 +12,12 @@ pure test of hypothesis quality.
   classic "sensible enumeration" a materials scientist might script.
 - BayesOptBaseline: GP + expected improvement over composition features —
   the sequential model-based search a materials-informatics group would run.
+
+Each has a "-novel" variant (random-novel, similarity-novel, bayesopt-novel)
+that skips compositions Materials Project already has before relaxing them,
+as the agent is told to, and may draw enough batches to spend its budget
+despite the skips. The originals relax known compositions too, so the
+variants are the stronger control for "agent vs baseline".
 """
 
 from __future__ import annotations
@@ -51,6 +57,8 @@ def element_similarity(a: str, b: str) -> float:
 
 class _BaseRunner:
     name = "base"
+    skip_known = False  # skip Materials Project compositions before relaxing
+    max_attempts_per_iteration = 10  # batches drawn per iteration at most
 
     def __init__(self, cfg: MissionConfig, db: CandidateDB, seed: int = 0):
         self.cfg = cfg
@@ -78,7 +86,7 @@ class _BaseRunner:
         for i in range(1, iterations + 1):
             relax_left = self.cfg.budget.max_relaxations_per_iteration
             attempts = 0
-            while relax_left > 0 and attempts < 10:
+            while relax_left > 0 and attempts < self.max_attempts_per_iteration:
                 attempts += 1
                 scored = self._one_batch(i, relax_left)
                 total_scored += scored
@@ -125,6 +133,14 @@ class _BaseRunner:
 
                 novel = is_novel(cand.formula,
                                  holdout=frozenset(self.cfg.evaluation.holdout_formulas))
+            if self.skip_known and novel is False:
+                self.db.add(CandidateRow(
+                    iteration=iteration, formula=cand.formula, status="filtered_out",
+                    parent_prototype=proto_name, substitution=cand.substitution,
+                    hypothesis=f"baseline:{self.name}", is_novel=False,
+                    filter_reasons=["known in Materials Project; skipped before relaxation"],
+                ))
+                continue
             s = relax_and_score(cand.structure,
                                 max_steps=self.cfg.budget.relaxation_max_steps,
                                 with_hull=self.has_mp_key)
@@ -326,3 +342,28 @@ class BayesOptBaseline(_BaseRunner):
             log.warning("[bayesopt] EI ranking failed (%s); shuffling", exc)
             self.rng.shuffle(cands)
             return cands
+
+
+class _SkipKnown:
+    """Novelty-aware variant: never relax a composition Materials Project has.
+
+    The agent sees novel_vs_materials_project before choosing and is told not
+    to spend relaxations on known materials; these variants get the same
+    information, used the same way. Skips cost no budget, so more batches are
+    allowed per iteration to let the budget actually be spent.
+    """
+
+    skip_known = True
+    max_attempts_per_iteration = 50
+
+
+class NoveltyRandomBaseline(_SkipKnown, RandomBaseline):
+    name = "random-novel"
+
+
+class NoveltySimilarityBaseline(_SkipKnown, SimilarityBaseline):
+    name = "similarity-novel"
+
+
+class NoveltyBayesOptBaseline(_SkipKnown, BayesOptBaseline):
+    name = "bayesopt-novel"

@@ -11,7 +11,7 @@ magnetism/active-learning, then new-surrogate work).
 ## Commands
 
 ```bash
-uv run pytest                              # 151 tests, all should pass
+uv run pytest                              # 155 tests, all should pass
 uv run athanor check                   # env/key status
 uv run athanor run --iterations 1      # discovery campaign (needs Ollama up)
 uv run athanor benchmark --skip-agent  # baselines only (no LLM needed)
@@ -86,7 +86,11 @@ uv run athanor export-pages            # static recorded-campaign site -> docs/
   differs. The BO machinery (GP, `featurize_composition`, `mission_utility`)
   is also the agent's `rank_by_surrogate` tool — keep them shared, or the
   LLM-vs-LLM+BO comparison stops being controlled. Toggle via `acquisition:`
-  in mission.yaml.
+  in mission.yaml. Each baseline has a `-novel` variant (`--baselines
+  random-novel,similarity-novel,bayesopt-novel`) that skips Materials
+  Project compositions before relaxing, as the agent is told to; the
+  originals relax known compositions too. Only the original three run by
+  default, so past commands reproduce.
 - `metrics.py` — shared hit definition (converged + on-target gap + near-hull +
   not confirmed-known); `benchmark.py` orchestrates same-relaxation-cap comparison into
   data/benchmark/<stamp>/ with markdown table + png plot.

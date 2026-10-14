@@ -1,0 +1,115 @@
+{
+ "started_utc": "2026-10-13T18:21:10+00:00",
+ "git_commit": "3dc1c1c20a9cf3936ff083f1b2c29068cd9551d9-dirty",
+ "iterations": 5,
+ "seed": 7,
+ "baselines": [
+  "random-novel",
+  "similarity-novel",
+  "bayesopt-novel"
+ ],
+ "include_agent": false,
+ "mission_config": {
+  "mission": {
+   "name": "pv-absorber-v1",
+   "description": "Find novel, thermodynamically stable (or near-stable) semiconductor compositions with a band gap near 1.4 eV, suitable as single-junction photovoltaic absorber candidates.\n"
+  },
+  "target": {
+   "band_gap_ev": [
+    1.1,
+    1.7
+   ],
+   "band_gap_ideal_ev": 1.4,
+   "e_above_hull_max_ev_per_atom": 0.05
+  },
+  "chemistry": {
+   "allowed_elements": [
+    "Cu",
+    "Ag",
+    "Zn",
+    "Cd",
+    "Al",
+    "Ga",
+    "In",
+    "Sn",
+    "Ge",
+    "Si",
+    "Sb",
+    "Bi",
+    "S",
+    "Se",
+    "Te",
+    "N",
+    "P",
+    "As",
+    "O",
+    "Cl",
+    "Br",
+    "I",
+    "Na",
+    "K",
+    "Ca",
+    "Sr",
+    "Ba",
+    "Mg",
+    "Ti",
+    "Zr",
+    "Fe",
+    "Mn",
+    "Ni",
+    "Co",
+    "Mo",
+    "W"
+   ],
+   "excluded_elements": [
+    "Pb",
+    "Hg",
+    "Tl"
+   ],
+   "max_elements_per_compound": 4,
+   "max_atoms_per_cell": 50
+  },
+  "budget": {
+   "iterations": 10,
+   "max_candidates_proposed_per_iteration": 50,
+   "max_relaxations_per_iteration": 20,
+   "relaxation_max_steps": 200,
+   "max_tool_calls_per_iteration": 24
+  },
+  "llm": {
+   "backend": "ollama",
+   "model": "qwen3:32b",
+   "base_url": "http://localhost:11434/v1",
+   "timeout_s": 600.0,
+   "effort": null,
+   "max_cost_usd": null
+  },
+  "critic": {
+   "enabled": true,
+   "backend": "ollama",
+   "model": "gemma4:26b",
+   "max_consecutive_failures": 3,
+   "num_ctx": 16384,
+   "min_reply_seconds": 0.2,
+   "preflight": true
+  },
+  "acquisition": {
+   "enabled": true,
+   "min_train": 6,
+   "xi": 0.01
+  },
+  "evaluation": {
+   "holdout_formulas": []
+  },
+  "paths": {
+   "db": "data/candidates.db",
+   "notebook": "data/lab_notebook.md",
+   "reports": "data/reports"
+  }
+ },
+ "prototype_cells": {
+  "chalcopyrite-CuInSe2": 16,
+  "kesterite-Cu2ZnSnS4": 16,
+  "zincblende-GaAs": 8
+ }
+}
