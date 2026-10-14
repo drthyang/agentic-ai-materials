@@ -83,6 +83,42 @@ def test_bayesopt_baseline_respects_budget_and_is_deterministic(
     assert all(r["hypothesis"] == "baseline:bayesopt" for r in rows)
 
 
+@pytest.mark.parametrize("variant", ["random-novel", "similarity-novel", "bayesopt-novel"])
+def test_novelty_variants_never_relax_a_known_composition(
+        cfg, fake_scoring, tmp_path, monkeypatch, variant):
+    """The -novel baselines skip MP-known compositions before relaxing (the
+    agent is told to); the originals relax them. Skips cost no budget."""
+    import zlib
+
+    from athanor.benchmark import BASELINES
+
+    monkeypatch.setenv("MP_API_KEY", "test")
+    monkeypatch.setattr(  # deterministic half-known palette, no network
+        "athanor.tools.mp_search.is_novel",
+        lambda formula, **kw: zlib.crc32(formula.encode()) % 2 == 0)
+
+    db = CandidateDB(tmp_path / "n.db")
+    result = BASELINES[variant](cfg, db, seed=5).run()
+    assert 0 < result.relaxations_used <= 2 * 5
+    assert all(r["is_novel"] == 1 for r in db.all_scored())
+    skipped = db._conn.execute(
+        "SELECT filter_reasons FROM candidates WHERE status='filtered_out' "
+        "AND is_novel=0").fetchall()
+    assert skipped and all("known in Materials Project" in r[0] for r in skipped)
+
+    original = BASELINES[variant.removesuffix("-novel")]
+    odb = CandidateDB(tmp_path / "o.db")
+    original(cfg, odb, seed=5).run()
+    assert any(r["is_novel"] == 0 for r in odb.all_scored())
+
+
+def test_default_baselines_are_the_original_three():
+    from athanor.benchmark import BASELINES, DEFAULT_BASELINES
+
+    assert DEFAULT_BASELINES == ("random", "similarity", "bayesopt")
+    assert set(DEFAULT_BASELINES) < set(BASELINES)
+
+
 def test_bayesopt_rank_survives_empty_pool_and_gp_failure(cfg, tmp_path):
     """Regression: dedup can empty a late batch; EI on 0 candidates crashed."""
     from athanor.baselines import BayesOptBaseline

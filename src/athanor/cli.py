@@ -155,7 +155,8 @@ def main() -> None:
                          help="run only the non-LLM baselines")
     bench_p.add_argument("--baselines", default=None,
                          help="comma list of baselines to run (random,similarity,"
-                              "bayesopt) or 'none'; default all")
+                              "bayesopt, or their -novel variants that skip known "
+                              "materials) or 'none'; default the original three")
     bench_p.add_argument("--tag", default="", help="suffix for the run directory name")
     arm = bench_p.add_argument_group("ablation arm (overrides mission config)")
     arm.add_argument("--backend", default=None,
